@@ -1,0 +1,184 @@
+/*
+ * First we define the sponge powered mixin (fixes?) repository and dependencies.
+ *
+ * Applying the plugin can wait, I put it at the end of this gradle file but I'm not
+ * sure if it HAS to be in the end. I'm pretty sure it just has to be somewhere.
+ */
+buildscript {
+    repositories {
+        maven {
+            url = "https://repo.spongepowered.org/repository/maven-public/"
+        }
+    }
+
+    dependencies {
+        classpath "org.spongepowered:mixingradle:0.7-SNAPSHOT"
+    }
+}
+
+// Apply other plugins, these will populate the gradle tasks in the IDE
+plugins {
+    id 'eclipse'
+    id 'idea'
+    id 'net.minecraftforge.gradle' version '[6.0,6.2)'
+    id 'org.parchmentmc.librarian.forgegradle' version '1.+'
+    id 'org.spongepowered.mixin' version '0.7.+'
+}
+
+// Basic identifying variables for the mod jar, I believe
+version = mod_version
+group = mod_group_id
+base.archivesName = mod_id
+java.toolchain.languageVersion = JavaLanguageVersion.of(17)
+
+// Something to print into the console because it is nice to see that it is running
+println "GOOM Project Build.gradle execution of ${base.archivesName.get()}"
+
+/*
+ * The minecraft tasks!
+ *
+ * It is these that let you do "runClient" or "runServer"
+ */
+minecraft {
+
+    // In terms of mappings, basically it has to do with obfuscation
+    mappings channel: mapping_channel, version: mapping_version
+
+    // No idea what this does yay
+    copyIdeResources = true
+
+    // Now options for running the "runClient" and "runServer" tasks Nice!
+    runs {
+        configureEach {
+            workingDirectory project.file('run')
+            property 'forge.logging.markers', 'REGISTRIES'
+            property 'forge.logging.console.level', 'debug'
+            //args '-mixin.config=' + mixin_config
+
+            mods {
+                "${mod_id}" {
+                    source sourceSets.main
+                }
+            }
+        }
+
+        client {
+            property 'forge.enabledGameTestNamespaces', mod_id
+        }
+
+        // It is easy to remove the nogui flag and use the window to op yourself in the server
+        server {
+            property 'forge.enabledGameTestNamespaces', mod_id
+            args '--nogui'
+        }
+        gameTestServer {
+            property 'forge.enabledGameTestNamespaces', mod_id
+        }
+        data {
+            workingDirectory project.file('run-data')
+            args '--mod', mod_id, '--all', '--output', file('src/generated/resources/'), '--existing', file('src/main/resources/')
+        }
+    }
+}
+
+// No idea what this does but it looks cool and fresh so it stays
+sourceSets.main.resources { srcDir 'src/generated/resources' }
+
+/*
+ * Repositories and dependencies for other mods!
+ *
+ * I really feel like I am living in 2025 when these auto download and apply
+ * to the client for me to test with, jesus, how long did it take us to get
+ * to this point?!
+ */
+repositories {
+    mavenLocal()
+    maven {
+        name = "Fabric"
+        url = "https://maven.fabricmc.net/"
+    }
+    maven {
+        name = "TerraformersMC"
+        url = "https://maven.terraformersmc.com/"
+    }
+    maven {
+        name = "NeoForge"
+        url = "https://maven.neoforged.net/releases/"
+    }
+    maven {
+        name = "CurseForge"
+        url = "https://minecraft.curseforge.com/api/maven"
+    }
+    maven {
+        name = "JitPack"
+        url = "https://jitpack.io"
+        content {
+            includeGroup "com.github.Virtuoel"
+        }
+    }
+    maven {
+        name = "GitHub"
+        url = "https://maven.pkg.github.com"
+    }
+}
+
+dependencies {
+    minecraft "net.minecraftforge:forge:${minecraft_version}-${forge_version}"
+
+    annotationProcessor 'org.spongepowered:mixin:0.8.7:processor'
+
+    implementation(annotationProcessor("io.github.llamalad7:mixinextras-common:0.5.0-rc.2"))
+    implementation(jarJar("io.github.llamalad7:mixinextras-forge:0.5.0-rc.2")) {
+        jarJar.ranged(it, "[0.5.0-rc.2,)")
+    }
+}
+
+mixin {
+
+    // Mixin Settings
+    add sourceSets.main, mixin_refmap
+    config mixin_config
+
+    // Specify options for dev run configs
+    //debug.verbose = true
+    //debug.export = true
+    //dumpTargetOnFailure = true
+}
+
+// More stuff that I'm not sure what it is for... I believe this is obfuscation-related
+tasks.named('processResources', ProcessResources).configure {
+    var replaceProperties = [
+            minecraft_version: minecraft_version, minecraft_version_range: minecraft_version_range,
+            forge_version: forge_version, forge_version_range: forge_version_range,
+            loader_version_range: loader_version_range,
+            mod_id: mod_id, mod_name: mod_name, mod_license: mod_license, mod_version: mod_version,
+            mod_authors: mod_authors, mod_description: mod_description,
+    ]
+    inputs.properties replaceProperties
+
+    filesMatching(['META-INF/mods.toml', 'pack.mcmeta']) {
+        expand replaceProperties + [project: project]
+    }
+}
+
+// Example for how to get properties into the manifest for reading at runtime.
+jar {
+    manifest {
+        attributes([
+                'Specification-Title'           : mod_id,
+                'Specification-Vendor'          : mod_authors,
+                'Specification-Version'         : mod_version,
+                'Implementation-Title'          : project.name,
+                'Implementation-Version'        : project.jar.archiveVersion,
+                'Implementation-Vendor'         : mod_authors,
+                'Implementation-Timestamp'      : new Date().format("yyyy-MM-dd'T'HH:mm:ssZ"),
+                'MixinConfigs'                  : mixin_config,
+                'FMLCorePluginContainsFMLMod'   : 'true'
+        ])
+    }
+
+    finalizedBy 'reobfJar'
+}
+
+// "Use the UTF-8 charset for Java compilation" but don't ask me why lol
+tasks.withType(JavaCompile).configureEach {options.encoding = 'UTF-8' }

@@ -1,0 +1,24 @@
+{
+  "required": true,
+  "minVersion": "0.8",
+  "package": "gunging.ootilities.GungingOotilitiesMod.mixin",
+  "compatibilityLevel": "JAVA_17",
+  "refmap": "mixins.gungingoom.refmap.json",
+  "client": [
+    "ClientPacketListenerMixin",
+    "LocalPlayerMixin",
+    "MinecraftMixin",
+    "MultiPlayerGameModeMixin"
+  ],
+  "mixins": [
+    "ContainerSynchronizerMixin",
+    "InventoryMixin",
+    "LivingEntityMixin",
+    "PlayerListMixin",
+    "PlayerMixin",
+    "ServerGamePacketListenerMixin"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}
