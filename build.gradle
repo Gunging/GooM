@@ -102,6 +102,7 @@ sourceSets.main.resources { srcDir 'src/generated/resources' }
  */
 repositories {
     mavenLocal()
+    mavenCentral()
     maven {
         name = "Fabric"
         url = "https://maven.fabricmc.net/"
