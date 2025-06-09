@@ -23,6 +23,10 @@ plugins {
     id 'net.minecraftforge.gradle' version '[6.0,6.2)'
     id 'org.parchmentmc.librarian.forgegradle' version '1.+'
     id 'org.spongepowered.mixin' version '0.7.+'
+
+    id 'java-library'
+    id 'maven-publish'
+    id 'signing'
 }
 
 // Basic identifying variables for the mod jar, I believe
@@ -33,6 +37,11 @@ java.toolchain.languageVersion = JavaLanguageVersion.of(17)
 
 // Something to print into the console because it is nice to see that it is running
 println "GOOM Project Build.gradle execution of ${base.archivesName.get()}"
+
+java {
+    withJavadocJar()
+    withSourcesJar()
+}
 
 /*
  * The minecraft tasks!
@@ -182,3 +191,53 @@ jar {
 
 // "Use the UTF-8 charset for Java compilation" but don't ask me why lol
 tasks.withType(JavaCompile).configureEach {options.encoding = 'UTF-8' }
+
+javadoc {
+    if(JavaVersion.current().isJava9Compatible()) {
+        options.addBooleanOption('html5', true)
+    }
+}
+
+publishing {
+    publications {
+        mavenJava(MavenPublication) {
+            groupId = mod_group_id
+            artifactId = mod_id
+            version = mod_version
+
+            from components.java
+
+            pom {
+                name = mod_name
+                description = mod_description
+                url = mod_url
+                licenses {
+                    license {
+                        name = mod_license
+                        url = 'http://www.opensource.org/licenses/mit-license.php'
+                    }
+                }
+                developers {
+                    developer {
+                        name = JRELEASER_GITHUB_NAME
+                        email = JRELEASER_GITHUB_EMAIL
+                        url = mod_url
+                    }
+                }
+                scm {
+                    connection = 'scm:git:git://github.com/Gunging/GooM.git'
+                    developerConnection = 'scm:git:ssh://github.com:Gunging/GooM.git'
+                    url = mod_url
+                }
+            }
+        }
+    }
+
+    repositories {
+        mavenLocal()
+    }
+}
+
+signing {
+    sign publishing.publications.mavenJava
+}

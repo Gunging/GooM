@@ -287,7 +287,7 @@ public enum ItemFlowExtensionReason {
     SERVER_PLAYER_READ_ADDITIONAL_DATA,
 
     /**
-     * Fired from {@link net.minecraft.server.level.ServerPlayer}.containerSynchronizer.sendInitialData(AbstractContainerMenu, NonNullList<ItemStack>, ItemStack, int[])
+     * Fired from {@link net.minecraft.server.level.ServerPlayer}.containerSynchronizer.sendInitialData(AbstractContainerMenu, NonNullList, ItemStack, int[])
      * by the mixin {@link ContainerSynchronizerMixin}
      *
      * @since 1.0.0
