@@ -17,6 +17,14 @@ import org.jetbrains.annotations.Nullable;
 public interface ItemStackLocation<E> {
 
     /**
+     * @return The explorer statement that was used to obtain this Item Stack Location
+     *
+     * @author Gunging
+     * @since 1.0.0
+     */
+    @NotNull ItemExplorerStatement<? extends ItemExplorerElaborator<? extends E>, E> getStatement();
+
+    /**
      * @return The container of this ItemStack Location,
      *         whatever that means in this context
      *

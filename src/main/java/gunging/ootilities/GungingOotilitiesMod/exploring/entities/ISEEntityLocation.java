@@ -34,13 +34,14 @@ public class ISEEntityLocation implements ItemStackLocation<Entity> {
      *
      * @since 1.0.0
      */
-    @NotNull final ISEEntityStatement definition;
+    @NotNull final ISEEntityStatement statement;
 
     /**
      * @since 1.0.0
      * @author Gunging
      */
-    @NotNull public ISEEntityStatement getStatement() { return definition; }
+    @Override
+    @NotNull public ISEEntityStatement getStatement() { return statement; }
 
     /**
      * @param entity The entity owner of this inventory slot
@@ -51,7 +52,7 @@ public class ISEEntityLocation implements ItemStackLocation<Entity> {
      */
     public ISEEntityLocation(@NotNull Entity entity, @NotNull ISEEntityStatement slot) {
         this.entity = entity;
-        this.definition = slot;
+        this.statement = slot;
     }
 
 

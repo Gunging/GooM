@@ -28,6 +28,14 @@ import java.util.ArrayList;
 public interface ItemStackExplorer<Elaborator extends ItemExplorerElaborator<? extends E>, E> {
 
     /**
+     * @return The explorer statement, the slot being searched for.
+     *
+     * @author Gunging
+     * @since 1.0.0
+     */
+    @NotNull ItemExplorerStatement<Elaborator, E> getStatement();
+
+    /**
      * Some "Item Stack Slots" encode for multiple slots,
      * for example "0-9" is a total of 10 different slots,
      * so in this array you would receive 10 different Inventory

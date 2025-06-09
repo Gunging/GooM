@@ -33,13 +33,14 @@ public class ISPPlayerLocation implements ItemStackLocation<Player> {
      *
      * @since 1.0.0
      */
-    @NotNull final ISPPlayerStatement specialization;
+    @NotNull final ISPPlayerStatement statement;
 
     /**
      * @since 1.0.0
      * @author Gunging
      */
-    @NotNull public ISPPlayerStatement getSpecialization() { return specialization; }
+    @Override
+    @NotNull public ISPPlayerStatement getStatement() { return statement; }
 
     /**
      * The index of the slot of the inventory
@@ -66,7 +67,7 @@ public class ISPPlayerLocation implements ItemStackLocation<Player> {
      */
     public ISPPlayerLocation(@NotNull Player player, @NotNull ISPPlayerStatement slot, int index) {
         this.player = player;
-        this.specialization = slot;
+        this.statement = slot;
         this.index = index;
     }
 
@@ -81,7 +82,7 @@ public class ISPPlayerLocation implements ItemStackLocation<Player> {
      */
     public ISPPlayerLocation(@NotNull Player player, @NotNull ISPPlayerStatement slot) {
         this.player = player;
-        this.specialization = slot;
+        this.statement = slot;
         this.index = -1;
     }
 
@@ -96,7 +97,7 @@ public class ISPPlayerLocation implements ItemStackLocation<Player> {
      */
     public ISPPlayerLocation(@NotNull Player player, int index) {
         this.player = player;
-        this.specialization = ISPExplorerStatements.STANDARD;
+        this.statement = ISPExplorerStatements.STANDARD;
         this.index = index;
     }
 
@@ -104,8 +105,8 @@ public class ISPPlayerLocation implements ItemStackLocation<Player> {
     public @NotNull Player getHolder() { return getPlayer(); }
 
     @Override
-    public void setItemStack(@Nullable ItemStack stack) { getSpecialization().writeItemStack(getPlayer(), stack); }
+    public void setItemStack(@Nullable ItemStack stack) { getStatement().writeItemStack(getPlayer(), stack); }
 
     @Override
-    public @Nullable ItemStack getItemStack() { return getSpecialization().readItemStack(getPlayer()); }
+    public @Nullable ItemStack getItemStack() { return getStatement().readItemStack(getPlayer()); }
 }

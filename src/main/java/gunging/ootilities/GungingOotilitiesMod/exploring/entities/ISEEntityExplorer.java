@@ -1,5 +1,6 @@
 package gunging.ootilities.GungingOotilitiesMod.exploring.entities;
 
+import gunging.ootilities.GungingOotilitiesMod.exploring.ItemExplorerStatement;
 import gunging.ootilities.GungingOotilitiesMod.exploring.ItemStackExplorer;
 import net.minecraft.world.entity.Entity;
 import org.jetbrains.annotations.NotNull;
@@ -20,13 +21,10 @@ public class ISEEntityExplorer implements ItemStackExplorer<ISEEntityElaborator,
      *
      * @since 1.0.0
      */
-    @NotNull ISEEntityStatement specialization;
+    @NotNull ISEEntityStatement statement;
 
-    /**
-     * @author Gunging
-     * @since 1.0.0
-     */
-    @NotNull public ISEEntityStatement getSpecialization() { return specialization; }
+    @Override
+    public @NotNull ISEEntityStatement getStatement() { return statement; }
 
     /**
      * Reference a special slot of the inventory, or family of slots
@@ -37,16 +35,16 @@ public class ISEEntityExplorer implements ItemStackExplorer<ISEEntityElaborator,
      * @since 1.0.0
      */
     public ISEEntityExplorer(@NotNull ISEEntityStatement slot) {
-        specialization = slot;
+        statement = slot;
     }
 
     @Override
     public @NotNull ArrayList<ItemStackExplorer<ISEEntityElaborator, Entity>> elaborate(@NotNull ISEEntityElaborator elaborator) {
-        return getSpecialization().whenElaborated(elaborator);
+        return getStatement().whenElaborated(elaborator);
     }
 
     @Override
     public @Nullable ISEEntityLocation realize(@NotNull ISEEntityElaborator elaborator) {
-        return getSpecialization().whenRealized(elaborator);
+        return getStatement().whenRealized(elaborator);
     }
 }

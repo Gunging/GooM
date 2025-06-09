@@ -20,13 +20,10 @@ public class ISPPlayerExplorer implements ItemStackExplorer<ISPPlayerElaborator,
      *
      * @since 1.0.0
      */
-    @NotNull ISPPlayerStatement specialization;
+    @NotNull ISPPlayerStatement statement;
 
-    /**
-     * @author Gunging
-     * @since 1.0.0
-     */
-    @NotNull public ISPPlayerStatement getSpecialization() { return specialization; }
+    @Override
+    @NotNull public ISPPlayerStatement getStatement() { return statement; }
 
     /**
      * Reference a special slot of the inventory, or family of slots
@@ -37,16 +34,16 @@ public class ISPPlayerExplorer implements ItemStackExplorer<ISPPlayerElaborator,
      * @since 1.0.0
      */
     public ISPPlayerExplorer(@NotNull ISPPlayerStatement slot) {
-        specialization = slot;
+        statement = slot;
     }
 
     @Override
     public @NotNull ArrayList<ItemStackExplorer<ISPPlayerElaborator, Player>> elaborate(@NotNull ISPPlayerElaborator elaborator) {
-        return getSpecialization().whenElaborated(elaborator);
+        return getStatement().whenElaborated(elaborator);
     }
 
     @Override
     public @Nullable ISPPlayerLocation realize(@NotNull ISPPlayerElaborator elaborator) {
-        return getSpecialization().whenRealized(elaborator);
+        return getStatement().whenRealized(elaborator);
     }
 }
