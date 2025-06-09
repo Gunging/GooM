@@ -1,5 +1,15 @@
 Gunging Ootilities Mod
 
+```gradle
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    implementation "io.github.gunging:gungingoom:0.0.0-1.20.1"
+}
+```
+
 "A lie, or perhaps, a happy ending" or something like that
 
 Well okay, it is just an utilities library plugin. Things focused on
