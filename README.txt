@@ -1,6 +1,6 @@
-Gunging Ootilities Mod
+# Gunging Ootilities Mod
 
-```gradle
+```
 repositories {
     mavenCentral()
 }
