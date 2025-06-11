@@ -1,9 +1,4 @@
-/*
- * First we define the sponge powered mixin (fixes?) repository and dependencies.
- *
- * Applying the plugin can wait, I put it at the end of this gradle file but I'm not
- * sure if it HAS to be in the end. I'm pretty sure it just has to be somewhere.
- */
+// I am not entirely sure why this dependency goes in the buildscript block
 buildscript {
     repositories {
         maven {
@@ -16,7 +11,7 @@ buildscript {
     }
 }
 
-// Apply other plugins, these will populate the gradle tasks in the IDE
+// Apply other plugins. The IDE will populate their gradle tasks
 plugins {
     id 'eclipse'
     id 'idea'
@@ -29,7 +24,7 @@ plugins {
     id 'signing'
 }
 
-// Basic identifying variables for the mod jar, I believe
+// Basic identifying stuff for java jars
 version = mod_version
 group = mod_group_id
 base.archivesName = mod_id
