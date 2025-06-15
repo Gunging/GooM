@@ -7,7 +7,7 @@ repositories {
 }
 
 dependencies {
-    implementation "io.github.gunging:gungingoom:0.0.0-1.20.1"
+    implementation fg.deobf("io.github.gunging:gungingoom:0.0.0-1.20.1")
 }
 ```
 
