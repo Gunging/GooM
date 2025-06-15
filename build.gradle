@@ -132,9 +132,9 @@ dependencies {
 
     annotationProcessor 'org.spongepowered:mixin:0.8.7:processor'
 
-    implementation(annotationProcessor("io.github.llamalad7:mixinextras-common:0.5.0-rc.2"))
-    implementation(jarJar("io.github.llamalad7:mixinextras-forge:0.5.0-rc.2")) {
-        jarJar.ranged(it, "[0.5.0-rc.2,)")
+    implementation(annotationProcessor("io.github.llamalad7:mixinextras-common:${mixinextras_version}"))
+    implementation(jarJar("io.github.llamalad7:mixinextras-forge:${mixinextras_version}")) {
+        jarJar.ranged(it, "[${mixinextras_version},)")
     }
 }
 
@@ -226,11 +226,46 @@ publishing {
                     url = mod_url
                 }
             }
+
+            /*
+             *  For some reason, the forge dependency in the POM will
+             *  include the mapping versions, and this causes it to crash
+             *  when implemented in other projects.
+             *
+             *  Then I am having to delete the dependencies block entirely
+             *  and then re-configure each other dependency in it
+             */
+            pom.withXml {
+                asNode().remove(asNode().get('dependencies'))
+                def dependenciesNode = asNode().appendNode('dependencies')
+
+                def dependencyNodeC = dependenciesNode.appendNode('dependency')
+                dependencyNodeC.appendNode('groupId', 'io.github.llamalad7')
+                dependencyNodeC.appendNode('artifactId', 'mixinextras-common')
+                dependencyNodeC.appendNode('version', mixinextras_version)
+                dependencyNodeC.appendNode('scope', 'runtime')
+
+                def dependencyNodeF = dependenciesNode.appendNode('dependency')
+                dependencyNodeF.appendNode('groupId', 'io.github.llamalad7')
+                dependencyNodeF.appendNode('artifactId', 'mixinextras-forge')
+                dependencyNodeF.appendNode('version', mixinextras_version)
+                dependencyNodeF.appendNode('scope', 'runtime')
+            }
         }
     }
 
     repositories {
         mavenLocal()
+
+        /*
+        maven {
+            name = "GitHubPackages"
+            url = uri("https://maven.pkg.github.com/gunging/gungingoom")
+            credentials {
+                username = JRELEASER_GITHUB_NAME
+                password = JRELEASER_GITHUB_TOKEN
+            }
+        }   //*/
     }
 }
 
