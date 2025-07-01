@@ -1,10 +1,13 @@
 package gunging.ootilities.GungingOotilitiesMod.exploring.players;
 
 import gunging.ootilities.GungingOotilitiesMod.exploring.ItemStackLocation;
+import gunging.ootilities.GungingOotilitiesMod.exploring.entities.ISEEntityLocation;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
+import java.util.UUID;
 
 /**
  * An actual slot in the inventory of a player,
@@ -109,4 +112,35 @@ public class ISPPlayerLocation implements ItemStackLocation<Player> {
 
     @Override
     public @Nullable ItemStack getItemStack() { return getStatement().readItemStack(getPlayer()); }
+
+    @Override
+    public boolean equals(@Nullable Object obj) {
+
+        // It has to be an ItemStack Location
+        if (!(obj instanceof ItemStackLocation<?>)) { return false; }
+
+        // I cast... manual breathing
+        ItemStackLocation<?> other = (ItemStackLocation<?>) obj;
+
+        // Check UUID of holder
+        UUID ofHolder = null;
+        if (obj instanceof ISEEntityLocation) {
+            ofHolder = ((ISEEntityLocation) obj).getHolder().getUUID();
+        } else if (obj instanceof ISPPlayerLocation) {
+            ofHolder = ((ISPPlayerLocation) obj).getHolder().getUUID();
+        }
+
+        // No holder? No service
+        if (ofHolder == null) { return false; }
+
+        // Different holders? Not equal!
+        if (!ofHolder.equals(getHolder().getUUID())) { return false; }
+
+        // Any of the slots may be elaborated? Abstractly, not equals
+        if (!other.getStatement().isFundamental()) { return false; }
+        if (!getStatement().isFundamental()) { return false; }
+
+        // Finally, must match slot
+        return other.getStatement().equals(getStatement());
+    }
 }
