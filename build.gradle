@@ -251,6 +251,8 @@ publishing {
                 dependencyNodeF.appendNode('version', mixinextras_version)
                 dependencyNodeF.appendNode('scope', 'runtime')
             }
+
+            // IMPORTANT: To actually publish, delete the .module files. They do not play well.
         }
     }
 
