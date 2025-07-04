@@ -1,6 +1,7 @@
 package gunging.ootilities.GungingOotilitiesMod.events.extension;
 
-import gunging.ootilities.GungingOotilitiesMod.exploring.entities.ISEEntityLocation;
+import gunging.ootilities.GungingOotilitiesMod.exploring.ItemStackLocation;
+import net.minecraft.world.entity.Entity;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -22,7 +23,7 @@ public class ServersideEntityEquipmentChangeEvent extends EntityEquipmentChangeE
      * @author Gunging
      * @since 1.0.0
      */
-    public ServersideEntityEquipmentChangeEvent(@NotNull ISEEntityLocation stackLocation, @NotNull ItemFlowExtensionReason reason) {
+    public ServersideEntityEquipmentChangeEvent(@NotNull ItemStackLocation<? extends Entity> stackLocation, @NotNull ItemFlowExtensionReason reason) {
         super(stackLocation, reason);
     }
 }

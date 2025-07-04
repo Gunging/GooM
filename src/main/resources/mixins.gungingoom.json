@@ -6,12 +6,15 @@
   "refmap": "mixins.gungingoom.refmap.json",
   "client": [
     "ClientPacketListenerMixin",
+    "ItemPickerMenuMixin",
     "LocalPlayerMixin",
     "MinecraftMixin",
     "MultiPlayerGameModeMixin"
   ],
   "mixins": [
+    "AbstractContainerMenuMixin",
     "ContainerSynchronizerMixin",
+    "InventoryMenuMixin",
     "InventoryMixin",
     "LivingEntityMixin",
     "PlayerListMixin",

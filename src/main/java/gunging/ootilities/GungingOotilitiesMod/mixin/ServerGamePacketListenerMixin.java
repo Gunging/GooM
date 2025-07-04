@@ -74,13 +74,14 @@ public abstract class ServerGamePacketListenerMixin {
         return true;
     }
 
+    /*  // Commenting reason: Seems to always run duplicated with CLIENTBOUND_SET_EQUIPMENT_SEND_HANDLE_EQUIPMENT_CHANGES that already handles MAINHAND change
     @Inject(method = "handleSetCarriedItem", at = @At("HEAD"))
     protected void onCarriedItemCall(@NotNull ServerboundSetCarriedItemPacket pPacket, CallbackInfo ci) {
         // Check diffs
         if (this.getPlayer().getInventory().selected != pPacket.getSlot()) {
             ExtensionEventBroadcaster.BroadcastEquipmentChangeEvent(ItemFlowExtensionReason.SERVERBOUND_SET_CARRIED_ITEM_HANDLE, false, EquipmentSlot.MAINHAND, this.getPlayer());
         }
-    }
+    }   //*/
 
     @Inject(method = "handlePickItem", at = @At("RETURN"))
     protected void onHandlePickItemCall(ServerboundPickItemPacket pPacket, CallbackInfo ci) {
@@ -155,6 +156,7 @@ public abstract class ServerGamePacketListenerMixin {
         GungingOotilitiesMod.Log("GOOP SGP handleSetCreativeModeSlot <Coming Soon>");
     }   //*/
 
+    //*  // COMMENTING REASON: Seems to always just run duplicated with CLIENTBOUND_SET_EQUIPMENT_SEND_HANDLE_EQUIPMENT_CHANGES that already handles offhand / mainhand changes serverside
     @Inject(method = "handlePlayerAction", at = @At("HEAD"))
     protected void onHandlePlayerActionCall(@NotNull ServerboundPlayerActionPacket pPacket, CallbackInfo ci) {
 
@@ -198,5 +200,5 @@ public abstract class ServerGamePacketListenerMixin {
             // Mainhand change
             ExtensionEventBroadcaster.BroadcastEquipmentChangeEvent(ItemFlowExtensionReason.SERVERBOUND_PLAYER_ACTION_HANDLE, false, EquipmentSlot.OFFHAND, this.getPlayer());
         }
-    }
+    }   //*/
 }

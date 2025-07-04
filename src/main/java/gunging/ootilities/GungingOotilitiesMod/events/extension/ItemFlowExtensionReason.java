@@ -295,6 +295,22 @@ public enum ItemFlowExtensionReason {
     SERVER_SEND_INITIAL_DATA,
 
     /**
+     * Fired from {@link net.minecraft.world.inventory.AbstractContainerMenu}.setCarriedItem(ItemStack)
+     * by the mixin {@link AbstractContainerMenuMixin}
+     *
+     * @since 1.0.0
+     */
+    SERVER_ON_SET_CARRIED_ITEM,
+
+    /**
+     * Fired from {@link net.minecraft.world.inventory.AbstractContainerMenu}.onInitializeCarriedItem(int, List, ItemStack)
+     * by the mixin {@link AbstractContainerMenuMixin}
+     *
+     * @since 1.0.0
+     */
+    SERVER_ON_INITIALIZE_CARRIED_ITEM,
+
+    /**
      * Fired from {@link net.minecraft.world.entity.player.Inventory#setPickedItem(ItemStack)}
      * by the mixin {@link InventoryMixin}
      *
