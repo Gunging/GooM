@@ -25,8 +25,7 @@ public class ISPPlayerElaborator implements ItemExplorerElaborator<Player> {
      * @author Gunging
      * @since 1.0.0
      */
-    @NotNull
-    public Player getPlayer() { return player; }
+    @NotNull public Player getPlayer() { return player; }
 
     /**
      * @param who Player provided to elaborate the ItemStack slot
@@ -35,6 +34,9 @@ public class ISPPlayerElaborator implements ItemExplorerElaborator<Player> {
      */
     public ISPPlayerElaborator(@NotNull Player who) { player = who; }
 
-    @Override
-    public @NotNull Player getElaborator() {return getPlayer(); }
+    /**
+     * @since 1.0.0
+     * @author Gunging
+     */
+    @Override public @NotNull Player getElaborator() {return getPlayer(); }
 }

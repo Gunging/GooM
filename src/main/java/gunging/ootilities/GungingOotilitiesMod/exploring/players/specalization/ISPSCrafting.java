@@ -1,14 +1,13 @@
 package gunging.ootilities.GungingOotilitiesMod.exploring.players.specalization;
 
-import gunging.ootilities.GungingOotilitiesMod.exploring.ItemStackExplorer;
 import gunging.ootilities.GungingOotilitiesMod.exploring.players.*;
+import gunging.ootilities.GungingOotilitiesMod.ootilityception.IntegerNumberRange;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.InventoryMenu;
 import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-
-import java.util.ArrayList;
 
 /**
  * Targets specific slots of the crafting grid.
@@ -24,7 +23,7 @@ public class ISPSCrafting extends ISPIndexedStatement {
      * @since 1.0.0
      * @author Gunging
      */
-    public ISPSCrafting() { super(); }
+    public ISPSCrafting(@NotNull ResourceLocation name) { super(name); }
 
     /**
      * @param slot The slot of the crafting grid in question
@@ -32,7 +31,15 @@ public class ISPSCrafting extends ISPIndexedStatement {
      * @since 1.0.0
      * @author Gunging
      */
-    public ISPSCrafting(int slot) { super(slot); }
+    public ISPSCrafting(@NotNull ResourceLocation name, int slot) { super(name, slot); }
+
+    /**
+     * @param qnr The slot range of the crafting grid in question
+     *
+     * @since 1.0.0
+     * @author Gunging
+     */
+    public ISPSCrafting(@NotNull ResourceLocation name, @NotNull IntegerNumberRange qnr) { super(name, qnr); }
 
     /**
      * @param minSlot The first inventory slot of the range [inclusive]
@@ -41,52 +48,58 @@ public class ISPSCrafting extends ISPIndexedStatement {
      * @since 1.0.0
      * @author Gunging
      */
-    public ISPSCrafting(int minSlot, int maxSlot) { super(minSlot, maxSlot); }
+    public ISPSCrafting(@NotNull ResourceLocation name, int minSlot, int maxSlot) { super(name, minSlot, maxSlot); }
 
-    @Override public ISPIndexedStatement of(int minSlot, int maxSlot) {return new ISPSCrafting(minSlot, maxSlot); }
+    /**
+     * @author Gunging
+     * @since 1.0.0
+     */
+    @Override public ISPSCrafting of(@NotNull IntegerNumberRange qnr) { return (ISPSCrafting) (new ISPSCrafting(getStatementName(), qnr)).setNetworkIndex(getNetworkIndex()); }
 
-    @Override
-    public @NotNull ArrayList<ItemStackExplorer<ISPPlayerElaborator, Player>> whenElaborated(@NotNull ISPPlayerElaborator elaborator) {
-        ArrayList<ItemStackExplorer<ISPPlayerElaborator, Player>> ret = new ArrayList<>();
+    /**
+     * @author Gunging
+     * @since 1.0.0
+     */
+    @Override public int getMinimumRange(@NotNull Player target) { return InventoryMenu.CRAFT_SLOT_START; }
 
-        // If there is an upper bound, elaborate
-        if (getNumericSlot() < getUpperNumericBound()) {
+    /**
+     * @author Gunging
+     * @since 1.0.0
+     */
+    @Override public int getMaximumRange(@NotNull Player target) { return InventoryMenu.CRAFT_SLOT_END; }
 
-            // Darn modded minecraft! I cant even assume the inventory size (plugin developer moment)
-            int maxInventorySize = 4;
-
-            // I mean, just add every one of those slots inclusive of the upper and lower bound
-            for (int i = getNumericSlot(); i <= getUpperNumericBound(); i++) {
-
-                // Cancel if the max inventory size was reached
-                if (i >= maxInventorySize) { break; }
-
-                // Yes include this slot it is a nice beautiful CLEAN slot
-                ret.add(new ISPPlayerExplorer(ISPExplorerStatements.CRAFTING.of(i)));
-            }
-
-        // If they are the same (or the upper bound is somehow less which is a massive skill issue) we are done
-        } else { ret.add(new ISPPlayerExplorer(ISPExplorerStatements.CRAFTING.of(getNumericSlot()))); }
-
-        return ret;
-    }
-
+    /**
+     * @author Gunging
+     * @since 1.0.0
+     */
     @Override
     public @Nullable ISPPlayerLocation whenRealized(@NotNull ISPPlayerElaborator elaborator) {
         return new ISPPlayerLocation(elaborator.getPlayer(), this);
     }
 
+    /**
+     * @author Gunging
+     * @since 1.0.0
+     */
     @Override
     public @Nullable ItemStack readItemStack(@NotNull Player target) {
-        if (getNumericSlot() < InventoryMenu.CRAFT_SLOT_START || getNumericSlot() >= InventoryMenu.CRAFT_SLOT_END) { return null; }
+        if (!getNumericSlot().isSimple()) { return null; }
+        int min = getNumericSlot().getMinimumInclusive();
+        if (min < getMinimumRange(target) || min >= getMaximumRange(target)) { return null; }
 
-        return target.inventoryMenu.getCraftSlots().getItem(getNumericSlot());
+        return target.inventoryMenu.getCraftSlots().getItem(min);
     }
 
+    /**
+     * @author Gunging
+     * @since 1.0.0
+     */
     @Override
     public void writeItemStack(@NotNull Player target, @Nullable ItemStack item) {
-        if (getNumericSlot() < InventoryMenu.CRAFT_SLOT_START || getNumericSlot() >= InventoryMenu.CRAFT_SLOT_END) { return; }
+        if (!getNumericSlot().isSimple()) { return; }
+        int min = getNumericSlot().getMinimumInclusive();
+        if (min < getMinimumRange(target) || min >= getMaximumRange(target)) { return; }
 
-        target.inventoryMenu.getCraftSlots().setItem(getNumericSlot(), item == null ? ItemStack.EMPTY : item);
+        target.inventoryMenu.getCraftSlots().setItem(min, item == null ? ItemStack.EMPTY : item);
     }
 }

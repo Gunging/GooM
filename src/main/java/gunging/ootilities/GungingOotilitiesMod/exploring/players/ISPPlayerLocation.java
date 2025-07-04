@@ -1,5 +1,6 @@
 package gunging.ootilities.GungingOotilitiesMod.exploring.players;
 
+import gunging.ootilities.GungingOotilitiesMod.exploring.ItemExplorerElaborator;
 import gunging.ootilities.GungingOotilitiesMod.exploring.ItemStackLocation;
 import gunging.ootilities.GungingOotilitiesMod.exploring.entities.ISEEntityLocation;
 import net.minecraft.world.entity.player.Player;
@@ -37,6 +38,11 @@ public class ISPPlayerLocation implements ItemStackLocation<Player> {
      * @since 1.0.0
      */
     @NotNull final ISPPlayerStatement statement;
+
+    @Override
+    public @NotNull Class<Player> getHolderClass() {
+        return Player.class;
+    }
 
     /**
      * @since 1.0.0
@@ -104,17 +110,29 @@ public class ISPPlayerLocation implements ItemStackLocation<Player> {
         this.index = index;
     }
 
-    @Override
-    public @NotNull Player getHolder() { return getPlayer(); }
+    /**
+     * @since 1.0.0
+     * @author Gunging
+     */
+    @Override public @NotNull Player getHolder() { return getPlayer(); }
 
-    @Override
-    public void setItemStack(@Nullable ItemStack stack) { getStatement().writeItemStack(getPlayer(), stack); }
+    /**
+     * @since 1.0.0
+     * @author Gunging
+     */
+    @Override public void setItemStack(@Nullable ItemStack stack) { getStatement().writeItemStack(getPlayer(), stack); }
 
-    @Override
-    public @Nullable ItemStack getItemStack() { return getStatement().readItemStack(getPlayer()); }
+    /**
+     * @since 1.0.0
+     * @author Gunging
+     */
+    @Override public @Nullable ItemStack getItemStack() { return getStatement().readItemStack(getPlayer()); }
 
-    @Override
-    public boolean equals(@Nullable Object obj) {
+    /**
+     * @since 1.0.0
+     * @author Gunging
+     */
+    @Override public boolean equals(@Nullable Object obj) {
 
         // It has to be an ItemStack Location
         if (!(obj instanceof ItemStackLocation<?>)) { return false; }
@@ -143,4 +161,10 @@ public class ISPPlayerLocation implements ItemStackLocation<Player> {
         // Finally, must match slot
         return other.getStatement().equals(getStatement());
     }
+
+    /**
+     * @since 1.0.0
+     * @author Gunging
+     */
+    @Override  public String toString() { return "|" + getHolder().getName().getString() + "|" + getStatement(); }
 }

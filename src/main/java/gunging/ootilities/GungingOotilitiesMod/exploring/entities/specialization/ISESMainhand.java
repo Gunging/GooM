@@ -2,6 +2,7 @@ package gunging.ootilities.GungingOotilitiesMod.exploring.entities.specializatio
 
 import gunging.ootilities.GungingOotilitiesMod.exploring.ItemStackExplorer;
 import gunging.ootilities.GungingOotilitiesMod.exploring.entities.*;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EquipmentSlot;
 import org.jetbrains.annotations.NotNull;
@@ -11,6 +12,37 @@ import java.util.ArrayList;
 
 public class ISESMainhand extends ISEEquipmentStatement {
 
+    /**
+     * @author Gunging
+     * @since 1.0.0
+     */
+    @Override
+    public @NotNull String getOptions() { return ""; }
+
+    /**
+     * @param statementName The internal name of this explorer statement
+     *
+     * @author Gunging
+     * @since 1.0.0
+     */
+    public ISESMainhand(@NotNull ResourceLocation statementName) { super(statementName); }
+
+    /**
+     * @author Gunging
+     * @since 1.0.0
+     */
+    @Override public @Nullable ISESMainhand withOptions(@NotNull String options) {return ISEExplorerStatements.MAINHAND; }
+
+    /**
+     * @author Gunging
+     * @since 1.0.0
+     */
+    @Override public @NotNull EquipmentSlot getEquipmentSlot() { return EquipmentSlot.MAINHAND; }
+
+    /**
+     * @author Gunging
+     * @since 1.0.0
+     */
     @Override
     public @NotNull ArrayList<ItemStackExplorer<ISEEntityElaborator, Entity>> whenElaborated(@NotNull ISEEntityElaborator elaborator) {
         ArrayList<ItemStackExplorer<ISEEntityElaborator, Entity>> ret = new ArrayList<>();
@@ -19,14 +51,12 @@ public class ISESMainhand extends ISEEquipmentStatement {
 
         return ret;
     }
-
+    /**
+     * @author Gunging
+     * @since 1.0.0
+     */
     @Override
     public @Nullable ISEEntityLocation whenRealized(@NotNull ISEEntityElaborator elaborator) {
         return new ISEEntityLocation(elaborator.getEntity(), this);
-    }
-
-    @Override
-    public @NotNull EquipmentSlot getEquipmentSlot() {
-        return EquipmentSlot.MAINHAND;
     }
 }

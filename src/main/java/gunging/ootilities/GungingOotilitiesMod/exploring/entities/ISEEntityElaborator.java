@@ -1,4 +1,3 @@
-
 package gunging.ootilities.GungingOotilitiesMod.exploring.entities;
 
 import gunging.ootilities.GungingOotilitiesMod.exploring.ItemExplorerElaborator;
@@ -27,8 +26,7 @@ public class ISEEntityElaborator implements ItemExplorerElaborator<Entity> {
      * @author Gunging
      * @since 1.0.0
      */
-    @NotNull
-    public Entity getEntity() { return entity; }
+    @NotNull public Entity getEntity() { return entity; }
 
     /**
      * @param who Entity provided to elaborate the Item Explorer Statement
@@ -38,5 +36,9 @@ public class ISEEntityElaborator implements ItemExplorerElaborator<Entity> {
      */
     public ISEEntityElaborator(@NotNull Entity who) { entity = who; }
 
+    /**
+     * @since 1.0.0
+     * @author Gunging
+     */
     @Override public @NotNull Entity getElaborator() { return getEntity(); }
 }

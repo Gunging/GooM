@@ -11,12 +11,12 @@ import org.jetbrains.annotations.Nullable;
 import java.util.ArrayList;
 
 /**
- * Targets all slots of the crafting grid.
+ * A statement that targets the armor slots, mainhand, and offhand
  *
  * @author Gunging
  * @since 1.0.0
  */
-public class ISPSAllCrafting extends ISPPlayerStatement {
+public class ISPSAllEquipment extends ISPPlayerStatement {
 
     /**
      * @author Gunging
@@ -28,13 +28,13 @@ public class ISPSAllCrafting extends ISPPlayerStatement {
      * @author Gunging
      * @since 1.0.0
      */
-    @Override public @NotNull ISPSAllCrafting withOptions(@NotNull String options) { return ISPExplorerStatements.ALL_CRAFTING; }
+    @Override public @NotNull ISPSAllEquipment withOptions(@NotNull String options) { return ISPExplorerStatements.ALL_EQUIPMENT; }
 
     /**
      * @author Gunging
      * @since 1.0.0
      */
-    public ISPSAllCrafting(@NotNull ResourceLocation name) { super(name); }
+    public ISPSAllEquipment(@NotNull ResourceLocation name) { super(name); }
 
     /**
      * @author Gunging
@@ -50,11 +50,8 @@ public class ISPSAllCrafting extends ISPPlayerStatement {
     public @NotNull ArrayList<ItemStackExplorer<ISPPlayerElaborator, Player>> whenElaborated(@NotNull ISPPlayerElaborator elaborator) {
         ArrayList<ItemStackExplorer<ISPPlayerElaborator, Player>> ret = new ArrayList<>();
 
-        ret.add(new ISPPlayerExplorer(ISPExplorerStatements.CRAFTING_RESULT));
-        ret.add(new ISPPlayerExplorer(ISPExplorerStatements.CRAFTING.of(1)));
-        ret.add(new ISPPlayerExplorer(ISPExplorerStatements.CRAFTING.of(2)));
-        ret.add(new ISPPlayerExplorer(ISPExplorerStatements.CRAFTING.of(3)));
-        ret.add(new ISPPlayerExplorer(ISPExplorerStatements.CRAFTING.of(4)));
+        ret.addAll(new ISPPlayerExplorer(ISPExplorerStatements.ARMOR).elaborate(elaborator));
+        ret.addAll(new ISPPlayerExplorer(ISPExplorerStatements.HANDS).elaborate(elaborator));
 
         return ret;
     }

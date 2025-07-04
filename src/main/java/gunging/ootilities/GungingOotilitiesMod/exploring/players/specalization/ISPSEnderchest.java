@@ -1,13 +1,12 @@
 package gunging.ootilities.GungingOotilitiesMod.exploring.players.specalization;
 
-import gunging.ootilities.GungingOotilitiesMod.exploring.ItemStackExplorer;
 import gunging.ootilities.GungingOotilitiesMod.exploring.players.*;
+import gunging.ootilities.GungingOotilitiesMod.ootilityception.IntegerNumberRange;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-
-import java.util.ArrayList;
 
 /**
  * A specific slot of the enderchest
@@ -17,22 +16,29 @@ import java.util.ArrayList;
  */
 public class ISPSEnderchest extends ISPIndexedStatement {
 
-
     /**
-     * Creates an "ANY" statement for all slots of the ender chest
+     * Creates an "ANY" statement for all slots of the crafting grid
      *
      * @since 1.0.0
      * @author Gunging
      */
-    public ISPSEnderchest() { super(); }
+    public ISPSEnderchest(@NotNull ResourceLocation name) { super(name); }
 
     /**
-     * @param slot The slot of the ender chest in question
+     * @param slot The slot of the crafting grid in question
      *
      * @since 1.0.0
      * @author Gunging
      */
-    public ISPSEnderchest(int slot) { super(slot); }
+    public ISPSEnderchest(@NotNull ResourceLocation name, int slot) { super(name, slot); }
+
+    /**
+     * @param qnr The slot range of the crafting grid in question
+     *
+     * @since 1.0.0
+     * @author Gunging
+     */
+    public ISPSEnderchest(@NotNull ResourceLocation name, @NotNull IntegerNumberRange qnr) { super(name, qnr); }
 
     /**
      * @param minSlot The first inventory slot of the range [inclusive]
@@ -41,53 +47,58 @@ public class ISPSEnderchest extends ISPIndexedStatement {
      * @since 1.0.0
      * @author Gunging
      */
-    public ISPSEnderchest(int minSlot, int maxSlot) { super(minSlot, maxSlot); }
+    public ISPSEnderchest(@NotNull ResourceLocation name, int minSlot, int maxSlot) { super(name, minSlot, maxSlot); }
 
+    /**
+     * @author Gunging
+     * @since 1.0.0
+     */
+    @Override public ISPSEnderchest of(@NotNull IntegerNumberRange qnr) {return (ISPSEnderchest) (new ISPSEnderchest(getStatementName(), qnr)).setNetworkIndex(getNetworkIndex()); }
 
-    @Override public ISPIndexedStatement of(int minSlot, int maxSlot) {return new ISPSEnderchest(minSlot, maxSlot); }
+    /**
+     * @author Gunging
+     * @since 1.0.0
+     */
+    @Override public int getMinimumRange(@NotNull Player target) { return 0; }
 
-    @Override
-    public @NotNull ArrayList<ItemStackExplorer<ISPPlayerElaborator, Player>> whenElaborated(@NotNull ISPPlayerElaborator elaborator) {
-        ArrayList<ItemStackExplorer<ISPPlayerElaborator, Player>> ret = new ArrayList<>();
+    /**
+     * @author Gunging
+     * @since 1.0.0
+     */
+    @Override public int getMaximumRange(@NotNull Player target) { return target.getEnderChestInventory().getContainerSize(); }
 
-        // If there is an upper bound, elaborate
-        if (getNumericSlot() < getUpperNumericBound()) {
-
-            // Darn modded minecraft! I cant even assume the inventory size (plugin developer moment)
-            int maxInventorySize = elaborator.getPlayer().getEnderChestInventory().getContainerSize();
-
-            // I mean, just add every one of those slots inclusive of the upper and lower bound
-            for (int i = getNumericSlot(); i <= getUpperNumericBound(); i++) {
-
-                // Cancel if the max inventory size was reached
-                if (i >= maxInventorySize) { break; }
-
-                // Yes include this slot it is a nice beautiful CLEAN slot
-                ret.add(new ISPPlayerExplorer(ISPExplorerStatements.ENDERCHEST.of(i)));
-            }
-
-            // If they are the same (or the upper bound is somehow less which is a massive skill issue) we are done
-        } else { ret.add(new ISPPlayerExplorer(ISPExplorerStatements.ENDERCHEST.of(getNumericSlot()))); }
-
-        return ret;
-    }
-
+    /**
+     * @author Gunging
+     * @since 1.0.0
+     */
     @Override
     public @Nullable ISPPlayerLocation whenRealized(@NotNull ISPPlayerElaborator elaborator) {
         return new ISPPlayerLocation(elaborator.getPlayer(), this);
     }
 
+    /**
+     * @author Gunging
+     * @since 1.0.0
+     */
     @Override
     public @Nullable ItemStack readItemStack(@NotNull Player target) {
-        if (getNumericSlot() < 0 || getNumericSlot() >= target.getEnderChestInventory().getContainerSize()) { return null; }
+        if (!getNumericSlot().isSimple()) { return null; }
+        int min = getNumericSlot().getMinimumInclusive();
+        if (min < getMinimumRange(target) || min >= getMaximumRange(target)) { return null; }
 
-        return target.getEnderChestInventory().getItem(getNumericSlot());
+        return target.getEnderChestInventory().getItem(min);
     }
 
+    /**
+     * @author Gunging
+     * @since 1.0.0
+     */
     @Override
     public void writeItemStack(@NotNull Player target, @Nullable ItemStack item) {
-        if (getNumericSlot() < 0 || getNumericSlot() >= target.getEnderChestInventory().getContainerSize()) { return; }
+        if (!getNumericSlot().isSimple()) { return; }
+        int min = getNumericSlot().getMinimumInclusive();
+        if (min < getMinimumRange(target) || min >= getMaximumRange(target)) { return; }
 
-        target.getEnderChestInventory().setItem(getNumericSlot(), item == null ? ItemStack.EMPTY : item);
+        target.getEnderChestInventory().setItem(min, item == null ? ItemStack.EMPTY : item);
     }
 }

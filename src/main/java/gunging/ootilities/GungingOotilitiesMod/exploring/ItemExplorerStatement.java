@@ -1,5 +1,6 @@
 package gunging.ootilities.GungingOotilitiesMod.exploring;
 
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -12,7 +13,7 @@ import java.util.ArrayList;
  * instance of something in the world that we
  * are about to explore.
  * <p></p>
- * For example, if you have a player and you know
+ * For example, if you have a player, and you know
  * you are looking for its 20th enderchest slot,
  * then the "statement" for the explorer is "ec20"
  *
@@ -22,6 +23,32 @@ import java.util.ArrayList;
  * @author Gunging
  */
 public interface ItemExplorerStatement<Elaborator extends ItemExplorerElaborator<? extends E>, E> {
+
+    /**
+     * <b>Only touch if you know what you are doing.</b> Assigns an index to
+     * this statement when registered so that it can be synced over the network
+     * in the form of a single number. Furthermore, simplifies Hash and Equals
+     * by checking if this is identical, since it is the same for all aliases
+     * of the same statement name.
+     * <br>
+     * Equals will check that options match too, though.
+     *
+     * @param n The network index to assign this statement
+     *
+     * @since 1.0.0
+     * @author Gunging
+     */
+    @NotNull ItemExplorerStatement<Elaborator, E> setNetworkIndex(int n);
+
+    /**
+     * @return The network index of this statement, not guaranteed to persist across sessions.
+     *
+     * @see #setNetworkIndex(int)
+     *
+     * @since 1.0.0
+     * @author Gunging
+     */
+    int getNetworkIndex();
 
     /**
      * @param elaborator The entity that is requesting these slots, thus
@@ -87,4 +114,85 @@ public interface ItemExplorerStatement<Elaborator extends ItemExplorerElaborator
      * @since 1.0.0
      */
     boolean isFundamental();
+
+    /**
+     * For example, enderchest slots' name is "gungingoom:ec" while the
+     * head slot is "gungingoom:head", most often this is followed by the
+     * options string to actually mean something "gungingoom:ec10" would be
+     * the statement of the 10th enderchest slot.
+     *
+     * @return The name of this statement that will uniquely encode for it
+     *         so that it can be referenced from anywhere, as well as saved
+     *         persistently.
+     *
+     * @see #getOptions()
+     *
+     * @since 1.0.0
+     * @author Gunging
+     */
+    @NotNull ResourceLocation getStatementName();
+
+    /**
+     * For example a number or a range, "3..10" to encode for slot indices 3
+     * through 10, though it will only be complete when appended to this
+     * statement's name. For example "gungingoom:main0..8" would be the
+     * statement for the hotbar (or just use "gungingoom:hotbar").
+     *
+     * @return The configuration that identifies this specific instance of this statement.
+     *
+     * @see #getStatementName()
+     *
+     * @since 1.0.0
+     * @author Gunging
+     */
+    @NotNull String getOptions();
+
+    /**
+     * @param options The "options" that will modify this statement.
+     *
+     * @return A new instance of this statement that complies with these options.
+     *
+     * @see #getOptions()
+     * @see #getStatementName()
+     *
+     * @since 1.0.0
+     * @author Gunging
+     */
+    @Nullable ItemExplorerStatement<Elaborator, E> withOptions(@NotNull String options);
+
+    /**
+     * @return The class of the target of the elaborator.
+     *
+     * @author Gunging
+     * @since 1.0.0
+     */
+    @NotNull Class<E> getElaboratorTarget();
+
+    /**
+     * @return An explorer that uses this statement
+     *
+     * @author Gunging
+     * @since 1.0.0
+     */
+    @NotNull ItemStackExplorer<Elaborator, E> prepareExplorer();
+
+    /**
+     * @return An elaborator wrapper for this target
+     *
+     * @param target The elaboration target whose inventory containers will be explored
+     *
+     * @author Gunging
+     * @since 1.0.0
+     */
+    @NotNull Elaborator prepareElaborator(@NotNull E target);
+
+    /**
+     * @param elaborator The object that may be accepted by this Item Explorer Statement
+     *
+     * @return If this Item Explorer Statement can search this elaborator's containers/inventories
+     *
+     * @author Gunging
+     * @since 1.0.0
+     */
+    default boolean acceptsElaborator(@Nullable Object elaborator) { return getElaboratorTarget().isInstance(elaborator); }
 }

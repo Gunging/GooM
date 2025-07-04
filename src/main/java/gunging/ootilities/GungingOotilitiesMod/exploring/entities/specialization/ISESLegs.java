@@ -10,7 +10,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 
-public class ISESOffhand extends ISEEquipmentStatement {
+public class ISESLegs extends ISEEquipmentStatement {
 
     /**
      * @author Gunging
@@ -25,19 +25,19 @@ public class ISESOffhand extends ISEEquipmentStatement {
      * @author Gunging
      * @since 1.0.0
      */
-    public ISESOffhand(@NotNull ResourceLocation statementName) { super(statementName); }
+    public ISESLegs(@NotNull ResourceLocation statementName) { super(statementName); }
 
     /**
      * @author Gunging
      * @since 1.0.0
      */
-    @Override public @Nullable ISESOffhand withOptions(@NotNull String options) {return ISEExplorerStatements.OFFHAND; }
+    @Override public @Nullable ISESLegs withOptions(@NotNull String options) {return ISEExplorerStatements.LEGS; }
 
     /**
      * @author Gunging
      * @since 1.0.0
      */
-    @Override public @NotNull EquipmentSlot getEquipmentSlot() { return EquipmentSlot.OFFHAND; }
+    @Override public @NotNull EquipmentSlot getEquipmentSlot() { return EquipmentSlot.LEGS; }
 
     /**
      * @author Gunging
@@ -47,7 +47,7 @@ public class ISESOffhand extends ISEEquipmentStatement {
     public @NotNull ArrayList<ItemStackExplorer<ISEEntityElaborator, Entity>> whenElaborated(@NotNull ISEEntityElaborator elaborator) {
         ArrayList<ItemStackExplorer<ISEEntityElaborator, Entity>> ret = new ArrayList<>();
 
-        ret.add(new ISEEntityExplorer(ISEExplorerStatements.OFFHAND));
+        ret.add(new ISEEntityExplorer(ISEExplorerStatements.LEGS));
 
         return ret;
     }

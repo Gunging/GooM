@@ -2,6 +2,7 @@ package gunging.ootilities.GungingOotilitiesMod.exploring.entities;
 
 import gunging.ootilities.GungingOotilitiesMod.exploring.ItemExplorerStatement;
 import gunging.ootilities.GungingOotilitiesMod.exploring.ItemStackExplorer;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.NotNull;
@@ -16,6 +17,69 @@ import java.util.ArrayList;
  * @author Gunging
  */
 public abstract class ISEEntityStatement implements ItemExplorerStatement<ISEEntityElaborator, Entity> {
+
+    /**
+     * @see #setNetworkIndex(int)
+     *
+     * @since 1.0.0
+     */
+    int networkIndex;
+
+    /**
+     * @since 1.0.0
+     * @author Gunging
+     */
+    @NotNull @Override public ISEEntityStatement setNetworkIndex(int n) { networkIndex = n; return this; }
+
+    /**
+     * @since 1.0.0
+     * @author Gunging
+     */
+    @Override public int getNetworkIndex() { return networkIndex; }
+
+    /**
+     * @since 1.0.0
+     * @author Gunging
+     */
+    @Override public String toString() { return getStatementName() + getOptions(); }
+
+    /**
+     * The internal name of this explorer statement
+     *
+     * @since 1.0.0
+     */
+    @NotNull final ResourceLocation statementName;
+
+    /**
+     * @since 1.0.0
+     * @author Gunging
+     */
+    @Override  public @NotNull ResourceLocation getStatementName() { return statementName; }
+
+    @Override
+    public boolean equals(Object obj) {
+
+        // Needs to be a statement to be equal
+        if (!(obj instanceof ItemExplorerStatement<?,?>)) { return false; }
+        ItemExplorerStatement<?,?> comparate = (ItemExplorerStatement<?,?>) obj;
+
+        // Must match both name and options in its most fundamental form
+        return (comparate.getNetworkIndex() == getNetworkIndex()) && comparate.getOptions().equals(getOptions());
+    }
+
+    /**
+     * @since 1.0.0
+     * @author Gunging
+     */
+    @Override public int hashCode() { return networkIndex; }
+
+    /**
+     * @param statementName The internal name of this explorer statement
+     *
+     * @since 1.0.0
+     * @author Gunging
+     */
+    protected ISEEntityStatement(@NotNull ResourceLocation statementName) { this.statementName = statementName; }
 
     /**
      * @param elaborator The entity that is requesting these slots, thus
@@ -81,4 +145,25 @@ public abstract class ISEEntityStatement implements ItemExplorerStatement<ISEEnt
      * @since 1.0.0
      */
      public boolean isFundamental() { return true; }
+
+    /**
+     * @author Gunging
+     * @since 1.0.0
+     */
+    @Override
+    public @NotNull Class<Entity> getElaboratorTarget() { return Entity.class; }
+
+    /**
+     * @author Gunging
+     * @since 1.0.0
+     */
+    @Override
+    public @NotNull ItemStackExplorer<ISEEntityElaborator, Entity> prepareExplorer() { return new ISEEntityExplorer(this); }
+
+    /**
+     * @author Gunging
+     * @since 1.0.0
+     */
+    @Override
+    public @NotNull ISEEntityElaborator prepareElaborator(@NotNull Entity target) { return new ISEEntityElaborator(target); }
 }

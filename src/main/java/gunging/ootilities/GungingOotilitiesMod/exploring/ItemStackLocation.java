@@ -17,6 +17,24 @@ import org.jetbrains.annotations.Nullable;
 public interface ItemStackLocation<E> {
 
     /**
+     * @return The class of the target of the elaborator.
+     *
+     * @author Gunging
+     * @since 1.0.0
+     */
+    @NotNull Class<E> getHolderClass();
+
+    /**
+     * @param holder The object that may be accepted by this Item Stack Location
+     *
+     * @return If this Item Stack Location could accept this holder type of objects
+     *
+     * @author Gunging
+     * @since 1.0.0
+     */
+    default boolean acceptsHolder(@Nullable Object holder) { return getHolderClass().isInstance(holder); }
+
+    /**
      * @return The explorer statement that was used to obtain this Item Stack Location
      *
      * @author Gunging
@@ -43,6 +61,19 @@ public interface ItemStackLocation<E> {
 
     /**
      * @return The item stack currently in this slot
+     *
+     * @since 1.0.0
+     * @author Gunging
      */
     @Nullable ItemStack getItemStack();
+
+    /**
+     * @return If this object can be used as an elaboration target by this Item Stack Location
+     *
+     * @since 1.0.0
+     * @author Gunging
+     */
+    default boolean acceptsTarget(@Nullable Object target) {
+        return getHolderClass().isInstance(target);
+    }
 }

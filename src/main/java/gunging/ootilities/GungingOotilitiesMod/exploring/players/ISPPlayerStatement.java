@@ -2,6 +2,7 @@ package gunging.ootilities.GungingOotilitiesMod.exploring.players;
 
 import gunging.ootilities.GungingOotilitiesMod.exploring.ItemExplorerStatement;
 import gunging.ootilities.GungingOotilitiesMod.exploring.ItemStackExplorer;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.NotNull;
@@ -16,6 +17,72 @@ import java.util.ArrayList;
  * @author Gunging
  */
 public abstract class ISPPlayerStatement implements ItemExplorerStatement<ISPPlayerElaborator, Player> {
+
+    /**
+     * @see #setNetworkIndex(int)
+     *
+     * @since 1.0.0
+     */
+    int networkIndex;
+
+    /**
+     * @since 1.0.0
+     * @author Gunging
+     */
+    @NotNull @Override public ISPPlayerStatement setNetworkIndex(int n) { networkIndex = n; return this; }
+
+    /**
+     * @since 1.0.0
+     * @author Gunging
+     */
+    @Override public int getNetworkIndex() { return networkIndex; }
+
+    /**
+     * @since 1.0.0
+     * @author Gunging
+     */
+    @Override public String toString() { return getStatementName() + getOptions(); }
+
+    /**
+     * The internal name of this explorer statement
+     *
+     * @since 1.0.0
+     */
+    @NotNull final ResourceLocation statementName;
+
+    /**
+     * @since 1.0.0
+     * @author Gunging
+     */
+    @Override  public @NotNull ResourceLocation getStatementName() { return statementName; }
+
+    /**
+     * @since 1.0.0
+     * @author Gunging
+     */
+    @Override public boolean equals(Object obj) {
+
+        // Needs to be a statement to be equal
+        if (!(obj instanceof ItemExplorerStatement<?,?>)) { return false; }
+        ItemExplorerStatement<?,?> comparate = (ItemExplorerStatement<?,?>) obj;
+
+        // Must match both name and options in its most fundamental form
+        return (comparate.getNetworkIndex() == getNetworkIndex()) && comparate.getOptions().equals(getOptions());
+    }
+
+    /**
+     * @since 1.0.0
+     * @author Gunging
+     */
+    @Override public int hashCode() { return networkIndex; }
+
+    /**
+     * @param statementName The internal name of this explorer statement
+     *
+     * @since 1.0.0
+     * @author Gunging
+     */
+    protected ISPPlayerStatement(@NotNull ResourceLocation statementName) { this.statementName = statementName; }
 
     /**
      * @param elaborator The player that is requesting these slots, thus
@@ -81,4 +148,25 @@ public abstract class ISPPlayerStatement implements ItemExplorerStatement<ISPPla
      * @since 1.0.0
      */
     public boolean isFundamental() { return true; }
+
+    /**
+     * @author Gunging
+     * @since 1.0.0
+     */
+    @Override
+    public @NotNull Class<Player> getElaboratorTarget() { return Player.class; }
+
+    /**
+     * @author Gunging
+     * @since 1.0.0
+     */
+    @Override
+    public @NotNull ItemStackExplorer<ISPPlayerElaborator, Player> prepareExplorer() { return new ISPPlayerExplorer(this); }
+
+    /**
+     * @author Gunging
+     * @since 1.0.0
+     */
+    @Override
+    public @NotNull ISPPlayerElaborator prepareElaborator(@NotNull Player target) { return new ISPPlayerElaborator(target); }
 }

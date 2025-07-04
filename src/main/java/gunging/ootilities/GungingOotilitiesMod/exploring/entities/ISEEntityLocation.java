@@ -1,5 +1,6 @@
 package gunging.ootilities.GungingOotilitiesMod.exploring.entities;
 
+import gunging.ootilities.GungingOotilitiesMod.exploring.ItemExplorerElaborator;
 import gunging.ootilities.GungingOotilitiesMod.exploring.ItemStackLocation;
 import gunging.ootilities.GungingOotilitiesMod.exploring.players.ISPPlayerLocation;
 import net.minecraft.world.entity.Entity;
@@ -58,6 +59,8 @@ public class ISEEntityLocation implements ItemStackLocation<Entity> {
         this.statement = slot;
     }
 
+    @Override
+    public @NotNull Class<Entity> getHolderClass() { return Entity.class; }
 
     @Override
     public void setItemStack(@Nullable ItemStack stack) { getStatement().writeItemStack(getEntity(), stack); }
@@ -95,4 +98,10 @@ public class ISEEntityLocation implements ItemStackLocation<Entity> {
         // Finally, must match slot
         return other.getStatement().equals(getStatement());
     }
+
+    /**
+     * @since 1.0.0
+     * @author Gunging
+     */
+    @Override  public String toString() { return "|" + getHolder().getName().getString() + "|" + getStatement(); }
 }
