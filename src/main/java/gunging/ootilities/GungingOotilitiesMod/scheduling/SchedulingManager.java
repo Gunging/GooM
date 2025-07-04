@@ -63,6 +63,10 @@ public class SchedulingManager {
         if (!serversideQueue.isEmpty()) { tryRunTasks(serversideQueue, serverTicks); }
     }
 
+    /**
+     * @author Gunging
+     * @since 1.0.0
+     */
     @SubscribeEvent(priority = EventPriority.LOW)
     public static void OnTick(@NotNull TickEvent.ClientTickEvent event) {
 
@@ -121,6 +125,14 @@ public class SchedulingManager {
         if (event instanceof TickEvent.ServerTickEvent) { server = ((TickEvent.ServerTickEvent) event).getServer(); }
 
         // Tick
+        if (localTicks % 2 == 0) {
+            SCHTwoTicksEvent broadcast = new SCHTwoTicksEvent(server, clientSided, event);
+            MinecraftForge.EVENT_BUS.post(broadcast);
+        }
+        if (localTicks % 5 == 0) {
+            SCHFiveTicksEvent broadcast = new SCHFiveTicksEvent(server, clientSided, event);
+            MinecraftForge.EVENT_BUS.post(broadcast);
+        }
         if (localTicks % 10 == 0) {
             SCHTenTicksEvent broadcast = new SCHTenTicksEvent(server, clientSided, event);
             MinecraftForge.EVENT_BUS.post(broadcast);

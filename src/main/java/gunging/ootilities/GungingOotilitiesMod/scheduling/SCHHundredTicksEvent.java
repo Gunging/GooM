@@ -25,5 +25,9 @@ public class SCHHundredTicksEvent extends SCHTickEvent {
         super(server, clientSide, sourceTickEvent);
     }
 
+    /**
+     * @author Gunging
+     * @since 1.0.0
+     */
     @Override public int getTickFrequency() { return 100; }
 }

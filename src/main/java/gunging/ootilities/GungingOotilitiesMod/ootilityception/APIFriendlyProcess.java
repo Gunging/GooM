@@ -43,7 +43,6 @@ public interface APIFriendlyProcess {
      */
     boolean isAllowed();
 
-
     /**
      * Executes this process.
      * <p>
@@ -58,7 +57,6 @@ public interface APIFriendlyProcess {
      * @author Gunging
      */
     void resolve();
-
 
     /**
      * A basic implementation of the three methods of this class

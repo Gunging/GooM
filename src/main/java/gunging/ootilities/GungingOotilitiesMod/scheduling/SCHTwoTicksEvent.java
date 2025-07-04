@@ -6,22 +6,22 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 /**
- * An event fired every 20 ticks
+ * An event fired every 2 ticks
  *
  * @since 1.0.0
  * @author Gunging
  */
-public class SCHTwentyTicksEvent extends SCHTickEvent {
+public class SCHTwoTicksEvent  extends SCHTickEvent {
 
     /**
-     * @param server          The minecraft server
-     * @param clientSide      If this is running on the client side
+     * @param server The minecraft server
+     * @param clientSide If this is running on the client side
      * @param sourceTickEvent The tick event that originally fired this ten-ticks event
      *
      * @author Gunging
      * @since 1.0.0
      */
-    protected SCHTwentyTicksEvent(@Nullable MinecraftServer server, boolean clientSide, @NotNull TickEvent sourceTickEvent) {
+    protected SCHTwoTicksEvent(@Nullable MinecraftServer server, boolean clientSide, @NotNull TickEvent sourceTickEvent) {
         super(server, clientSide, sourceTickEvent);
     }
 
@@ -29,5 +29,5 @@ public class SCHTwentyTicksEvent extends SCHTickEvent {
      * @author Gunging
      * @since 1.0.0
      */
-    @Override public int getTickFrequency() { return 20; }
+    @Override public int getTickFrequency() { return 2; }
 }

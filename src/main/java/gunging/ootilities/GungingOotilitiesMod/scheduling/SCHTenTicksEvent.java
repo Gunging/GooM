@@ -17,6 +17,7 @@ public class SCHTenTicksEvent extends SCHTickEvent {
      * @param server The minecraft server
      * @param clientSide If this is running on the client side
      * @param sourceTickEvent The tick event that originally fired this ten-ticks event
+     *
      * @author Gunging
      * @since 1.0.0
      */
@@ -24,5 +25,9 @@ public class SCHTenTicksEvent extends SCHTickEvent {
         super(server, clientSide, sourceTickEvent);
     }
 
+    /**
+     * @author Gunging
+     * @since 1.0.0
+     */
     @Override public int getTickFrequency() { return 10; }
 }

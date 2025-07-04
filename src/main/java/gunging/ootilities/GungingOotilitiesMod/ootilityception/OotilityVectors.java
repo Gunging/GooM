@@ -7,7 +7,7 @@ import org.jetbrains.annotations.NotNull;
 /**
  * A utility class that handles 3D-Space math operations
  *
- * @since 0.0.0
+ * @since 1.0.0
  * @author Gunging
  */
 @SuppressWarnings("unused")
@@ -29,6 +29,9 @@ public class OotilityVectors {
      * @param zOff Absolute Z-direction offset
      *
      * @return A vector (not normalized) representing this SVF transformation.
+     *
+     * @since 1.0.0
+     * @author Gunging
      */
     @NotNull public static Vec3 entityTransformSVF(@NotNull Entity who, double sOff, double vOff, double fOff, double xOff, double yOff, double zOff) {
         return transformSVF(Math.toRadians(who.getXRot()), Math.toRadians(who.getYRot()), sOff, vOff, fOff, xOff, yOff, zOff);
@@ -51,6 +54,9 @@ public class OotilityVectors {
      * @param zOff Absolute Z-direction offset
      *
      * @return A vector (not normalized) representing this SVF transformation.
+     *
+     * @since 1.0.0
+     * @author Gunging
      */
     @NotNull public static Vec3 transformSVF(double pitch, double yaw, double sOff, double vOff, double fOff, double xOff, double yOff, double zOff) {
         return transformSVFL(pitch, yaw, sOff, vOff, fOff, 0, xOff, yOff, zOff);
@@ -68,6 +74,9 @@ public class OotilityVectors {
      * @param zOff Absolute Z-direction offset
      *
      * @return A vector (not normalized) representing this SVF transformation.
+     *
+     * @since 1.0.0
+     * @author Gunging
      */
     @NotNull public static Vec3 entityTransformSVFL(@NotNull Entity who, double sOff, double vOff, double fOff, double lOff, double xOff, double yOff, double zOff) {
         return transformSVFL(Math.toRadians(who.getXRot()), Math.toRadians(who.getYRot()), sOff, vOff, fOff, lOff, xOff, yOff, zOff);
@@ -94,6 +103,9 @@ public class OotilityVectors {
      * @param zOff Absolute Z-direction offset
      *
      * @return A vector (not normalized) representing this SVF transformation.
+     *
+     * @since 1.0.0
+     * @author Gunging
      */
     @SuppressWarnings("UnnecessaryLocalVariable")
     @NotNull public static Vec3 transformSVFL(double pitch, double yaw, double sOff, double vOff, double lOff, double fOff, double xOff, double yOff, double zOff) {
@@ -132,7 +144,7 @@ public class OotilityVectors {
      * @see #entityForward(Entity)
      * @see #entityTransformSVF(Entity, double, double, double, double, double, double)
      *
-     * @since 0.0.4
+     * @since 1.0.0
      * @author Gunging
      */
     @NotNull public static Vec3 entitySide(@NotNull Entity who) {
@@ -148,7 +160,7 @@ public class OotilityVectors {
      * @see #entityForward(Entity)
      * @see #entityTransformSVF(Entity, double, double, double, double, double, double)
      *
-     * @since 0.0.4
+     * @since 1.0.0
      * @author Gunging
      */
     @NotNull public static Vec3 entityVertical(@NotNull Entity who) {
@@ -164,7 +176,7 @@ public class OotilityVectors {
      * @see #entityVertical(Entity)
      * @see #entityTransformSVF(Entity, double, double, double, double, double, double)
      *
-     * @since 0.0.4
+     * @since 1.0.0
      * @author Gunging
      */
     @NotNull public static Vec3 entityForward(@NotNull Entity who) {
@@ -181,7 +193,7 @@ public class OotilityVectors {
      * @see #entityForward(Entity)
      * @see #entityTransformSVFL(Entity, double, double, double, double, double, double, double)
      *
-     * @since 0.0.4
+     * @since 1.0.0
      * @author Gunging
      */
     @NotNull public static Vec3 entityLevel(@NotNull Entity who) {
@@ -198,7 +210,7 @@ public class OotilityVectors {
      * @see #vertical(double, double)
      * @see #transformSVF(double, double, double, double, double, double, double, double)
      *
-     * @since 0.0.4
+     * @since 1.0.0
      * @author Gunging
      */
     @NotNull public static Vec3 side(double pitch, double yaw) {
@@ -224,7 +236,7 @@ public class OotilityVectors {
      * @see #side(double, double)
      * @see #transformSVF(double, double, double, double, double, double, double, double)
      *
-     * @since 0.0.4
+     * @since 1.0.0
      * @author Gunging
      */
     @SuppressWarnings("UnnecessaryLocalVariable")
@@ -250,7 +262,7 @@ public class OotilityVectors {
      * @see #side(double, double)
      * @see #transformSVF(double, double, double, double, double, double, double, double)
      *
-     * @since 0.0.4
+     * @since 1.0.0
      * @author Gunging
      */
     @NotNull public static Vec3 forward(double pitch, double yaw) {
@@ -276,7 +288,7 @@ public class OotilityVectors {
      * @see #side(double, double)
      * @see #transformSVFL(double, double, double, double, double, double, double, double, double)
      *
-     * @since 0.0.4
+     * @since 1.0.0
      * @author Gunging
      */
     @NotNull public static Vec3 level(double pitch, double yaw) {
@@ -299,7 +311,7 @@ public class OotilityVectors {
      *
      * @return If the target point is in range of the origin
      *
-     * @since 0.0.0
+     * @since 1.0.0
      * @author Gunging
      */
     public static boolean inRange(@NotNull Vec3 origin, @NotNull Vec3 target, double range) {

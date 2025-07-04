@@ -21,12 +21,20 @@ public class GungingOotilitiesMod {
      */
     public static final String MODID = "gungingoom";
 
+    /**
+     * @author Gunging
+     * @since 1.0.0
+     */
     public GungingOotilitiesMod(FMLJavaModLoadingContext context) {
 
         // Register this mod onto Forge
         MinecraftForge.EVENT_BUS.register(this);
     }
 
+    /**
+     * @author Gunging
+     * @since 1.0.0
+     */
     public static void Log(@Nullable String log) {
         System.out.println("GREP [Not Secure] <Dev> " + log);
     }
