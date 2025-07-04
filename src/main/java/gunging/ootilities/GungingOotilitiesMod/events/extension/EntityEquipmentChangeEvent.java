@@ -1,6 +1,7 @@
 package gunging.ootilities.GungingOotilitiesMod.events.extension;
 
-import gunging.ootilities.GungingOotilitiesMod.exploring.entities.ISEEntityLocation;
+import gunging.ootilities.GungingOotilitiesMod.exploring.ItemStackLocation;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.event.entity.EntityEvent;
 import org.jetbrains.annotations.NotNull;
@@ -23,14 +24,13 @@ public class EntityEquipmentChangeEvent extends EntityEvent {
      *
      * @since 1.0.0
      */
-    @NotNull
-    final ISEEntityLocation stackLocation;
+    @NotNull final ItemStackLocation<? extends Entity> stackLocation;
 
     /**
      * @since 1.0.0
      * @author Gunging
      */
-    @NotNull public ISEEntityLocation getStackLocation() { return stackLocation; }
+    @NotNull public ItemStackLocation<? extends Entity> getStackLocation() { return stackLocation; }
 
     /**
      * @return The ItemStack currently in this Entity's inventory
@@ -63,8 +63,8 @@ public class EntityEquipmentChangeEvent extends EntityEvent {
      * @since 1.0.0
      * @author Gunging
      */
-    public EntityEquipmentChangeEvent(@NotNull ISEEntityLocation stackLocation, @NotNull ItemFlowExtensionReason reason) {
-        super(stackLocation.getEntity());
+    public EntityEquipmentChangeEvent(@NotNull ItemStackLocation<? extends Entity> stackLocation, @NotNull ItemFlowExtensionReason reason) {
+        super(stackLocation.getHolder());
         this.stackLocation = stackLocation;
         this.reason = reason;
     }

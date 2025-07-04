@@ -4,6 +4,7 @@ import gunging.ootilities.GungingOotilitiesMod.events.extension.ClientsideEntity
 import gunging.ootilities.GungingOotilitiesMod.events.extension.EntityEquipmentChangeEvent;
 import gunging.ootilities.GungingOotilitiesMod.events.extension.ItemFlowExtensionReason;
 import gunging.ootilities.GungingOotilitiesMod.events.extension.ServersideEntityEquipmentChangeEvent;
+import gunging.ootilities.GungingOotilitiesMod.exploring.ItemStackLocation;
 import gunging.ootilities.GungingOotilitiesMod.exploring.entities.ISEExplorerStatements;
 import gunging.ootilities.GungingOotilitiesMod.exploring.entities.ISEEntityLocation;
 import net.minecraft.world.entity.Entity;
@@ -48,7 +49,7 @@ public class ExtensionEventBroadcaster {
      * @since 1.0.0
      * @author Gunging
      */
-    @NotNull public static EntityEquipmentChangeEvent BroadcastEquipmentChangeEvent(@NotNull ItemFlowExtensionReason reason, boolean clientside, @NotNull ISEEntityLocation stackLocation) {
+    @NotNull public static EntityEquipmentChangeEvent BroadcastEquipmentChangeEvent(@NotNull ItemFlowExtensionReason reason, boolean clientside, @NotNull ItemStackLocation<? extends Entity> stackLocation) {
 
         // Define event
         EntityEquipmentChangeEvent event;
