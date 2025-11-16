@@ -1,13 +1,17 @@
 package gunging.ootilities.GungingOotilitiesMod.exploring;
 
 import gunging.ootilities.GungingOotilitiesMod.GungingOotilitiesMod;
+import gunging.ootilities.GungingOotilitiesMod.exploring.entities.ISEExplorerStatements;
 import gunging.ootilities.GungingOotilitiesMod.exploring.players.ISPExplorerStatements;
+import gunging.ootilities.GungingOotilitiesMod.netcode.packets.clientbound.GMNClientboundStatementSync;
 import net.minecraft.ResourceLocationException;
+import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -25,7 +29,7 @@ public class ExplorerManager {
      *
      * @since 1.0.0
      */
-    @NotNull static final HashMap<String, HashMap<String, ItemExplorerStatement<? extends ItemExplorerElaborator<?>, ?>>> statementsByNamespace = new HashMap<>();
+    @NotNull static final HashMap<String, HashMap<String, ItemExplorerStatement<?,?>>> statementsByNamespace = new HashMap<>();
 
     /**
      * An index by integer numbers, not guaranteed to persist between sessions since
@@ -35,20 +39,20 @@ public class ExplorerManager {
      *
      * @since 1.0.0
      */
-    @NotNull static final HashMap<Integer, ItemExplorerStatement<? extends ItemExplorerElaborator<?>, ?>> statementsByNetwork = new HashMap<>();
+    @NotNull static final HashMap<Integer, ItemExplorerStatement<?,?>> statementsByNetwork = new HashMap<>();
 
     /**
      * The list of registered explorer statements
      *
      * @since 1.0.0
      */
-    @NotNull static final HashMap<ResourceLocation, ItemExplorerStatement<? extends ItemExplorerElaborator<?>, ?>> registeredStatements = new HashMap<>();
+    @NotNull static final HashMap<ResourceLocation, ItemExplorerStatement<?,?>> registeredStatements = new HashMap<>();
 
     /**
      * @since 1.0.0
      * @author Gunging
      */
-    @NotNull public static HashMap<ResourceLocation, ItemExplorerStatement<? extends ItemExplorerElaborator<?>, ?>> getRegisteredStatements() { return registeredStatements; }
+    @NotNull public static HashMap<ResourceLocation, ItemExplorerStatement<?,?>> getRegisteredStatements() { return registeredStatements; }
 
     /**
      * Clears the registry of statements.
@@ -71,7 +75,7 @@ public class ExplorerManager {
      * @since 1.0.0
      * @author Gunging
      */
-    @Nullable public static ItemExplorerStatement<? extends ItemExplorerElaborator<?>, ?> getByNetwork(int n) {
+    @Nullable public static ItemExplorerStatement<?,?> getByNetwork(int n) {
         return statementsByNetwork.get(n);
     }
 
@@ -84,14 +88,14 @@ public class ExplorerManager {
      * @since 1.0.0
      * @author Gunging
      */
-    public static boolean registerStatement(@NotNull ItemExplorerStatement<? extends ItemExplorerElaborator<?>, ?> statement, boolean isServer, @NotNull String... aliases) {
+    public static boolean registerStatement(@NotNull ItemExplorerStatement<?,?> statement, boolean isServer, @NotNull String... aliases) {
 
         boolean registered = false;
 
         // Try registering its internal name, straight-up
         if (!registeredStatements.containsKey(statement.getStatementName())) {
             registeredStatements.put(statement.getStatementName(), statement);
-            HashMap<String, ItemExplorerStatement<? extends ItemExplorerElaborator<?>, ?>> byNamespace = statementsByNamespace.computeIfAbsent(statement.getStatementName().getNamespace(), k -> new HashMap<>());
+            HashMap<String, ItemExplorerStatement<?,?>> byNamespace = statementsByNamespace.computeIfAbsent(statement.getStatementName().getNamespace(), k -> new HashMap<>());
             byNamespace.put(statement.getStatementName().getPath(), statement);
             registered = true;
         }
@@ -105,7 +109,7 @@ public class ExplorerManager {
             // Attempt to register it
             if (!registeredStatements.containsKey(aliasKey)) {
                 registeredStatements.put(aliasKey, statement);
-                HashMap<String, ItemExplorerStatement<? extends ItemExplorerElaborator<?>, ?>> byNamespace = statementsByNamespace.computeIfAbsent(aliasKey.getNamespace(), k -> new HashMap<>());
+                HashMap<String, ItemExplorerStatement<?,?>> byNamespace = statementsByNamespace.computeIfAbsent(aliasKey.getNamespace(), k -> new HashMap<>());
                 byNamespace.put(aliasKey.getPath(), statement);
                 registered = true;
             }
@@ -131,7 +135,7 @@ public class ExplorerManager {
      * @author Gunging
      */
     @Contract("null -> null")
-    @Nullable public static ItemExplorerStatement<? extends ItemExplorerElaborator<?>, ?> findStatement(@Nullable ResourceLocation namespacedKey) {
+    @Nullable public static ItemExplorerStatement<?,?> findStatement(@Nullable ResourceLocation namespacedKey) {
         if (namespacedKey == null) { return  null; }
         return registeredStatements.get(namespacedKey);
     }
@@ -145,7 +149,7 @@ public class ExplorerManager {
      * @author Gunging
      */
     @Contract("null -> null")
-    @Nullable public static ItemExplorerStatement<? extends ItemExplorerElaborator<?>, ?> findStatement(@Nullable String name) {
+    @Nullable public static ItemExplorerStatement<?,?> findStatement(@Nullable String name) {
         if (name == null) { return  null; }
         return findStatement(GungingOotilitiesMod.MODID, name);
     }
@@ -160,7 +164,7 @@ public class ExplorerManager {
      * @author Gunging
      */
     @Contract("null,_ -> null;_,null -> null")
-    @Nullable public static ItemExplorerStatement<? extends ItemExplorerElaborator<?>, ?> findStatement(@Nullable String namespace, @Nullable String name) {
+    @Nullable public static ItemExplorerStatement<?,?> findStatement(@Nullable String namespace, @Nullable String name) {
         if (name == null || namespace == null) { return  null; }
 
         // Build the Resource Location
@@ -190,15 +194,15 @@ public class ExplorerManager {
      * @author Gunging
      */
     @Contract("null,_ -> null;_,null -> null")
-    @Nullable public static ItemExplorerStatement<? extends ItemExplorerElaborator<?>, ?> decodeStatement(@Nullable String namespace, @Nullable String keyOptions) {
+    @Nullable public static ItemExplorerStatement<?,?> decodeStatement(@Nullable String namespace, @Nullable String keyOptions) {
         if (namespace == null || keyOptions == null) { return null; }
 
         /*
          * Honestly I can't think of a better way than a brute force attack.
          * This is because I don't want to make any assumption about the options
          */
-        HashMap<String, ItemExplorerStatement<? extends ItemExplorerElaborator<?>, ?>> byNamespace = statementsByNamespace.get(namespace);
-        for (Map.Entry<String, ItemExplorerStatement<? extends ItemExplorerElaborator<?>, ?>> pair : byNamespace.entrySet()) {
+        HashMap<String, ItemExplorerStatement<?,?>> byNamespace = statementsByNamespace.get(namespace);
+        for (Map.Entry<String, ItemExplorerStatement<?,?>> pair : byNamespace.entrySet()) {
             String statement = pair.getKey();
 
             // Okay we found the one
@@ -235,7 +239,7 @@ public class ExplorerManager {
      * @author Gunging
      */
     @Contract("null -> null")
-    @Nullable public static ItemExplorerStatement<? extends ItemExplorerElaborator<?>, ?> decodeStatement(@Nullable String statement) {
+    @Nullable public static ItemExplorerStatement<?,?> decodeStatement(@Nullable String statement) {
         if (statement == null) { return null; }
         String namespace = GungingOotilitiesMod.MODID;
         String keyOptions = statement;
@@ -258,10 +262,114 @@ public class ExplorerManager {
      * @author Gunging
      */
     @Contract("null -> null")
-    @Nullable public static ItemStackExplorer<? extends ItemExplorerElaborator<?>, ?> buildItemStackExplorer(@Nullable String statement) {
+    @Nullable public static ItemStackExplorer<?,?> buildItemStackExplorer(@Nullable String statement) {
         if (statement == null) { return null; }
-        ItemExplorerStatement<? extends ItemExplorerElaborator<?>, ?> decoded = decodeStatement(statement);
+        ItemExplorerStatement<?,?> decoded = decodeStatement(statement);
         if (decoded == null) { return null; }
         return decoded.prepareExplorer();
+    }
+
+    /**
+     * Method meant to be called during mod initialization.
+     *
+     * @param isServer If called from the server-side
+     *
+     * @since 1.0.0
+     * @author Gunging
+     */
+    public static void registerGooMStatements(boolean isServer) {
+
+        // Player Statements
+        registerStatement(ISPExplorerStatements.CURSOR, isServer);
+        registerStatement(ISPExplorerStatements.ALL_EQUIPMENT, isServer);
+        registerStatement(ISPExplorerStatements.HANDS, isServer);
+        registerStatement(ISPExplorerStatements.MAINHAND, isServer);
+        registerStatement(ISPExplorerStatements.OFFHAND, isServer);
+        registerStatement(ISPExplorerStatements.ARMOR, isServer);
+        registerStatement(ISPExplorerStatements.HEAD, isServer);
+        registerStatement(ISPExplorerStatements.CHEST, isServer);
+        registerStatement(ISPExplorerStatements.LEGS, isServer);
+        registerStatement(ISPExplorerStatements.FEET, isServer);
+        registerStatement(ISPExplorerStatements.STANDARD, isServer);
+        registerStatement(ISPExplorerStatements.MAIN, isServer);
+        registerStatement(ISPExplorerStatements.STASH, isServer);
+        registerStatement(ISPExplorerStatements.HOTBAR, isServer);
+        registerStatement(ISPExplorerStatements.ALL, isServer);
+        registerStatement(ISPExplorerStatements.CRAFTING, isServer);
+        registerStatement(ISPExplorerStatements.CRAFTING_RESULT, isServer);
+        registerStatement(ISPExplorerStatements.ALL_CRAFTING, isServer);
+        registerStatement(ISPExplorerStatements.ALL_EXTENDED, isServer);
+        registerStatement(ISPExplorerStatements.ENDERCHEST, isServer);
+        registerStatement(ISPExplorerStatements.ALL_ENDERCHEST, isServer);
+
+        // Entity Statements
+        registerStatement(ISEExplorerStatements.ALL_EQUIPMENT, isServer);
+        registerStatement(ISEExplorerStatements.ARMOR, isServer);
+        registerStatement(ISEExplorerStatements.HEAD, isServer);
+        registerStatement(ISEExplorerStatements.CHEST, isServer);
+        registerStatement(ISEExplorerStatements.LEGS, isServer);
+        registerStatement(ISEExplorerStatements.FEET, isServer);
+        registerStatement(ISEExplorerStatements.HANDS, isServer);
+        registerStatement(ISEExplorerStatements.MAINHAND, isServer);
+        registerStatement(ISEExplorerStatements.OFFHAND, isServer);
+    }
+
+    /**
+     * @param buff Byte Buff that arrived from over the network
+     * @return The one reconstructed if it could be reconstructed
+     *
+     * @since 1.0.0
+     * @author Gunging
+     */
+    @Nullable public static ItemExplorerStatement<?,?> decode(@NotNull FriendlyByteBuf buff) {
+        int networkIndex = buff.readInt();
+        String options = buff.readUtf();
+
+        // Try to find
+        ItemExplorerStatement<?,?> st = getByNetwork(networkIndex);
+        if (st == null) { return null; }
+
+        // Return with options
+        return st.withOptions(options);
+    }
+
+    /**
+     * Receives a list of namespaced statements to adjust their network index
+     *
+     * @since 1.0.0
+     * @author Gunging
+     */
+    public static void receiveNetworkSync(@NotNull GMNClientboundStatementSync packet) {
+        HashMap<String, ItemExplorerStatement<?,?>> statements = statementsByNamespace.get(packet.getNamespace());
+        for (Map.Entry<String, Integer> syn : packet.getSynced().entrySet()) {
+            ItemExplorerStatement<?,?> found = statements.get(syn.getKey());
+            if (found == null) { continue; }
+
+            // Adopt index
+            found.setNetworkIndex(syn.getValue());
+            statementsByNetwork.put(syn.getValue(), found);
+        }
+    }
+
+    /**
+     * @return The list of namespaces of all statements
+     *
+     * @since 1.0.0
+     * @author Gunging
+     */
+    @NotNull public static ArrayList<String> listStatementNamespaces() {
+        return new ArrayList<>(statementsByNamespace.keySet());
+    }
+
+    /**
+     * @return The list of all statements associated with this namespace
+     *
+     * @since 1.0.0
+     * @author Gunging
+     */
+    @NotNull public static ArrayList<ItemExplorerStatement<?,?>> listStatements(@NotNull String namespace) {
+        HashMap<String, ItemExplorerStatement<?,?>> statements = statementsByNamespace.get(namespace);
+        if (statements == null) { return new ArrayList<>(); }
+        return new ArrayList<>(statements.values());
     }
 }

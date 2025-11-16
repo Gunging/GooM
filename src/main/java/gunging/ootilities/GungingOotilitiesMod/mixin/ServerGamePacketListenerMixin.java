@@ -67,6 +67,7 @@ public abstract class ServerGamePacketListenerMixin {
         for (int i = 0; i < who.getInventory().offhand.size(); i++) {
             ItemStack one = who.getInventory().offhand.get(i);
             ItemStack two = gungingoom$originalOffhand.size() > i ? gungingoom$originalOffhand.get(i) : null;
+            if (two == null) { return false; }
 
             // If any of these differ, then the offhand changed. It is not redundant
             if (!one.equals(two, false)) { return false; }

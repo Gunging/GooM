@@ -1,5 +1,6 @@
 package gunging.ootilities.GungingOotilitiesMod.exploring;
 
+import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.NotNull;
@@ -23,6 +24,18 @@ import java.util.ArrayList;
  * @author Gunging
  */
 public interface ItemExplorerStatement<Elaborator extends ItemExplorerElaborator<? extends E>, E> {
+
+    /**
+     * <b>This must always encode an integer followed by a string, and only that. </b>
+     *
+     * @param buff Network buff to which encode this
+     *
+     * @since 1.0.0
+     * @author Gunging
+     */
+    default void encode(@NotNull FriendlyByteBuf buff) {
+        buff.writeInt(getNetworkIndex());
+        buff.writeUtf(getOptions()); }
 
     /**
      * <b>Only touch if you know what you are doing.</b> Assigns an index to

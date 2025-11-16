@@ -20,6 +20,24 @@ public class OotilityVectors {
      * math for those is identical to SVF just with different names to avoid confusion when combining SVF and DAH.
      *
      * @param who The entity whose facing to use as relative axes.
+     * @param svf The SVFL coordinate information
+     *
+     * @return A vector (not normalized) representing this SVF transformation.
+     *
+     * @since 1.0.0
+     * @author Gunging
+     */
+    @NotNull public static Vec3 entityTransformSVFL(@NotNull Entity who, @NotNull SVFLBit svf) {
+        return transformSVFL(Math.toRadians(who.getXRot()), Math.toRadians(who.getYRot()), svf);
+    }
+
+    /**
+     * SVF: Side-Vertical-Offset(-Level) relative coordinates, not to be confused with DAH (Dodge-Above-Heading[-Base])
+     * or the absolute XYZ coords. The SVF coordinate system points in the direction of an entity, usually a player or
+     * caster of an action. Sometimes, this action involves a second body with its own relative coordinates DAH, but the
+     * math for those is identical to SVF just with different names to avoid confusion when combining SVF and DAH.
+     *
+     * @param who The entity whose facing to use as relative axes.
      *
      * @param sOff Relative sideways direction offset
      * @param vOff Relative vertical direction offset
@@ -45,6 +63,25 @@ public class OotilityVectors {
      *
      * @param pitch The rotation along the X-axis, in the direction from the Y-axis to the Z-axis, in radians
      * @param yaw The rotation along the Y-axis, in the direction from the Z-axis to the X-axis, in radians
+     * @param svf The SVFL coordinate information
+     *
+     * @return A vector (not normalized) representing this SVF transformation.
+     *
+     * @since 1.0.0
+     * @author Gunging
+     */
+    @NotNull public static Vec3 transformSVFL(double pitch, double yaw, @NotNull SVFLBit svf) {
+        return transformSVFL(pitch, yaw, svf.getS(), svf.getV(), svf.getF(), svf.getL(), svf.getX(), svf.getY(), svf.getZ());
+    }
+
+    /**
+     * SVF: Side-Vertical-Offset(-Level) relative coordinates, not to be confused with DAH (Dodge-Above-Heading[-Base])
+     * or the absolute XYZ coords. The SVF coordinate system points in the direction of an entity, usually a player or
+     * caster of an action. Sometimes, this action involves a second body with its own relative coordinates DAH, but the
+     * math for those is identical to SVF just with different names to avoid confusion when combining SVF and DAH.
+     *
+     * @param pitch The rotation along the X-axis, in the direction from the Y-axis to the Z-axis, in radians
+     * @param yaw The rotation along the Y-axis, in the direction from the X-axis to the Z-axis, in radians
      *
      * @param sOff Relative sideways direction offset
      * @param vOff Relative vertical direction offset
@@ -92,7 +129,7 @@ public class OotilityVectors {
      * Often useful because it just feels right for some things to move only in this direction.
      *
      * @param pitch The rotation along the X-axis, in the direction from the Y-axis to the Z-axis, in radians
-     * @param yaw The rotation along the Y-axis, in the direction from the Z-axis to the X-axis, in radians
+     * @param yaw The rotation along the Y-axis, in the direction from the X-axis to the Z-axis, in radians
      *
      * @param sOff Relative sideways direction offset
      * @param vOff Relative vertical direction offset
@@ -108,7 +145,7 @@ public class OotilityVectors {
      * @author Gunging
      */
     @SuppressWarnings("UnnecessaryLocalVariable")
-    @NotNull public static Vec3 transformSVFL(double pitch, double yaw, double sOff, double vOff, double lOff, double fOff, double xOff, double yOff, double zOff) {
+    @NotNull public static Vec3 transformSVFL(double pitch, double yaw, double sOff, double vOff, double fOff, double lOff, double xOff, double yOff, double zOff) {
 
         // Polar angle Theta
         double tF = (0.5 * Math.PI) + pitch;
@@ -302,6 +339,53 @@ public class OotilityVectors {
         // Bake vector
         return new Vec3(Math.sin(pL), 0, Math.cos(pL));
         //return new Vec3(Math.sin(pL) * Math.sin(tL), Math.cos(tL), Math.cos(pL) * Math.sin(tL));
+    }
+
+    /**
+     * @param basis The vector to rotate around the vertical axis Y
+     * @param yaw The yaw angle to apply, increasing from the X axis to the Z axis.
+     *            Yes, this is clockwise which is against the usual math convention
+     *            where counter-clockwise is positive.
+     *
+     * @return Rotates a vector around the vertical axis, changing its X and Z components while keeping the Y component the same.
+     *
+     * @since 1.0.0
+     * @author Gunging
+     */
+    @NotNull public static Vec3 yawRotate(@NotNull Vec3 basis, double yaw) {
+        double c = Math.cos(yaw);
+        double s = Math.sin(yaw);
+        return new Vec3(basis.x * c - basis.z * s, basis.y,  basis.z * c + basis.x * s);
+    }
+
+    /**
+     * @param basis The vector to rotate around the side axis X
+     * @param pitch The pitch angle to apply, increasing from the Y axis to the Z axis.
+     *
+     * @return Rotates a vector around the side axis, changing its Y and Z components while keeping the X component the same.
+     *
+     * @since 1.0.0
+     * @author Gunging
+     */
+    @NotNull public static Vec3 pitchRotate(@NotNull Vec3 basis, double pitch) {
+        double c = Math.cos(pitch);
+        double s = Math.sin(pitch);
+        return new Vec3(basis.x, basis.y * c - basis.z * s,  basis.z * c + basis.y * s);
+    }
+
+    /**
+     * @param basis The vector to rotate around the forward axis Z
+     * @param roll The roll angle to apply, increasing from the X axis to the Y axis.
+     *
+     * @return Rotates a vector around the side axis, changing its Y and Z components while keeping the X component the same.
+     *
+     * @since 1.0.0
+     * @author Gunging
+     */
+    @NotNull public static Vec3 rollRotate(@NotNull Vec3 basis, double roll) {
+        double c = Math.cos(roll);
+        double s = Math.sin(roll);
+        return new Vec3(basis.x * c - basis.y * s, basis.y * c + basis.x * s,  basis.z);
     }
 
     /**

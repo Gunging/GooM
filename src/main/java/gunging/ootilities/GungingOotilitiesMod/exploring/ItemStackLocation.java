@@ -40,7 +40,7 @@ public interface ItemStackLocation<E> {
      * @author Gunging
      * @since 1.0.0
      */
-    @NotNull ItemExplorerStatement<? extends ItemExplorerElaborator<? extends E>, E> getStatement();
+    @NotNull ItemExplorerStatement<? extends ItemExplorerElaborator<? extends E>, ? extends E> getStatement();
 
     /**
      * @return The container of this ItemStack Location,

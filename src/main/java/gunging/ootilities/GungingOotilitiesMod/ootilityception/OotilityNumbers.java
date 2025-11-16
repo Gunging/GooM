@@ -11,7 +11,7 @@ import java.util.stream.Stream;
 
 /**
  * A few methods to attempt to parse Strings into Numbers. Also, a few methods to parse Math into Strings.
- * <p></p>
+ * <br><br>
  * These methods are designed to fail <b>silently</b>, use that to your advantage.
  * Basically, they will return <code>null</code> instead of throwing exceptions,
  * admitting even input that makes no sense without generating errors.
@@ -262,6 +262,77 @@ public class OotilityNumbers {
 
         // Scale to the range of them and add the min range.
         return (Math.random() * (maxExclusive - minInclusive)) + minInclusive;
+    }
+
+    /**
+     * The gaussian curve has the beautiful asymptotic behaviour where
+     * it starts at unity and tends to zero at either infinity.
+     *
+     * @param u The mean, the center, of the gaussian bell
+     * @param o The spread of the gaussian bell
+     * @param z The length along the gaussian bell
+     *
+     * @return The value of the gaussian bell at this Z-value
+     *
+     * @since 1.0.0
+     * @author Gunging
+     */
+    public static double gaussian(double u, double o, double z) {
+        double zu = (z - u) / o;
+        return Math.exp(-0.5 * zu * zu);
+    }
+
+    /**
+     * The gaussian curve has the beautiful asymptotic behaviour where
+     * it starts at unity and tends to zero at either infinity. Reversing
+     * it so that it starts at zero and tends at 1 at either infinity is
+     * a simple matter of subtracting it from unity.
+     *
+     * @param u The mean, the center, of the gaussian bell
+     * @param o The spread of the gaussian bell
+     * @param z The length along the gaussian bell
+     *
+     * @return The difference between unity and this gaussian curve
+     *
+     * @since 1.0.0
+     * @author Gunging
+     */
+    public static double gaussianRev(double u, double o, double z) {
+        return 1 - gaussian(u, o, z);
+    }
+
+    /**
+     * Basis and comparate are exchangeable, don't worry too much about it lol
+     *
+     * @param basis Double to base
+     * @param comparate Double to compare against base
+     * @param tolerance Tolerance around the base
+     *
+     * @return If the comparate is within tolerance of the basis
+     *
+     * @since 1.0.0
+     * @author Gunging
+     */
+    public boolean approximately(double basis, double comparate, double tolerance) {
+        return basis + tolerance >= comparate && basis - tolerance <= comparate;
+    }
+
+    /**
+     * The basis and comparate are not exchangeable, using the larger
+     * number as the basis results in a wider tolerance that may encompass
+     * the comparate even if it would not match when flipping the arguments.
+     *
+     * @param basis Double to base
+     * @param comparate Double to compare against base
+     * @param percent Tolerance around the base, where 1 = 100%
+     *
+     * @return If the comparate is within tolerance percent of the basis
+     *
+     * @since 1.0.0
+     * @author Gunging
+     */
+    public boolean approximatelyPercent(double basis, double comparate, double percent) {
+        return basis * (1 + percent) >= comparate && basis * (1 - percent) <= comparate;
     }
     //endregion
 

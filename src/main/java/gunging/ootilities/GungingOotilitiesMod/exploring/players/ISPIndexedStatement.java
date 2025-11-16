@@ -142,7 +142,7 @@ public abstract class ISPIndexedStatement extends ISPPlayerStatement {
      * @since 1.0.0
      * @author Gunging
      */
-    public ISPIndexedStatement any() { return of(-1, -1); }
+    public ISPIndexedStatement any() { return of(new IntegerNumberRange(null, null)); }
 
     /**
      * @param slot The slot of this inventory in question
@@ -152,7 +152,7 @@ public abstract class ISPIndexedStatement extends ISPPlayerStatement {
      * @since 1.0.0
      * @author Gunging
      */
-    public ISPIndexedStatement of(int slot) { return of(slot, -1); }
+    public ISPIndexedStatement of(int slot) { return of(slot, slot); }
 
     /**
      * @param minSlot The first inventory slot of the range [inclusive]

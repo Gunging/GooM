@@ -46,6 +46,9 @@ public class AbstractContainerMenuMixin {
 
         // No subject, no point
         if (who == null) { return; }
+        if (who.level().isClientSide) {
+            ExtensionEventBroadcaster.BroadcastEquipmentChangeEvent(ItemFlowExtensionReason.CLIENT_ON_SET_CARRIED_ITEM, true, new ISPPlayerLocation(who, ISPExplorerStatements.CURSOR));
+            return; }
         ExtensionEventBroadcaster.BroadcastEquipmentChangeEvent(ItemFlowExtensionReason.SERVER_ON_SET_CARRIED_ITEM, false, new ISPPlayerLocation(who, ISPExplorerStatements.CURSOR));
     }
 }

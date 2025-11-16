@@ -303,6 +303,14 @@ public enum ItemFlowExtensionReason {
     SERVER_ON_SET_CARRIED_ITEM,
 
     /**
+     * Fired from {@link net.minecraft.world.inventory.AbstractContainerMenu}.setCarriedItem(ItemStack)
+     * by the mixin {@link AbstractContainerMenuMixin}
+     *
+     * @since 1.0.0
+     */
+    CLIENT_ON_SET_CARRIED_ITEM,
+
+    /**
      * Fired from {@link net.minecraft.world.inventory.AbstractContainerMenu}.onInitializeCarriedItem(int, List, ItemStack)
      * by the mixin {@link AbstractContainerMenuMixin}
      *

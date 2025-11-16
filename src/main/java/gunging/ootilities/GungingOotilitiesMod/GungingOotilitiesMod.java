@@ -1,7 +1,10 @@
 package gunging.ootilities.GungingOotilitiesMod;
 
+import gunging.ootilities.GungingOotilitiesMod.exploring.ExplorerManager;
+import gunging.ootilities.GungingOotilitiesMod.netcode.GOOMNetworkManager;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import org.jetbrains.annotations.Nullable;
 
@@ -29,6 +32,22 @@ public class GungingOotilitiesMod {
 
         // Register this mod onto Forge
         MinecraftForge.EVENT_BUS.register(this);
+        context.getModEventBus().addListener(this::OnCommonSetup);
+    }
+
+    /**
+     * @author Gunging
+     * @since 1.0.0
+     */
+    private void OnCommonSetup(final FMLCommonSetupEvent event) {
+        ExplorerManager.registerGooMStatements(true);
+
+        /*
+         * The event does not run on the main thread, we must
+         * enqueue this for it to run in the main thread.
+         */
+
+        event.enqueueWork(GOOMNetworkManager::register);
     }
 
     /**

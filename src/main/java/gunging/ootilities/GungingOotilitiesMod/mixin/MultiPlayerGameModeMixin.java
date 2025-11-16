@@ -191,14 +191,14 @@ public abstract class MultiPlayerGameModeMixin {
     @Inject(method = "handleCreativeModeItemAdd", at = @At("HEAD"))
     protected void onHandleCreativeModeItemAddCall(ItemStack pStack, int pSlotId, CallbackInfo ci) {
 
-        GungingOotilitiesMod.Log("GOOP MPG Creative Add Index [" + pSlotId + "]");
+        //SLT//GungingOotilitiesMod.Log("GOOP MPG Creative Add Index [" + pSlotId + "]");
     }
     @Inject(method = "handleCreativeModeItemAdd", at = @At("RETURN"))
     protected void onHandleCreativeModeItemAddReturn(ItemStack pStack, int pSlotId, CallbackInfo ci) {
         if (this.minecraft.player == null) { return; }
         // ItemFlowExtensionReason.SERVERBOUND_SET_CREATIVE_MODE_SLOT_PACKET_SEND_ITEM_ADD
 
-        GungingOotilitiesMod.Log("GOOP MPG handleCreativeModeItemAdd <Coming Soon>");
+        //SLT//GungingOotilitiesMod.Log("GOOP MPG handleCreativeModeItemAdd <Coming Soon>");
     }
 
     @Inject(method = "handleCreativeModeItemDrop", at = @At("HEAD"))
@@ -218,12 +218,12 @@ public abstract class MultiPlayerGameModeMixin {
 
     @Inject(method = "handleInventoryMouseClick", at = @At("HEAD"))
     protected void onHandleInventoryMouseClickCall(int pContainerId, int pSlotId, int pMouseButton, ClickType pClickType, Player pPlayer, CallbackInfo ci) {
-        GungingOotilitiesMod.Log("GOOP MPG Mouse Click Index [" + pSlotId + "] |Container ID|: " + pContainerId);
+        //SLT//GungingOotilitiesMod.Log("GOOP MPG Mouse Click Index [" + pSlotId + "] |Container ID|: " + pContainerId);
     }
     @Inject(method = "handleInventoryMouseClick", at = @At("RETURN"))
     protected void onHandleInventoryMouseClickReturn(int pContainerId, int pSlotId, int pMouseButton, ClickType pClickType, Player pPlayer, CallbackInfo ci) {
         // ItemFlowExtensionReason.SERVERBOUND_CONTAINER_CLICK_SEND_HANDLE_MOUSE_CLICK
 
-        GungingOotilitiesMod.Log("GOOP MPG handleCreativeModeItemAdd <Coming Soon>");
+        //SLT//GungingOotilitiesMod.Log("GOOP MPG handleCreativeModeItemAdd <Coming Soon>");
     }
 }
