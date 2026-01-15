@@ -2,6 +2,7 @@ package gunging.ootilities.GungingOotilitiesMod.ootilityception;
 
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.ItemStack;
+import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -1019,6 +1020,114 @@ public class OotilityNumbers {
         }
 
         return null;
+    }
+
+    /**
+     * @param source The string to search the substring in
+     * @param match The substring you are searching for
+     *
+     * @param safeguarded If the string is not found, the entire original
+     *                    string is returned rather than "null"
+     *
+     * @return Everything from the beginning of the provided string to
+     *         the first occurrence of the specified string. If it is
+     *         not found, null is returned. The matched string is always
+     *         cut out.
+     */
+    @Contract("!null, _, true -> !null")
+    @Nullable public static String extractUntil(@Nullable String source, @Nullable String match, boolean safeguarded) {
+
+        // Early termination
+        if (source == null) { return null; }
+        if (match == null) { return safeguarded ? source : null; }
+
+        // Find in string
+        int index = source.indexOf(match);
+        if (index < 0) { return safeguarded ? source : null; }
+
+        // Extract
+        return source.substring(0, index);
+    }
+
+    /**
+     * @param source The string to search the substring in
+     * @param match The substring you are searching for
+     *
+     * @param safeguarded If the string is not found, the entire original
+     *                    string is returned rather than "null"
+     *
+     * @return Everything from the beginning of the provided string to
+     *         the last occurrence of the specified string. If it is
+     *         not found, null is returned. The matched string is always
+     *         cut out.
+     */
+    @Contract("!null, _, true -> !null")
+    @Nullable public static String extractUntilRev(@Nullable String source, @Nullable String match, boolean safeguarded) {
+
+        // Early termination
+        if (source == null) { return null; }
+        if (match == null) { return safeguarded ? source : null; }
+
+        // Find in string
+        int index = source.lastIndexOf(match);
+        if (index < 0) { return safeguarded ? source : null; }
+
+        // Extract
+        return source.substring(0, index);
+    }
+
+    /**
+     * @param source The string to search the substring in
+     * @param match The substring you are searching for
+     *
+     * @param safeguarded If the string is not found, the entire original
+     *                    string is returned rather than "null"
+     *
+     * @return Everything from the end of the provided string to the end
+     *         of the first occurrence of the specified string. If it is
+     *         not found, null is returned. The matched string is always
+     *         cut out.
+     */
+    @Contract("!null, _, true -> !null")
+    @Nullable public static String extractAfter(@Nullable String source, @Nullable String match, boolean safeguarded) {
+
+        // Early termination
+        if (source == null) { return null; }
+        if (match == null) { return safeguarded ? source : null; }
+
+        // Find in string
+        int index = source.indexOf(match);
+        if (index < 0) { return safeguarded ? source : null; }
+
+        // Extract
+        return source.substring(index + match.length());
+    }
+
+    /**
+     * @param source The string to search the substring in
+     * @param match The substring you are searching for
+     *
+     * @param safeguarded If the string is not found, the entire original
+     *                    string is returned rather than "null"
+     *
+     * @return Everything from the end of the provided string to the end
+     *         of the last occurrence of the specified string. If it is
+     *         not found, null is returned. The matched string is always
+     *         cut out.
+     */
+    @Contract("!null, _, true -> !null")
+    @Nullable public static String extractAfterRev(@Nullable String source, @Nullable String match, boolean safeguarded) {
+
+        // Early termination
+        if (source == null) { return null; }
+        if (match == null) { return safeguarded ? source : null; }
+
+        // Find in string
+        int index = source.lastIndexOf(match);
+        if (index < 0) { return safeguarded ? source : null; }
+
+        // Extract
+        return source.substring(index + match.length());
     }
     //endregion
 }

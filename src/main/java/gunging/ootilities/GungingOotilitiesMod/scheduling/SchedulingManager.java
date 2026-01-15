@@ -160,8 +160,11 @@ public class SchedulingManager {
      */
     static void tryRunTasks(@NotNull ArrayList<SCHTaskSchedule> tasks, long localTicks) {
 
+        // Make a copy to avoid concurrency
+        ArrayList<SCHTaskSchedule> running = new ArrayList<>(tasks);
+
         // Attempt to resolve all tasks
-        for (SCHTaskSchedule task : tasks) {
+        for (SCHTaskSchedule task : running) {
             if (!task.isResolved()) {
                 if (task.getDate() <= localTicks) {
                     task.getTask().runGOOMTask();

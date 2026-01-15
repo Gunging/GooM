@@ -43,8 +43,18 @@ public class GOOMClientsidePacketHandler {
     public static void handleMomentumSync(@NotNull GMNClientboundMomentum thrown, @NotNull Supplier<NetworkEvent.Context> contextSupplier) {
         Player local = Minecraft.getInstance().player;
         if (local == null) { return; }
+
+        // Basic Pos and Delta
         local.setPos(thrown.getPosition());
         local.setDeltaMovement(thrown.getVelocity());
+
+        // Rubberbanding and Smoothing
+        local.xo = thrown.getPosition().x;
+        local.yo = thrown.getPosition().y;
+        local.zo = thrown.getPosition().z;
+        local.xOld = thrown.getPosition().x;
+        local.yOld = thrown.getPosition().y;
+        local.zOld = thrown.getPosition().z;
     }
 
 

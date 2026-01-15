@@ -53,5 +53,15 @@ public class GOOMPlayerMomentumSync implements APIFriendlyProcess {
          */
         GMNClientboundMomentum momentum = new GMNClientboundMomentum(who.position(), who.getDeltaMovement());
         GOOMNetworkManager.serverToPlayer((ServerPlayer) who, momentum);
+
+        /*
+         * (2) Stick the values in the ServerSide as well
+         */
+        who.xo = who.position().x;
+        who.yo = who.position().y;
+        who.zo = who.position().z;
+        who.xOld = who.position().x;
+        who.yOld = who.position().y;
+        who.zOld = who.position().z;
     }
 }

@@ -51,8 +51,8 @@ public class ISPSMain extends ISPPlayerStatement {
     public @NotNull ArrayList<ItemStackExplorer<ISPPlayerElaborator, Player>> whenElaborated(@NotNull ISPPlayerElaborator elaborator) {
         ArrayList<ItemStackExplorer<ISPPlayerElaborator, Player>> ret = new ArrayList<>();
 
-        ret.add(new ISPPlayerExplorer(ISPExplorerStatements.HOTBAR));
-        ret.add(new ISPPlayerExplorer(ISPExplorerStatements.STASH));
+        ret.addAll(new ISPPlayerExplorer(ISPExplorerStatements.HOTBAR).elaborate(elaborator));
+        ret.addAll(new ISPPlayerExplorer(ISPExplorerStatements.STASH).elaborate(elaborator));
 
         return ret;
     }
