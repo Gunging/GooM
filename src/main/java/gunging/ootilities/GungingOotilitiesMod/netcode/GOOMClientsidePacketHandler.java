@@ -55,6 +55,7 @@ public class GOOMClientsidePacketHandler {
         local.xOld = thrown.getPosition().x;
         local.yOld = thrown.getPosition().y;
         local.zOld = thrown.getPosition().z;
+        local.fallDistance = 0;
     }
 
 

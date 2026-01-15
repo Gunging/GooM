@@ -63,5 +63,6 @@ public class GOOMPlayerMomentumSync implements APIFriendlyProcess {
         who.xOld = who.position().x;
         who.yOld = who.position().y;
         who.zOld = who.position().z;
+        who.fallDistance = 0;
     }
 }
