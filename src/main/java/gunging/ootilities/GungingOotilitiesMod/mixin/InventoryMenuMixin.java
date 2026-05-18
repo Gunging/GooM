@@ -19,4 +19,6 @@ public abstract class InventoryMenuMixin extends RecipeBookMenu<CraftingContaine
     @Shadow @Final private Player owner;
 
     @Override public @Nullable Player gungingoom$getAssociatedPlayer() { return owner; }
+
+    @Override public void gungingoom$setAssociatedPlayer(@Nullable Player who) { }
 }

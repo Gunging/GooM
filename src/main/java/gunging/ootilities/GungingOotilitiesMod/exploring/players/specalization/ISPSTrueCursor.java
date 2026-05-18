@@ -11,21 +11,20 @@ import org.jetbrains.annotations.Nullable;
 import java.util.ArrayList;
 
 /**
- * The cursor slot, only really exists while the inventory GUI is open
+ * The cursor slot, pointing specifically to the inventory of
+ * this player and not the current screen they are looking at.
  *
  * @author Gunging
  * @since 1.0.0
  */
-public class ISPSCursor extends ISPPlayerStatement {
+public class ISPSTrueCursor extends ISPPlayerStatement {
 
     /**
      * @author Gunging
      * @since 1.0.0
      */
     @Override
-    public @NotNull String getOptions() {
-        return "";
-    }
+    public @NotNull String getOptions() { return ""; }
 
     /**
      * @param statementName The internal name of this explorer statement
@@ -33,18 +32,14 @@ public class ISPSCursor extends ISPPlayerStatement {
      * @author Gunging
      * @since 1.0.0
      */
-    public ISPSCursor(@NotNull ResourceLocation statementName) {
-        super(statementName);
-    }
+    public ISPSTrueCursor(@NotNull ResourceLocation statementName) { super(statementName); }
 
     /**
      * @author Gunging
      * @since 1.0.0
      */
     @Override
-    public @Nullable ISPSCursor withOptions(@NotNull String options) {
-        return ISPExplorerStatements.CURSOR;
-    }
+    public @Nullable ISPSTrueCursor withOptions(@NotNull String options) { return ISPExplorerStatements.TRUE_CURSOR; }
 
     /**
      * @author Gunging
@@ -54,7 +49,7 @@ public class ISPSCursor extends ISPPlayerStatement {
     public @NotNull ArrayList<ItemStackExplorer<ISPPlayerElaborator, Player>> whenElaborated(@NotNull ISPPlayerElaborator elaborator) {
         ArrayList<ItemStackExplorer<ISPPlayerElaborator, Player>> ret = new ArrayList<>();
 
-        ret.add(new ISPPlayerExplorer(ISPExplorerStatements.CURSOR));
+        ret.add(new ISPPlayerExplorer(ISPExplorerStatements.TRUE_CURSOR));
 
         return ret;
     }
@@ -74,7 +69,7 @@ public class ISPSCursor extends ISPPlayerStatement {
      */
     @Override
     public @Nullable ItemStack readItemStack(@NotNull Player target) {
-        return target.containerMenu.getCarried();
+        return target.inventoryMenu.getCarried();
     }
 
     /**
@@ -83,6 +78,6 @@ public class ISPSCursor extends ISPPlayerStatement {
      */
     @Override
     public void writeItemStack(@NotNull Player target, @Nullable ItemStack item) {
-        target.containerMenu.setCarried(item == null ? ItemStack.EMPTY : item);
+        target.inventoryMenu.setCarried(item == null ? ItemStack.EMPTY : item);
     }
 }

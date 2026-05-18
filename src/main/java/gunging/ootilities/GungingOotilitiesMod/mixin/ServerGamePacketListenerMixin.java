@@ -1,12 +1,15 @@
 package gunging.ootilities.GungingOotilitiesMod.mixin;
 
+import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import gunging.ootilities.GungingOotilitiesMod.events.ExtensionEventBroadcaster;
 import gunging.ootilities.GungingOotilitiesMod.events.extension.ItemFlowExtensionReason;
+import gunging.ootilities.GungingOotilitiesMod.mixininterfaces.PlayerLinked;
 import net.minecraft.network.protocol.game.*;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.server.network.ServerGamePacketListenerImpl;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.spongepowered.asm.mixin.Mixin;
@@ -202,4 +205,20 @@ public abstract class ServerGamePacketListenerMixin {
             ExtensionEventBroadcaster.BroadcastEquipmentChangeEvent(ItemFlowExtensionReason.SERVERBOUND_PLAYER_ACTION_HANDLE, false, EquipmentSlot.OFFHAND, this.getPlayer());
         }
     }   //*/
+
+    @Inject(method = "handleContainerClick", at = @At("HEAD"))
+    void whenPlayerContainerInteractHead(ServerboundContainerClickPacket pPacket, CallbackInfo ci) {
+
+        AbstractContainerMenu gui = this.player.containerMenu;
+        PlayerLinked asLinked = (PlayerLinked) gui;
+        asLinked.gungingoom$setAssociatedPlayer(player);
+    }
+
+    @Inject(method = "handleContainerClick", at = @At("RETURN"))
+    void whenPlayerContainerInteractEnd(ServerboundContainerClickPacket pPacket, CallbackInfo ci) {
+
+        AbstractContainerMenu gui = this.player.containerMenu;
+        PlayerLinked asLinked = (PlayerLinked) gui;
+        asLinked.gungingoom$setAssociatedPlayer(null);
+    }
 }

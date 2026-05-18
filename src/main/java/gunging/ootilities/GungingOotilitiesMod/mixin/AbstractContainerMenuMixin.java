@@ -8,7 +8,9 @@ import gunging.ootilities.GungingOotilitiesMod.mixininterfaces.PlayerLinked;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.item.ItemStack;
+import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
@@ -16,8 +18,11 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import java.util.List;
 
 @Mixin(AbstractContainerMenu.class)
-public class AbstractContainerMenuMixin {
+public class AbstractContainerMenuMixin implements PlayerLinked {
 
+    @Unique Player gungingoom$linkedPlayer;
+    @Override public @Nullable Player gungingoom$getAssociatedPlayer() { return gungingoom$linkedPlayer; }
+    @Override public void gungingoom$setAssociatedPlayer(@Nullable Player who) { gungingoom$linkedPlayer = who; }
 
     @Inject(method = "initializeContents", at = @At("RETURN"))
     public void onInitializeCarriedItem(int pStateId, List<ItemStack> pItems, ItemStack pCarried, CallbackInfo ci) {
@@ -39,10 +44,7 @@ public class AbstractContainerMenuMixin {
     public void onSetCarriedItem(ItemStack pStack, CallbackInfo ci) {
 
         // Read player associated with this menu
-        Player who = null;
-        AbstractContainerMenu asMenu = (AbstractContainerMenu) (Object) this;
-        if (asMenu instanceof PlayerLinked) {
-            who = ((PlayerLinked) asMenu).gungingoom$getAssociatedPlayer(); }
+        Player who = gungingoom$getAssociatedPlayer();
 
         // No subject, no point
         if (who == null) { return; }

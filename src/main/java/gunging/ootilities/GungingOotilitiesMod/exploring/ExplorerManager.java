@@ -301,6 +301,7 @@ public class ExplorerManager {
         registerStatement(ISPExplorerStatements.ALL_EXTENDED, isServer);
         registerStatement(ISPExplorerStatements.ENDERCHEST, isServer);
         registerStatement(ISPExplorerStatements.ALL_ENDERCHEST, isServer);
+        registerStatement(ISPExplorerStatements.TRUE_CURSOR, isServer);
 
         // Entity Statements
         registerStatement(ISEExplorerStatements.ALL_EQUIPMENT, isServer);

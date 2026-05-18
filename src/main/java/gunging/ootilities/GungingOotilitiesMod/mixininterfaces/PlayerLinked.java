@@ -18,4 +18,12 @@ public interface PlayerLinked {
      * @since 1.0.0
      */
     @Nullable Player gungingoom$getAssociatedPlayer();
+
+    /**
+     * @param who The player that might be associated with this class
+     *
+     * @author Gunging
+     * @since 1.0.0
+     */
+    void gungingoom$setAssociatedPlayer(@Nullable Player who);
 }

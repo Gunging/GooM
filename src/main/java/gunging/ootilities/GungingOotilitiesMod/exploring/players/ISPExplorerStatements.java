@@ -111,6 +111,14 @@ public class ISPExplorerStatements {
     public static ISPSCursor CURSOR = new ISPSCursor(ResourceLocation.fromNamespaceAndPath(GungingOotilitiesMod.MODID, "cursor"));
 
     /**
+     * The cursor slot, pointing always and specifically to the inventory
+     * of this player and not the current container opened.
+     *
+     * @since 1.0.0
+     */
+    public static ISPSTrueCursor TRUE_CURSOR = new ISPSTrueCursor(ResourceLocation.fromNamespaceAndPath(GungingOotilitiesMod.MODID, "true_cursor"));
+
+    /**
      * All the normal storage slots of the inventory, basically
      * the combination of the hotbar and the stash.
      *
