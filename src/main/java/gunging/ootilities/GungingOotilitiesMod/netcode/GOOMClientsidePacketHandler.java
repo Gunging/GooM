@@ -30,7 +30,7 @@ public class GOOMClientsidePacketHandler {
      * @author Gunging
      */
     public static void handleStatementSync(@NotNull GMNClientboundStatementSync syncing, @NotNull Supplier<NetworkEvent.Context> contextSupplier) {
-        ExplorerManager.receiveNetworkSync(syncing);
+        GungingOotilitiesMod.getInstance().getExplorer().receiveNetworkSync(syncing);
     }
 
     /**

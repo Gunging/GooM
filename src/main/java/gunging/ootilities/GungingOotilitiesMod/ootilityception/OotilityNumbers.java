@@ -1,6 +1,7 @@
 package gunging.ootilities.GungingOotilitiesMod.ootilityception;
 
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
@@ -508,6 +509,7 @@ public class OotilityNumbers {
 
     /**
      * Chops a long description into several parts (use for nice lore IDK)
+     *
      * @param colorPrefix Will be placed at the beginning of each line
      * @param longString Long string to be chopped
      * @param paragraphWide Number of characters maximum per line, will naturally
@@ -855,11 +857,11 @@ public class OotilityNumbers {
 
     /**
      * Ever wished to write your own toString method on the spot?
-     *
+     * <br><br>
      * Well now you can with this handy transcriber.
-     * <p></p>
+     * <br><br>
      * Check this example out:
-     * <p></p>
+     * <br><br>
      * <code>
      * ArrayList itemNames = OotilityNumbers.transcribeList(itemsList, (o)->OotilityNumbers.getItemName( ((ItemStack)o) ));
      * </code>
@@ -927,12 +929,50 @@ public class OotilityNumbers {
      * @author Gunging
      */
     @NotNull public static String unwrapFromCurlyBrackets(@NotNull String source) {
+        return unwrapFromBrackets(source, "{", "}", false, false);
+    }
 
-        // Unwrap if Existing
-        if (source.endsWith("}")) { source = source.substring(0, source.length() -1); }
-        if (source.startsWith("{")) { source = source.substring(1); }
+    /**
+     * @param source String that may be wrapped in brackets
+     * @param opening The opening bracket. If missing, this method returns an empty string.
+     * @param closing The closing bracket
+     *
+     * @since 1.0.0
+     * @author Gunging
+     */
+    @NotNull public static String unwrapFromBrackets(@NotNull String source, @NotNull String opening, @NotNull String closing) {
+        return unwrapFromBrackets(source, opening, closing, false, false);
+    }
+    /**
+     * @param source String that may be wrapped in brackets
+     * @param opening The opening bracket. If missing, this method returns an empty string.
+     * @param closing The closing bracket
+     *
+     * @param failWhenUnopened If the brackets are never opened, this will return an EMPTY string.
+     *                         Alternatively, it will assume they started already open.
+     * @param failWhenUnclosed If the brackets are not closed, this will return an EMPTY string.
+     *                         Alternatively, it will just output everything after the first
+     *                         opening bracket.
+     *
+     * @since 1.0.0
+     * @author Gunging
+     */
+    @NotNull public static String unwrapFromBrackets(@NotNull String source, @NotNull String opening, @NotNull String closing, boolean failWhenUnopened, boolean failWhenUnclosed) {
 
-        return source;
+        int op = source.indexOf(opening);
+        if (op < 0) { if (failWhenUnopened) { return ""; } else { op = -opening.length(); } }
+
+        int closeLen = closing.length();
+        int openLen = opening.length();
+        for (int sr = op + openLen; (sr + closeLen - 1) < source.length(); sr++) {
+
+            // Found the closing brackets?
+            if (source.substring(sr, sr + closeLen).equals(closing)) {
+                return source.substring(op + openLen, sr); }
+        }
+
+        // Fail, or return everything after the opening bracket
+        return failWhenUnclosed ? "" : source.substring(op + openLen);
     }
     
     /**
@@ -1033,6 +1073,9 @@ public class OotilityNumbers {
      *         the first occurrence of the specified string. If it is
      *         not found, null is returned. The matched string is always
      *         cut out.
+     *
+     * @author Gunging
+     * @since 1.0.0
      */
     @Contract("!null, _, true -> !null")
     @Nullable public static String extractUntil(@Nullable String source, @Nullable String match, boolean safeguarded) {
@@ -1060,6 +1103,9 @@ public class OotilityNumbers {
      *         the last occurrence of the specified string. If it is
      *         not found, null is returned. The matched string is always
      *         cut out.
+     *
+     * @author Gunging
+     * @since 1.0.0
      */
     @Contract("!null, _, true -> !null")
     @Nullable public static String extractUntilRev(@Nullable String source, @Nullable String match, boolean safeguarded) {
@@ -1087,6 +1133,9 @@ public class OotilityNumbers {
      *         of the first occurrence of the specified string. If it is
      *         not found, null is returned. The matched string is always
      *         cut out.
+     *
+     * @author Gunging
+     * @since 1.0.0
      */
     @Contract("!null, _, true -> !null")
     @Nullable public static String extractAfter(@Nullable String source, @Nullable String match, boolean safeguarded) {
@@ -1114,6 +1163,9 @@ public class OotilityNumbers {
      *         of the last occurrence of the specified string. If it is
      *         not found, null is returned. The matched string is always
      *         cut out.
+     *
+     * @author Gunging
+     * @since 1.0.0
      */
     @Contract("!null, _, true -> !null")
     @Nullable public static String extractAfterRev(@Nullable String source, @Nullable String match, boolean safeguarded) {
@@ -1128,6 +1180,165 @@ public class OotilityNumbers {
 
         // Extract
         return source.substring(index + match.length());
+    }
+
+    /**
+     * Internal Standard:
+     * <br><br>
+     * Only uppercase letters, underscores, and numbers. However,
+     * the very first character must be a letter, preferably but
+     * not necessarily capital.
+     *
+     * @param check String to check against the Internal Standardization rule
+     *
+     * @return If this string meets the Internal Standardization
+     *
+     * @author Gunging
+     * @since 1.0.0
+     */
+    @Contract("null -> false")
+    public static boolean isInternalStandard(@Nullable String check) {
+        if (check == null) { return false; }
+        return check.matches("[a-zA-Z][a-zA-Z0-9_]*");
+    }
+
+    /**
+     * @param r Number from 0 to 255
+     * @param g Number from 0 to 255
+     * @param b Number from 0 to 255
+     *
+     * @return A compound integer encoding for this color
+     *
+     * @author Gunging
+     * @since 1.0.0
+     */
+    public static int bitShiftRGB(int r, int g, int b) {
+        return (r << 16) | (g << 8) | (b);
+    }
+
+    /**
+     * @param r Number from 0 to 255
+     * @param g Number from 0 to 255
+     * @param b Number from 0 to 255
+     *
+     * @param italic If this should encode 1 << 24 for italic
+     * @param bold If this should encode 1 << 25 for bold
+     * @param underline If this should encode 1 << 26 for underline
+     * @param strikethrough If this should encode 1 << 27 for strikethrough
+     *
+     * @return A compound integer encoding for this color and format
+     *
+     * @author Gunging
+     * @since 1.0.0
+     */
+    public static int bitShiftFormat(int r, int g, int b, boolean italic, boolean bold, boolean underline, boolean strikethrough) {
+        return ((strikethrough ? 1 : 0) << 27) |
+                ((underline ? 1 : 0) << 26) |
+                ((bold ? 1 : 0) << 25) |
+                ((italic ? 1 : 0) << 24) |
+                (r << 16) | (g << 8) | (b);
+    }
+
+    /**
+     * @param component Component to apply this style to
+     *
+     * @param compoundFormat The number generated from {@link #bitShiftFormat(int, int, int, boolean, boolean, boolean, boolean)}
+     *
+     * @return This same component but with this style applied
+     *
+     * @author Gunging
+     * @since 1.0.0
+     */
+    @NotNull public static MutableComponent applyStyle(@NotNull MutableComponent component, int compoundFormat) {
+
+        // Unpack and apply style
+        return component.withStyle(style -> style
+                .withColor(unformat(compoundFormat))
+                .withBold(hasBold(compoundFormat))
+                .withItalic(hasItalic(compoundFormat))
+                .withStrikethrough(hasStrikethrough(compoundFormat))
+                .withUnderlined(hasUnderline(compoundFormat)));
+    }
+
+    /**
+     * @param compoundFormat The number generated from {@link #bitShiftFormat(int, int, int, boolean, boolean, boolean, boolean)}
+     *
+     * @return This number removed the format flags
+     *
+     * @author Gunging
+     * @since 1.0.0
+     */
+    public static int unformat(int compoundFormat) {
+        int allFlags = compoundFormat | (1 << 24) | (1 << 25) | (1 << 26) | (1 << 27);
+        return allFlags ^ (1 << 24) ^ (1 << 25) ^ (1 << 26) ^ (1 << 27);
+    }
+
+    /**
+     * @param compoundFormat The number generated from {@link #bitShiftFormat(int, int, int, boolean, boolean, boolean, boolean)}
+     *
+     * @return If it has the italic flag 1 << 24
+     *
+     * @author Gunging
+     * @since 1.0.0
+     */
+    public static boolean hasItalic(int compoundFormat) {
+
+        // Isolate the italics bit
+        int eval = compoundFormat & (1 << 24);
+
+        // Confirm its existence
+        return eval == (1 << 24);
+    }
+
+    /**
+     * @param compoundFormat The number generated from {@link #bitShiftFormat(int, int, int, boolean, boolean, boolean, boolean)}
+     *
+     * @return If it has the bold flag 1 << 25
+     *
+     * @author Gunging
+     * @since 1.0.0
+     */
+    public static boolean hasBold(int compoundFormat) {
+
+        // Isolate the bold bit
+        int eval = compoundFormat & (1 << 25);
+
+        // Confirm its existence
+        return eval == (1 << 25);
+    }
+
+    /**
+     * @param compoundFormat The number generated from {@link #bitShiftFormat(int, int, int, boolean, boolean, boolean, boolean)}
+     *
+     * @return If it has the underline flag 1 << 26
+     *
+     * @author Gunging
+     * @since 1.0.0
+     */
+    public static boolean hasUnderline(int compoundFormat) {
+
+        // Isolate the underline bit
+        int eval = compoundFormat & (1 << 26);
+
+        // Confirm its existence
+        return eval == (1 << 26);
+    }
+
+    /**
+     * @param compoundFormat The number generated from {@link #bitShiftFormat(int, int, int, boolean, boolean, boolean, boolean)}
+     *
+     * @return If it has the strikethrough flag 1 << 27
+     *
+     * @author Gunging
+     * @since 1.0.0
+     */
+    public static boolean hasStrikethrough(int compoundFormat) {
+
+        // Isolate the strikethrough bit
+        int eval = compoundFormat & (1 << 27);
+
+        // Confirm its existence
+        return eval == (1 << 27);
     }
     //endregion
 }

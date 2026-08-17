@@ -37,10 +37,10 @@ public abstract class PlayerListMixin {
     public void onPlayerLogin(Connection pNetManager, ServerPlayer pPlayer, CallbackInfo ci) {
 
         // Iterate all namespaces
-        for (String namespace : ExplorerManager.listStatementNamespaces()) {
+        for (String namespace : GungingOotilitiesMod.getInstance().getExplorer().listStatementNamespaces()) {
 
             // To Sync
-            ArrayList<ItemExplorerStatement<?,?>> toSync = ExplorerManager.listStatements(namespace);
+            ArrayList<ItemExplorerStatement<?,?>> toSync = GungingOotilitiesMod.getInstance().getExplorer().listStatements(namespace);
             if (toSync.isEmpty()) { continue; }
 
             // Send information

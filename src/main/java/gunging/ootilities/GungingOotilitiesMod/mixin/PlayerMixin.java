@@ -1,22 +1,23 @@
 package gunging.ootilities.GungingOotilitiesMod.mixin;
 
-import gunging.ootilities.GungingOotilitiesMod.events.ExtensionEventBroadcaster;
-import gunging.ootilities.GungingOotilitiesMod.events.extension.ItemFlowExtensionReason;
-import net.minecraft.nbt.CompoundTag;
+import gunging.ootilities.GungingOotilitiesMod.mixininterfaces.WithStatsStack;
+import gunging.ootilities.GungingOotilitiesMod.stats.core.*;
 import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
-import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+import org.spongepowered.asm.mixin.Unique;
+
+import java.util.ArrayList;
+import java.util.HashMap;
 
 @Mixin(Player.class)
-public abstract class PlayerMixin extends LivingEntity {
+public abstract class PlayerMixin extends LivingEntity implements WithStatsStack {
 
     protected PlayerMixin(EntityType<? extends LivingEntity> pEntityType, Level pLevel) {
         super(pEntityType, pLevel);
@@ -35,4 +36,7 @@ public abstract class PlayerMixin extends LivingEntity {
     }
 
     //*/
+
+    @Unique @NotNull StatStack gungingoom$stats = new StatStack();
+    @Override public @NotNull StatStack gungingoom$getStatStack() { return gungingoom$stats; }
 }

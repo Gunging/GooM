@@ -1,5 +1,6 @@
 package gunging.ootilities.GungingOotilitiesMod.netcode.packets.serverbound;
 
+import gunging.ootilities.GungingOotilitiesMod.GungingOotilitiesMod;
 import gunging.ootilities.GungingOotilitiesMod.exploring.ExplorerManager;
 import gunging.ootilities.GungingOotilitiesMod.exploring.ItemExplorerStatement;
 import gunging.ootilities.GungingOotilitiesMod.netcode.GOOMNetworkManager;
@@ -56,10 +57,10 @@ public class GMNServerboundStatementSyncRequest {
             if (player == null) { return; }
 
             // Iterate all namespaces
-            for (String namespace : ExplorerManager.listStatementNamespaces()) {
+            for (String namespace : GungingOotilitiesMod.getInstance().getExplorer().listStatementNamespaces()) {
 
                 // To Sync
-                ArrayList<ItemExplorerStatement<?,?>> toSync = ExplorerManager.listStatements(namespace);
+                ArrayList<ItemExplorerStatement<?,?>> toSync = GungingOotilitiesMod.getInstance().getExplorer().listStatements(namespace);
                 if (toSync.isEmpty()) { continue; }
 
                 // Send information
