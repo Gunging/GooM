@@ -13,11 +13,19 @@ import gunging.ootilities.GungingOotilitiesMod.stats.commands.StatsCommandNode;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.commands.SharedSuggestionProvider;
+import net.minecraft.commands.synchronization.ArgumentTypeInfo;
+import net.minecraft.commands.synchronization.ArgumentTypeInfos;
+import net.minecraft.commands.synchronization.SingletonArgumentInfo;
+import net.minecraft.core.registries.Registries;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.RegisterCommandsEvent;
 import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
+import net.minecraftforge.registries.DeferredRegister;
+import net.minecraftforge.registries.RegistryObject;
+import net.minecraftforge.server.command.ModIdArgument;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -70,6 +78,37 @@ public class GCCCommandRegistry {
     //endregion
 
     //region Transcription
+    /**
+     * Seemingly, I must register the command argument type or it crashes the game :B
+     *
+     * @since 1.0.0
+     */
+    private static final DeferredRegister<ArgumentTypeInfo<?, ?>> COMMAND_ARGUMENT_TYPES = DeferredRegister.create(Registries.COMMAND_ARGUMENT_TYPE, GungingOotilitiesMod.MODID);
+
+    /**
+     * GooM String argument type that is just a string that doesn't freaking complain
+     * about symbols like, bruh? Since when do normal command arguments complain about
+     * symbols.
+     *
+     * @since 1.0.0
+     */
+    private static final RegistryObject<SingletonArgumentInfo<GooMQuotableString>> GOOM_ARGUMENT_TYPE = COMMAND_ARGUMENT_TYPES.register("goom", () ->
+            ArgumentTypeInfos.registerByClass(GooMQuotableString.class, SingletonArgumentInfo.contextFree(GooMQuotableString::new)));
+
+    /**
+     * Load this system onto the mod during mod loading initialization
+     *
+     * @param context Mod Loading context
+     *
+     * @author Gunging
+     * @since 1.0.0
+     */
+    public static void OnModLoadInitialize(FMLJavaModLoadingContext context) {
+
+        // Run the registered hold points event
+        COMMAND_ARGUMENT_TYPES.register(context.getModEventBus());
+    }
+
     /**
      * Collects all GooM command trees and registers them to the game
      *
@@ -160,7 +199,7 @@ public class GCCCommandRegistry {
             for (GCMExpectedArgument<?> goomArgument : ((GCMCommandNode) node).getArgumentsByIndex()) {
 
                 // Add arguments as quotable phrases
-                ArgumentBuilder<CommandSourceStack, ?> argumentNode = Commands.argument(goomArgument.getArgumentKeyword(), StringArgumentType.string())
+                ArgumentBuilder<CommandSourceStack, ?> argumentNode = Commands.argument(goomArgument.getArgumentKeyword(), new GooMQuotableString())
 
                         // Tab Completion Delegation
                         .suggests((css, builder) -> {
@@ -170,7 +209,7 @@ public class GCCCommandRegistry {
                             argBuilt.add(node.getKeyword());
                             for (GCMExpectedArgument<?> provided : ((GCMCommandNode) node).getArgumentsByIndex()) {
                                 try {
-                                    String in = StringArgumentType.getString(css, provided.getArgumentKeyword());
+                                    String in = css.getArgument(provided.getArgumentKeyword(), String.class);
                                     argBuilt.add(in);
                                 } catch (IllegalArgumentException ignored) { break; }
                             }
@@ -185,13 +224,6 @@ public class GCCCommandRegistry {
                             // Suggest appropriately
                             ArrayList<String> tabCompletion = node.tabComplete(options, argBuilt.toArray(new String[0]));
                             return SharedSuggestionProvider.suggest(tabCompletion, builder);
-
-                        // Command Execution Delegation
-                        }).executes(css -> {
-
-                            //todo Make sure to run /help mode when no args are provided
-
-                            return 0;
                         });
 
                 // Append to previous

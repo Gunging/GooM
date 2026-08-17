@@ -1,5 +1,6 @@
 package gunging.ootilities.GungingOotilitiesMod;
 
+import gunging.ootilities.GungingOotilitiesMod.commands.forge.GCCCommandRegistry;
 import gunging.ootilities.GungingOotilitiesMod.exploring.ExplorerManager;
 import gunging.ootilities.GungingOotilitiesMod.netcode.GOOMNetworkManager;
 import gunging.ootilities.GungingOotilitiesMod.stats.StatsManager;
@@ -36,6 +37,9 @@ public class GungingOotilitiesMod {
         // Register this mod onto Forge
         MinecraftForge.EVENT_BUS.register(this);
         context.getModEventBus().addListener(this::OnCommonSetup);
+
+        // Startup the mod's systems
+        GCCCommandRegistry.OnModLoadInitialize(context);
     }
 
     /**
