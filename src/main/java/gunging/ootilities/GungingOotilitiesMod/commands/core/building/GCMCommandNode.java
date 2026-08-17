@@ -179,6 +179,9 @@ public abstract class GCMCommandNode extends GCMNode {
     public boolean hasComplexAutocompleteArguments() { return complexAutocompleteArguments; }
 
     /**
+     * <b>The arguments in this hash map may be out of order, consider if you want
+     * {@link #getArgumentsByIndex()} for an ordered list instead. </b>
+     *
      * @author Gunging
      * @since 1.0.0
      */

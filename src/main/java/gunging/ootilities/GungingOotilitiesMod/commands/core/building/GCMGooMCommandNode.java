@@ -164,7 +164,7 @@ public abstract class GCMGooMCommandNode extends GCMCommandNode {
         getHelp().activatePrefix(true, null);
         StringBuilder syntax = new StringBuilder("$r/... ");
         syntax.append(getKeyword());
-        for (GCMExpectedArgument<?> argument : getArguments().values()) { syntax.append(" ").append(argument.forSyntaxDisplay()); }
+        for (GCMExpectedArgument<?> argument : getArgumentsByIndex()) { syntax.append(" ").append(argument.forSyntaxDisplay()); }
         getHelp().log(FriendlyFeedbackCategory.INFORMATION, syntax.toString());
 
         // Add long description
@@ -174,7 +174,7 @@ public abstract class GCMGooMCommandNode extends GCMCommandNode {
         }
 
         // Describe arguments
-        for (GCMExpectedArgument<?> argument : getArguments().values()) {
+        for (GCMExpectedArgument<?> argument : getArgumentsByIndex()) {
             getHelp().log(FriendlyFeedbackCategory.INFORMATION, "$u  " + argument.forSyntaxDisplay() + "$b " + argument.getArgumentDescription());
         }
     }
