@@ -4,7 +4,6 @@ import gunging.ootilities.GungingOotilitiesMod.commands.core.building.argument.G
 import gunging.ootilities.GungingOotilitiesMod.commands.core.building.GCMGooMCommandNode;
 import gunging.ootilities.GungingOotilitiesMod.commands.core.building.argument.GCMStatArgument;
 import gunging.ootilities.GungingOotilitiesMod.commands.core.parsing.GCPCommandStack;
-import gunging.ootilities.GungingOotilitiesMod.commands.core.parsing.GCPContextOptions;
 import gunging.ootilities.GungingOotilitiesMod.commands.forge.GCCCommandRegistry;
 import gunging.ootilities.GungingOotilitiesMod.commands.forge.argument.GCMPlayerArgument;
 import gunging.ootilities.GungingOotilitiesMod.commands.forge.argument.GCPProvidedPlayer;
@@ -29,7 +28,7 @@ public class InherentStatCommand extends GCMGooMCommandNode {
      * @since 1.0.0
      */
     public InherentStatCommand() {
-        super("base", "Set Base Stat", "Sets the base value of this stat for a specific player. ");
+        super("base", "Set Base Stat", "Sets the base value of this stat for a specific entity. ");
 
         // Build arguments
         addArgument(playerArg);
@@ -37,12 +36,7 @@ public class InherentStatCommand extends GCMGooMCommandNode {
         addArgument(valueArg);
 
         // Build /help
-        getHelp().activatePrefix(true, "Base Stats");
-        getHelp().log(FriendlyFeedbackCategory.INFORMATION, "$rChange the base stats of an entity. ");
-        getHelp().activatePrefix(false, "Base Stats");
-        for (String helpLine : OotilityNumbers.chop("The base stats of an entity are unique to itself regardless of its equipment or environment. For players, these changes are retained after death or relog. ", GCCCommandRegistry.HELP_PARAGRAPH_WIDTH, "$b")) {
-            getHelp().log(FriendlyFeedbackCategory.INFORMATION, helpLine);
-        }
+        buildHelp("Base Stats", "$rChange the base stats of an entity. ", "The base stats of an entity are unique to itself regardless of its equipment or environment. For players, these changes are retained after death or relog. ");
     }
 
     /**

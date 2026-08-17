@@ -1,7 +1,10 @@
 package gunging.ootilities.GungingOotilitiesMod.commands.core.building;
 
 import gunging.ootilities.GungingOotilitiesMod.commands.core.parsing.*;
+import gunging.ootilities.GungingOotilitiesMod.commands.forge.GCCCommandRegistry;
+import gunging.ootilities.GungingOotilitiesMod.commands.friendly.FriendlyFeedbackCategory;
 import gunging.ootilities.GungingOotilitiesMod.commands.friendly.FriendlyFeedbackProvider;
+import gunging.ootilities.GungingOotilitiesMod.ootilityception.OotilityNumbers;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -99,7 +102,6 @@ public abstract class GCMGooMCommandNode extends GCMCommandNode {
         return "";
     }
 
-
     /**
      * This represents quick preliminary checks, such as the number
      * of arguments making sense, before actually reading the arguments.
@@ -143,4 +145,37 @@ public abstract class GCMGooMCommandNode extends GCMCommandNode {
      * @since 1.0.0
      */
     @Nullable public abstract String execute(@NotNull GCPCommandStack stack, @Nullable FriendlyFeedbackProvider ffp);
+
+    /**
+     * @param subdivision The prefix subdivision for this command
+     * @param shortDescription A very concise description of what this does
+     * @param longDescription A more elaborate description paragraph to be chopped.
+     *
+     * @author Gunging
+     * @since 1.0.0
+     */
+    public void buildHelp(@NotNull String subdivision, @NotNull String shortDescription, @NotNull String longDescription) {
+
+        // Build /help
+        getHelp().activatePrefix(true, subdivision);
+        getHelp().log(FriendlyFeedbackCategory.INFORMATION, shortDescription);
+
+        // Summarize syntax
+        getHelp().activatePrefix(true, null);
+        StringBuilder syntax = new StringBuilder("$r/... ");
+        syntax.append(getKeyword());
+        for (GCMExpectedArgument<?> argument : getArguments().values()) { syntax.append(" ").append(argument.forSyntaxDisplay()); }
+        getHelp().log(FriendlyFeedbackCategory.INFORMATION, syntax.toString());
+
+        // Add long description
+        getHelp().activatePrefix(false, null);
+        for (String helpLine : OotilityNumbers.chop(longDescription, GCCCommandRegistry.HELP_PARAGRAPH_WIDTH, "$b")) {
+            getHelp().log(FriendlyFeedbackCategory.INFORMATION, helpLine);
+        }
+
+        // Describe arguments
+        for (GCMExpectedArgument<?> argument : getArguments().values()) {
+            getHelp().log(FriendlyFeedbackCategory.INFORMATION, "$u  " + argument.forSyntaxDisplay() + "$b " + argument.getArgumentDescription());
+        }
+    }
 }

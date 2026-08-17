@@ -27,7 +27,7 @@ public class StatsCommandNode extends GCMBranchNode {
         getHelp().activatePrefix(true, "Stats");
         getHelp().log(FriendlyFeedbackCategory.INFORMATION, "$rPerform operations with stats");
         getHelp().activatePrefix(false, "Stats");
-        for (String helpLine : OotilityNumbers.chop("The GooM stats system is an RPG engine, similar to vanilla attributes but peak.", GCCCommandRegistry.HELP_PARAGRAPH_WIDTH, "$b")) {
+        for (String helpLine : OotilityNumbers.chop("The GooM stats system is an RPG engine, similar to vanilla attributes but peak. ", GCCCommandRegistry.HELP_PARAGRAPH_WIDTH, "$b")) {
             getHelp().log(FriendlyFeedbackCategory.INFORMATION, helpLine);
         }
     }

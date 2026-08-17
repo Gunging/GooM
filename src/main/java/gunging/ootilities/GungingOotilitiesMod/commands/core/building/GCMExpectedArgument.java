@@ -193,4 +193,15 @@ public abstract class GCMExpectedArgument<Value> {
         // That is the result
         return ret;
     }
+
+    /**
+     * @return Returns the {@link #getArgumentKeyword()} of this argument in
+     * square brackets if optional, or in angles if required.
+     *
+     * @author Gunging
+     * @since 1.0.0
+     */
+    @NotNull public String forSyntaxDisplay() {
+        return isOptional() ? "[" + getArgumentKeyword() + "]" : "<" + getArgumentKeyword() + ">";
+    }
 }

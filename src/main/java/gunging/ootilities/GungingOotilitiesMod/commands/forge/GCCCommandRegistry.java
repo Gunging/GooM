@@ -146,6 +146,12 @@ public class GCCCommandRegistry {
         // Build core around keyword
         ArgumentBuilder<CommandSourceStack, ?> ret = Commands.literal(node.getKeyword());
 
+        // Always register /help mode
+        ret.executes(css -> {
+            node.getHelp().sendAllTo((bakedMessage -> css.getSource().sendSystemMessage(bakedMessage)));
+            return 1;
+        });
+
         // Command nodes rely on interpreting the Forge Command into a GooM command then running
         if (node instanceof GCMCommandNode) {
 
@@ -201,13 +207,7 @@ public class GCCCommandRegistry {
 
             // Allow chaining
             //ret.then(Commands.literal("oS=").redirect(dispatcher.getRoot()));
-
-        // If not a command node, register /help mode
-        }else {
-            ret.executes(css -> {
-                node.getHelp().sendAllTo((bakedMessage -> css.getSource().sendSystemMessage(bakedMessage)));
-                return 1;
-            }); }
+        }
 
         // If it has children, register the children
         if (node instanceof GCMBranchNode) {
