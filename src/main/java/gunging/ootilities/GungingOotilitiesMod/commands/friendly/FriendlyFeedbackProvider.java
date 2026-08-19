@@ -1,5 +1,7 @@
 package gunging.ootilities.GungingOotilitiesMod.commands.friendly;
 
+import gunging.ootilities.GungingOotilitiesMod.GungingOotilitiesMod;
+import gunging.ootilities.GungingOotilitiesMod.mod.GooMGamerules;
 import net.minecraft.network.chat.MutableComponent;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -52,6 +54,28 @@ public class FriendlyFeedbackProvider {
      * @since 1.0.0
      */
     public FriendlyFeedbackProvider(@NotNull FriendlyFeedbackPalette palette) { brandPalette = palette; }
+
+    /**
+     * The gamerules effective for this feedback provider
+     * If not set, the default gamerules will be used {@link GungingOotilitiesMod#getGamerules()}
+     *
+     * @since 1.0.0
+     */
+    @Nullable GooMGamerules overridingGamerules;
+
+    /**
+     * @author Gunging
+     * @since 1.0.0
+     */
+    public void setOverridingGamerules(@Nullable GooMGamerules gamerules) { overridingGamerules = gamerules; }
+
+    /**
+     * @return The gamerules effective for this feedback provider
+     *
+     * @author Gunging
+     * @since 1.0.0
+     */
+    @NotNull public GooMGamerules getGamerules() { return overridingGamerules == null ? GungingOotilitiesMod.getInstance().getGamerules() : overridingGamerules; }
     //endregion
 
     //region Collecting Messages
@@ -397,6 +421,55 @@ public class FriendlyFeedbackProvider {
 
         // Style and send
         return msg.forPlayer(palette);
+    }
+
+    /**
+     * @param ffp The Friendly Feedback Provider into which to log this error
+     * @param message The message to send to the user in category {@link FriendlyFeedbackCategory#ERROR}
+     * @param replaces The replaces to include in the message instead of {0}, {1}, ...{N}
+     *
+     * @author Gunging
+     * @since 1.0.0
+     */
+    public static void logError(@Nullable FriendlyFeedbackProvider ffp, @NotNull String message, @Nullable String... replaces) {
+        if (ffp != null && ffp.getGamerules().isSendErrorFeedback()) {
+            ffp.log(FriendlyFeedbackCategory.ERROR, message, replaces); }
+    }
+
+    /**
+     * @param ffp The Friendly Feedback Provider into which to log this win
+     * @param message The message to send to the user in category {@link FriendlyFeedbackCategory#SUCCESS}
+     * @param replaces The replaces to include in the message instead of {0}, {1}, ...{N}
+     *
+     * @author Gunging
+     * @since 1.0.0
+     */
+    public static void logSuccess(@Nullable FriendlyFeedbackProvider ffp, @NotNull String message, @Nullable String... replaces) {
+        if (ffp != null && ffp.getGamerules().isSendSuccessFeedback()) {
+            ffp.log(FriendlyFeedbackCategory.SUCCESS, message, replaces); }
+    }
+    /**
+     * @param ffp The Friendly Feedback Provider into which to log this fail
+     * @param message The message to send to the user in category {@link FriendlyFeedbackCategory#FAILURE}
+     * @param replaces The replaces to include in the message instead of {0}, {1}, ...{N}
+     *
+     * @author Gunging
+     * @since 1.0.0
+     */
+    public static void logFailure(@Nullable FriendlyFeedbackProvider ffp, @NotNull String message, @Nullable String... replaces) {
+        if (ffp != null && ffp.getGamerules().isSendFailFeedback()) {
+            ffp.log(FriendlyFeedbackCategory.FAILURE, message, replaces); }
+    }
+    /**
+     * @param ffp The Friendly Feedback Provider into which to log this info
+     * @param message The message to send to the user in category {@link FriendlyFeedbackCategory#INFORMATION}
+     * @param replaces The replaces to include in the message instead of {0}, {1}, ...{N}
+     *
+     * @author Gunging
+     * @since 1.0.0
+     */
+    public static void logInfo(@Nullable FriendlyFeedbackProvider ffp, @NotNull String message, @Nullable String... replaces) {
+        if (ffp != null) { ffp.log(FriendlyFeedbackCategory.INFORMATION, message, replaces); }
     }
     //endregion
 }

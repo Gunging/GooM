@@ -4,12 +4,10 @@ import gunging.ootilities.GungingOotilitiesMod.commands.core.building.argument.G
 import gunging.ootilities.GungingOotilitiesMod.commands.core.building.GCMGooMCommandNode;
 import gunging.ootilities.GungingOotilitiesMod.commands.core.building.argument.GCMStatArgument;
 import gunging.ootilities.GungingOotilitiesMod.commands.core.parsing.GCPCommandStack;
-import gunging.ootilities.GungingOotilitiesMod.commands.forge.GCCCommandRegistry;
 import gunging.ootilities.GungingOotilitiesMod.commands.forge.argument.GCMPlayerArgument;
 import gunging.ootilities.GungingOotilitiesMod.commands.forge.argument.GCPProvidedPlayer;
 import gunging.ootilities.GungingOotilitiesMod.commands.friendly.FriendlyFeedbackCategory;
 import gunging.ootilities.GungingOotilitiesMod.commands.friendly.FriendlyFeedbackProvider;
-import gunging.ootilities.GungingOotilitiesMod.ootilityception.OotilityNumbers;
 import net.minecraft.network.chat.Component;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -36,7 +34,7 @@ public class InherentStatCommand extends GCMGooMCommandNode {
         addArgument(valueArg);
 
         // Build /help
-        buildHelp("Base Stats", "$rChange the base stats of an entity. ", "The base stats of an entity are unique to itself regardless of its equipment or environment. For players, these changes are retained after death or relog. ");
+        buildHelp("$rChange the base stats of an entity. ", "The base stats of an entity are unique to itself regardless of its equipment or environment. For players, these changes are retained after death or relog. ");
     }
 
     /**
@@ -64,12 +62,18 @@ public class InherentStatCommand extends GCMGooMCommandNode {
      * @author Gunging
      * @since 1.0.0
      */
+    @Override public @NotNull String getCommandSubdivision() { return "Base Stats"; }
+
+    /**
+     * @author Gunging
+     * @since 1.0.0
+     */
     @Override @Nullable public String execute(@NotNull GCPCommandStack stack, @Nullable FriendlyFeedbackProvider ffp) {
+        FriendlyFeedbackProvider.logInfo(ffp, "INHERENT Start");
 
         GCPProvidedPlayer player = (GCPProvidedPlayer) playerArg.read(stack);
-
-        if (player.getParsed() != null) { player.getParsed().sendSystemMessage(Component.literal("EEEOEO"));}
-
+        if (player.getParsed() != null) { FriendlyFeedbackProvider.logInfo(ffp, "INHERENT Player $s{0}$b! ", player.getParsed().getScoreboardName()); }
+        FriendlyFeedbackProvider.logInfo(ffp, "INHERENT End");
         return "";
     }
 }

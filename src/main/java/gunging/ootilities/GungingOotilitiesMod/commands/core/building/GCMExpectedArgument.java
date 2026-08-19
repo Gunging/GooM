@@ -176,17 +176,16 @@ public abstract class GCMExpectedArgument<Value> {
         if (isOptional()) {
 
             // Was this argument omitted? Consume an optional credit and absorb error
-            if (!ret.isSuccessful()) {
-                if (stack.getOptionalCredits() > 0) {
+            // Or perhaps, we know for sure this argument was NOT provided
+            if (stack.isConfirmedNoOptionals() || !ret.isSuccessful()) {
 
-                    // Absorb error, set default value
-                    ret.setParsed(getDefaultValue());
-                    ret.setParsingError(null);
-                    ret.setDefaulted(true);
+                // Absorb error, set default value
+                ret.setParsed(getDefaultValue());
+                ret.setParsingError(null);
+                ret.setDefaulted(true);
 
-                    // Account for this in future index pulls
-                    stack.consumeOptionalCredit();
-                }
+                // Account for this exception in future index pulls
+                stack.consumeOptionalCredit();
             }
         }
 

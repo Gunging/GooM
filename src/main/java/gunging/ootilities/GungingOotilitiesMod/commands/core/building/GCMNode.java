@@ -5,6 +5,7 @@ import gunging.ootilities.GungingOotilitiesMod.commands.FFPGooM;
 import gunging.ootilities.GungingOotilitiesMod.commands.core.parsing.GCPContextOptions;
 import gunging.ootilities.GungingOotilitiesMod.commands.friendly.FriendlyFeedbackProvider;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -88,7 +89,7 @@ public abstract class GCMNode {
      *
      * @since 1.0.0
      */
-    @NotNull FriendlyFeedbackProvider help = new FriendlyFeedbackProvider(new FFPGooM());
+    @Nullable FriendlyFeedbackProvider help;
 
     /**
      * @return The chat messages displayed when calling this node with no arguments
@@ -96,7 +97,10 @@ public abstract class GCMNode {
      * @author Gunging
      * @since 1.0.0
      */
-    public @NotNull FriendlyFeedbackProvider getHelp() { return help; }
+    public @NotNull FriendlyFeedbackProvider getHelp() {
+        if (help == null) { help = newFeedbackProvider(); }
+        return help;
+    }
 
     /**
      * @param args The arguments that follow, where the ZEROTH argument is
@@ -153,5 +157,18 @@ public abstract class GCMNode {
 
         // Convert to array
         return ret.toArray(new String[0]);
+    }
+
+    /**
+     * @return Builds a new friendly feedback provider with the
+     *         correct palette and style to execute this command
+     *
+     * @author Gunging
+     * @since 1.0.0
+     */
+    @NotNull public FriendlyFeedbackProvider newFeedbackProvider() {
+        FriendlyFeedbackProvider ret = new FriendlyFeedbackProvider(new FFPGooM());
+        ret.activatePrefix(true, null);
+        return ret;
     }
 }

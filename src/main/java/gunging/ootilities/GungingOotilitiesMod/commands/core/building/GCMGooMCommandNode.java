@@ -1,10 +1,12 @@
 package gunging.ootilities.GungingOotilitiesMod.commands.core.building;
 
+import gunging.ootilities.GungingOotilitiesMod.GungingOotilitiesMod;
 import gunging.ootilities.GungingOotilitiesMod.commands.core.parsing.*;
 import gunging.ootilities.GungingOotilitiesMod.commands.forge.GCCCommandRegistry;
 import gunging.ootilities.GungingOotilitiesMod.commands.friendly.FriendlyFeedbackCategory;
 import gunging.ootilities.GungingOotilitiesMod.commands.friendly.FriendlyFeedbackProvider;
 import gunging.ootilities.GungingOotilitiesMod.ootilityception.OotilityNumbers;
+import net.minecraft.commands.CommandSourceStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -31,11 +33,23 @@ public abstract class GCMGooMCommandNode extends GCMCommandNode {
     }
 
     /**
+     * This is like a display name for the keyword that is more
+     * of an internal name, but it must still be extremely short
+     * like two words at MOST.
+     *
+     * @return A concisely-identifying name for this command
+     *
+     * @author Gunging
+     * @since 1.0.0
+     */
+    @NotNull public abstract String getCommandSubdivision();
+
+    /**
      * @author Gunging
      * @since 1.0.0
      */
     @Override
-    public @NotNull ArrayList<String> tabComplete(@NotNull GCPContextOptions source, @NotNull String[] args) {
+    @NotNull public ArrayList<String> tabComplete(@NotNull GCPContextOptions source, @NotNull String[] args) {
 
         // Cheaper less-accurate method
         if (doNotParseForTabComplete()) {
@@ -49,9 +63,9 @@ public abstract class GCMGooMCommandNode extends GCMCommandNode {
             ArrayList<String> ret = new ArrayList<>();
             for (int i = minimalCurrentArg; i <= maximumCurrentArg; i++) {
                 GCMExpectedArgument<?> exArgument = getArgumentsByIndex()[i];
-                ret.addAll(exArgument.getUbiquitousSuggestions());
-            }
+                ret.addAll(exArgument.getUbiquitousSuggestions()); }
 
+            // Done, just suggest all possibilities with no intelligence
             return ret;
         }
 
@@ -63,8 +77,9 @@ public abstract class GCMGooMCommandNode extends GCMCommandNode {
         GCPArgumentStack transformed = interpreter.transform(argsToFullPath(args));
         GCPArgumentStack interpreted = interpreter.interpret(getRoot(), transformed);
         if (!(interpreted instanceof GCPCommandStack)) {
+            GungingOotilitiesMod.Log("<GCMGooMCommandNode.TabComplete() Fatal Error>");
             ArrayList<String> ret = new ArrayList<>();
-            ret.add("<GCMGooMCommandNode Fatal Error>");
+            ret.add("<GooM-ERROR>");
             return ret; }
         GCPCommandStack stacked = (GCPCommandStack) interpreted;
         stacked.getOptions().withContext(source);
@@ -99,7 +114,35 @@ public abstract class GCMGooMCommandNode extends GCMCommandNode {
      */
     @Override
     public @Nullable String execute(@NotNull GCPContextOptions source, @NotNull String[] args, @Nullable FriendlyFeedbackProvider ffp) {
-        return "";
+
+        // Run /help when no arguments were provided
+        if (args.length < 2) {
+            CommandSourceStack css = source.getCommandSourceStack();
+            if (css != null) { getHelp().sendAllTo((css::sendSystemMessage)); }
+            return "";
+        }
+
+        // Fully interpret command
+        String[] fullArgs = argsToFullPath(args);
+        GCPCommandInterpreter interpreter = new GCPCommandInterpreter();
+        GCPArgumentStack transformed = interpreter.transform(fullArgs);
+        GCPArgumentStack interpreted = interpreter.interpret(getRoot(), transformed);
+        if (!(interpreted instanceof GCPCommandStack)) {
+            GungingOotilitiesMod.Log("<GCMGooMCommandNode.Execute() Fatal Error>");
+            return ""; }
+
+        // Finalize interpretation
+        GCPCommandStack stacked = (GCPCommandStack) interpreted;
+        stacked.getOptions().withContext(source);
+        prepareExecute(stacked);
+
+        // Catch fundamental errors before even parsing arguments
+        if (stacked.getLowParsingError() != null) {
+            FriendlyFeedbackProvider.logError(ffp, stacked.getLowParsingError());
+            return ""; }
+
+        // Proper execution
+        return execute(stacked, ffp);
     }
 
     /**
@@ -119,10 +162,10 @@ public abstract class GCMGooMCommandNode extends GCMCommandNode {
         int minimumRequiredArguments = getArguments().size() - getOptionalArgsCount();
         int maximumArguments = getArguments().size();
         if (minimumRequiredArguments > stack.size()) {
-            stack.setLowParsingError("Not enough arguments. Received " + stack.size() + ", expected a minimum of " + minimumRequiredArguments + ". ");
+            stack.setLowParsingError("$fNot enough arguments! Received $r" + stack.size() + "$f, expected a minimum of $e" + minimumRequiredArguments + "$f. ");
             return; }
         if (maximumArguments < stack.size()) {
-            stack.setLowParsingError("Too many arguments. Received " + stack.size() + ", expected a maximum of " + maximumArguments + ". ");
+            stack.setLowParsingError("$fToo many arguments! Received $r" + stack.size() + "$f, expected a maximum of $e" + maximumArguments + "$f. ");
             return; }
 
         // Math that involves optional args
@@ -147,18 +190,23 @@ public abstract class GCMGooMCommandNode extends GCMCommandNode {
     @Nullable public abstract String execute(@NotNull GCPCommandStack stack, @Nullable FriendlyFeedbackProvider ffp);
 
     /**
-     * @param subdivision The prefix subdivision for this command
      * @param shortDescription A very concise description of what this does
      * @param longDescription A more elaborate description paragraph to be chopped.
      *
      * @author Gunging
      * @since 1.0.0
      */
-    public void buildHelp(@NotNull String subdivision, @NotNull String shortDescription, @NotNull String longDescription) {
+    public void buildHelp(@NotNull String shortDescription, @NotNull String longDescription) {
 
         // Build /help
-        getHelp().activatePrefix(true, subdivision);
+        getHelp().activatePrefix(true, getCommandSubdivision());
         getHelp().log(FriendlyFeedbackCategory.INFORMATION, shortDescription);
+
+        // Add long description
+        getHelp().activatePrefix(false, null);
+        for (String helpLine : OotilityNumbers.chop(longDescription, GCCCommandRegistry.HELP_PARAGRAPH_WIDTH, "$b")) {
+            getHelp().log(FriendlyFeedbackCategory.INFORMATION, helpLine);
+        }
 
         // Summarize syntax
         getHelp().activatePrefix(true, null);
@@ -167,15 +215,21 @@ public abstract class GCMGooMCommandNode extends GCMCommandNode {
         for (GCMExpectedArgument<?> argument : getArgumentsByIndex()) { syntax.append(" ").append(argument.forSyntaxDisplay()); }
         getHelp().log(FriendlyFeedbackCategory.INFORMATION, syntax.toString());
 
-        // Add long description
-        getHelp().activatePrefix(false, null);
-        for (String helpLine : OotilityNumbers.chop(longDescription, GCCCommandRegistry.HELP_PARAGRAPH_WIDTH, "$b")) {
-            getHelp().log(FriendlyFeedbackCategory.INFORMATION, helpLine);
-        }
-
         // Describe arguments
+        getHelp().activatePrefix(false, null);
         for (GCMExpectedArgument<?> argument : getArgumentsByIndex()) {
             getHelp().log(FriendlyFeedbackCategory.INFORMATION, "$u  " + argument.forSyntaxDisplay() + "$b " + argument.getArgumentDescription());
         }
+    }
+
+    /**
+     * @author Gunging
+     * @since 1.0.0
+     */
+    @Override
+    public @NotNull FriendlyFeedbackProvider newFeedbackProvider() {
+        FriendlyFeedbackProvider ret = super.newFeedbackProvider();
+        ret.activatePrefix(true, getCommandSubdivision());
+        return ret;
     }
 }

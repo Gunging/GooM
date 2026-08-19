@@ -4,10 +4,16 @@ import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.builder.ArgumentBuilder;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
+import com.mojang.brigadier.context.CommandContext;
 import gunging.ootilities.GungingOotilitiesMod.GungingOotilitiesMod;
+import gunging.ootilities.GungingOotilitiesMod.commands.FFPGooM;
 import gunging.ootilities.GungingOotilitiesMod.commands.core.building.*;
+import gunging.ootilities.GungingOotilitiesMod.commands.core.parsing.GCPArgumentStack;
+import gunging.ootilities.GungingOotilitiesMod.commands.core.parsing.GCPCommandInterpreter;
+import gunging.ootilities.GungingOotilitiesMod.commands.core.parsing.GCPCommandStack;
 import gunging.ootilities.GungingOotilitiesMod.commands.core.parsing.GCPContextOptions;
 import gunging.ootilities.GungingOotilitiesMod.commands.friendly.FriendlyFeedbackCategory;
+import gunging.ootilities.GungingOotilitiesMod.commands.friendly.FriendlyFeedbackProvider;
 import gunging.ootilities.GungingOotilitiesMod.ootilityception.OotilityNumbers;
 import gunging.ootilities.GungingOotilitiesMod.stats.commands.StatsCommandNode;
 import net.minecraft.commands.CommandSourceStack;
@@ -204,26 +210,30 @@ public class GCCCommandRegistry {
                         // Tab Completion Delegation
                         .suggests((css, builder) -> {
 
-                            // Transcribe command from Minecraft to GooM
-                            ArrayList<String> argBuilt = new ArrayList<>();
-                            argBuilt.add(node.getKeyword());
-                            for (GCMExpectedArgument<?> provided : ((GCMCommandNode) node).getArgumentsByIndex()) {
-                                try {
-                                    String in = css.getArgument(provided.getArgumentKeyword(), String.class);
-                                    argBuilt.add(in);
-                                } catch (IllegalArgumentException ignored) { break; }
-                            }
-
-                            // Include empty arguments
-                            if (css.getInput().endsWith(" ")) { argBuilt.add(""); }
-
                             // Provide options
                             GCPContextOptions options = new GCPContextOptions();
                             options.setCommandSourceStack(css.getSource());
 
                             // Suggest appropriately
-                            ArrayList<String> tabCompletion = node.tabComplete(options, argBuilt.toArray(new String[0]));
+                            ArrayList<String> tabCompletion = node.tabComplete(options, extractArguments((GCMCommandNode) node, css));
                             return SharedSuggestionProvider.suggest(tabCompletion, builder);
+
+                        // And really, GooM is very flexible with arguments we don't want to constrain in any way...
+                        }).executes(css -> {
+
+                            // Prep Feedback
+                            FriendlyFeedbackProvider ffp = node.newFeedbackProvider();
+
+                            // Provide options
+                            GCPContextOptions options = new GCPContextOptions();
+                            options.setCommandSourceStack(css.getSource());
+
+                            // Execute this command
+                            ((GCMCommandNode) node).execute(options, extractArguments((GCMCommandNode) node, css), ffp);
+
+                            // Provide Feedback
+                            ffp.sendAllTo((bakedMessage -> css.getSource().sendSystemMessage(bakedMessage)));
+                            return 1;
                         });
 
                 // Append to previous
@@ -249,6 +259,36 @@ public class GCCCommandRegistry {
 
         // Done
         return ret;
+    }
+
+    /**
+     * @param node The GooM command node being executed
+     * @param css The arguments passed onto minecraft
+     *
+     * @return The list of arguments passed to this GooM command
+     *
+     * @author Gunging
+     * @since 1.0.0
+     */
+    @NotNull public static String[] extractArguments(@NotNull GCMCommandNode node, @NotNull CommandContext<CommandSourceStack> css) {
+
+        // Start with the keyword to follow the convention
+        ArrayList<String> ret = new ArrayList<>();
+        ret.add(node.getKeyword());
+
+        // Then include every argument
+        for (GCMExpectedArgument<?> provided : node.getArgumentsByIndex()) {
+            try {
+                String in = css.getArgument(provided.getArgumentKeyword(), String.class);
+                ret.add(in);
+            } catch (IllegalArgumentException ignored) { break; }
+        }
+
+        // Include empty arguments
+        if (css.getInput().endsWith(" ")) { ret.add(""); }
+
+        // Convert to array to be done
+        return ret.toArray(new String[0]);
     }
     //endregion
 }

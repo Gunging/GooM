@@ -109,6 +109,20 @@ public class GCPCommandStack extends GCPArgumentStack {
     int optionalCredits;
 
     /**
+     * The special case when no optional arguments are provided
+     * means all optional argument checks are discarded, since
+     * by definition none of them were provided.
+     *
+     * @return If only the required arguments were provided
+     *
+     * @author Gunging
+     * @since 1.0.0
+     */
+    public boolean isConfirmedNoOptionals() {
+        return getCommand().getOptionalArgsCount() <= optionalCredits;
+    }
+
+    /**
      * @author Gunging
      * @since 1.0.0
      */

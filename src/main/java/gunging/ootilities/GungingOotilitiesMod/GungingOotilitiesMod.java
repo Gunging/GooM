@@ -2,6 +2,7 @@ package gunging.ootilities.GungingOotilitiesMod;
 
 import gunging.ootilities.GungingOotilitiesMod.commands.forge.GCCCommandRegistry;
 import gunging.ootilities.GungingOotilitiesMod.exploring.ExplorerManager;
+import gunging.ootilities.GungingOotilitiesMod.mod.GooMGamerules;
 import gunging.ootilities.GungingOotilitiesMod.netcode.GOOMNetworkManager;
 import gunging.ootilities.GungingOotilitiesMod.stats.StatsManager;
 import net.minecraftforge.common.MinecraftForge;
@@ -66,7 +67,6 @@ public class GungingOotilitiesMod {
      * @since 1.0.0
      */
     ExplorerManager INVENTORY_EXPLORER = null;
-
     /**
      * @return The Explorer System manager
      *
@@ -88,7 +88,6 @@ public class GungingOotilitiesMod {
      * @since 1.0.0
      */
     StatsManager STATS_SYS = null;
-
     /**
      * @return The Stats System manager
      *
@@ -101,6 +100,26 @@ public class GungingOotilitiesMod {
         // Just create a new Renderer without level
         STATS_SYS = new StatsManager();
         return STATS_SYS;
+    }
+
+    /**
+     * The operational configuration of this mod
+     *
+     * @since 1.0.0
+     */
+    GooMGamerules GAMERULES = null;
+    /**
+     * @return The Gamerules
+     *
+     * @author Gunging
+     * @since 1.0.0
+     */
+    @NotNull public GooMGamerules getGamerules() {
+        if (GAMERULES!= null) { return GAMERULES; }
+
+        // Just create a new Renderer without level
+        GAMERULES = new GooMGamerules();
+        return GAMERULES;
     }
     //endregion
 
