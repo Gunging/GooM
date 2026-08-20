@@ -23,5 +23,6 @@ public class GCPProvidedDouble extends GCPProvidedArgument<Double> {
 
         // Parse this value
         setParsed(OotilityNumbers.DoubleParse(explicit));
+        if (getParsed() == null) { setParsingError("$bExpected a number instead of '$f" + explicit + "$b'. ");  }
     }
 }

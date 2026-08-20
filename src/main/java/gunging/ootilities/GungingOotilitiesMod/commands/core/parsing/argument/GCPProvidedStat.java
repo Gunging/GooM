@@ -24,5 +24,6 @@ public class GCPProvidedStat extends GCPProvidedArgument<StatDefinition<?>> {
 
         // Parse it by checking the registered stats of course
         setParsed(GungingOotilitiesMod.getInstance().getStats().getStatDefinition(explicit));
+        if (getParsed() == null) { setParsingError("$bStat '$f" + explicit + "$b' not found. ");  }
     }
 }

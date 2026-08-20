@@ -1,5 +1,6 @@
 package gunging.ootilities.GungingOotilitiesMod.commands.core.building.argument;
 
+import gunging.ootilities.GungingOotilitiesMod.GungingOotilitiesMod;
 import gunging.ootilities.GungingOotilitiesMod.commands.core.building.GCMStandaloneArgument;
 import gunging.ootilities.GungingOotilitiesMod.commands.core.parsing.argument.GCPProvidedStat;
 import gunging.ootilities.GungingOotilitiesMod.stats.core.StatDefinition;
@@ -40,11 +41,8 @@ public class GCMStatArgument extends GCMStandaloneArgument<StatDefinition<?>> {
      */
     @Override
     public @NotNull ArrayList<String> getUbiquitousSuggestions() {
-        ArrayList<String> ret = new ArrayList<>();
-        ret.add("FAKE_MAX_HEALTH");
-        ret.add("FAKE_ATTACK_DAMAGE");
-        ret.add("FAKE_MAX_MANA");
-        ret.add("FAKE_ATTACK_SPEED");
+        ArrayList<String> ret = GungingOotilitiesMod.getInstance().getStats().getStatIDs();
+        if (ret.isEmpty()) { ret.add("<NO-STATS-LOADED>"); }
         return ret;
     }
 }

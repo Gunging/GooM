@@ -118,25 +118,19 @@ public class GCPCommandStack extends GCPArgumentStack {
      * @author Gunging
      * @since 1.0.0
      */
-    public boolean isConfirmedNoOptionals() {
-        return getCommand().getOptionalArgsCount() <= optionalCredits;
-    }
+    public boolean isConfirmedNoOptionals() { return !isAmbiguousOptionals() && (getCommand().getOptionalArgsCount() <= optionalCredits); }
 
     /**
      * @author Gunging
      * @since 1.0.0
      */
-    public @Nullable String getLowParsingError() {
-        return lowParsingError;
-    }
+    public @Nullable String getLowParsingError() { return lowParsingError; }
 
     /**
      * @author Gunging
      * @since 1.0.0
      */
-    public void setLowParsingError(@Nullable String lowParsingError) {
-        this.lowParsingError = lowParsingError;
-    }
+    public void setLowParsingError(@Nullable String lowParsingError) { this.lowParsingError = lowParsingError; }
 
     /**
      * A string resulting from fundamental failures to parsing
@@ -153,17 +147,13 @@ public class GCPCommandStack extends GCPArgumentStack {
      * @author Gunging
      * @since 1.0.0
      */
-    public int getOptionalsDefaulted() {
-        return optionalsDefaulted;
-    }
+    public int getOptionalsDefaulted() { return optionalsDefaulted; }
 
     /**
      * @author Gunging
      * @since 1.0.0
      */
-    public void setOptionalsDefaulted(int optionalsDefaulted) {
-        this.optionalsDefaulted = optionalsDefaulted;
-    }
+    public void setOptionalsDefaulted(int optionalsDefaulted) { this.optionalsDefaulted = optionalsDefaulted; }
 
     /**
      * The number of optional arguments that have been assumed
@@ -190,4 +180,25 @@ public class GCPCommandStack extends GCPArgumentStack {
         optionalsDefaulted++;
         optionalCredits--;
     }
+
+    /**
+     * When TRUE, optionals may parse even when they couldn't possibly be provided because
+     * the optional credits equal the maximum optional credits. This is important for
+     * effective tab-completing, since some arguments may just not be provided yet
+     *
+     * @since 1.0.0
+     */
+    boolean ambiguousOptionals;
+
+    /**
+     * @author Gunging
+     * @since 1.0.0
+     */
+    public boolean isAmbiguousOptionals() { return ambiguousOptionals; }
+
+    /**
+     * @author Gunging
+     * @since 1.0.0
+     */
+    public void setAmbiguousOptionals(boolean ambiguous) { this.ambiguousOptionals = ambiguous; }
 }

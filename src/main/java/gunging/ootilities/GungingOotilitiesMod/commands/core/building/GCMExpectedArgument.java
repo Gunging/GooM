@@ -151,7 +151,7 @@ public abstract class GCMExpectedArgument<Value> {
      * @since 1.0.0
      */
     @NotNull public GCPProvidedArgument<?> getMyExplicit(@NotNull GCPCommandStack stack) {
-        return stack.get(getIndex() + stack.getOptionalsDefaulted());
+        return stack.get(getIndex() - stack.getOptionalsDefaulted());
     }
 
     /**
@@ -177,7 +177,7 @@ public abstract class GCMExpectedArgument<Value> {
 
             // Was this argument omitted? Consume an optional credit and absorb error
             // Or perhaps, we know for sure this argument was NOT provided
-            if (stack.isConfirmedNoOptionals() || !ret.isSuccessful()) {
+            if (stack.isConfirmedNoOptionals() || ((stack.getOptionalCredits() > 0) && (!ret.isSuccessful()))) {
 
                 // Absorb error, set default value
                 ret.setParsed(getDefaultValue());

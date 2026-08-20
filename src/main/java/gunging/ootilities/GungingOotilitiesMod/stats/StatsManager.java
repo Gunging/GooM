@@ -7,6 +7,7 @@ import net.minecraftforge.common.MinecraftForge;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 
 /**
@@ -33,6 +34,14 @@ public class StatsManager {
      * @author Gunging
      */
     @Nullable public StatDefinition<?> getStatDefinition(@Nullable String statID) { return registeredStats.get(statID); }
+
+    /**
+     * @return The internal IDs of all loaded stats
+     *
+     * @since 1.0.0
+     * @author Gunging
+     */
+    @NotNull public ArrayList<String> getStatIDs() { return new ArrayList<>(registeredStats.keySet()); }
 
     /**
      * This means registering stats is closed now

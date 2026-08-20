@@ -431,7 +431,8 @@ public class FriendlyFeedbackProvider {
      * @author Gunging
      * @since 1.0.0
      */
-    public static void logError(@Nullable FriendlyFeedbackProvider ffp, @NotNull String message, @Nullable String... replaces) {
+    public static void logError(@Nullable FriendlyFeedbackProvider ffp, @Nullable String message, @Nullable String... replaces) {
+        if (message == null) { return; }
         if (ffp != null && ffp.getGamerules().isSendErrorFeedback()) {
             ffp.log(FriendlyFeedbackCategory.ERROR, message, replaces); }
     }
@@ -444,7 +445,8 @@ public class FriendlyFeedbackProvider {
      * @author Gunging
      * @since 1.0.0
      */
-    public static void logSuccess(@Nullable FriendlyFeedbackProvider ffp, @NotNull String message, @Nullable String... replaces) {
+    public static void logSuccess(@Nullable FriendlyFeedbackProvider ffp, @Nullable String message, @Nullable String... replaces) {
+        if (message == null) { return; }
         if (ffp != null && ffp.getGamerules().isSendSuccessFeedback()) {
             ffp.log(FriendlyFeedbackCategory.SUCCESS, message, replaces); }
     }
@@ -456,7 +458,8 @@ public class FriendlyFeedbackProvider {
      * @author Gunging
      * @since 1.0.0
      */
-    public static void logFailure(@Nullable FriendlyFeedbackProvider ffp, @NotNull String message, @Nullable String... replaces) {
+    public static void logFailure(@Nullable FriendlyFeedbackProvider ffp, @Nullable String message, @Nullable String... replaces) {
+        if (message == null) { return; }
         if (ffp != null && ffp.getGamerules().isSendFailFeedback()) {
             ffp.log(FriendlyFeedbackCategory.FAILURE, message, replaces); }
     }
@@ -468,7 +471,8 @@ public class FriendlyFeedbackProvider {
      * @author Gunging
      * @since 1.0.0
      */
-    public static void logInfo(@Nullable FriendlyFeedbackProvider ffp, @NotNull String message, @Nullable String... replaces) {
+    public static void logInfo(@Nullable FriendlyFeedbackProvider ffp, @Nullable String message, @Nullable String... replaces) {
+        if (message == null) { return; }
         if (ffp != null) { ffp.log(FriendlyFeedbackCategory.INFORMATION, message, replaces); }
     }
     //endregion

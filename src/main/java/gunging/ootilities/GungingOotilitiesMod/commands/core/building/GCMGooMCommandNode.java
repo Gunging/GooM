@@ -84,6 +84,7 @@ public abstract class GCMGooMCommandNode extends GCMCommandNode {
         GCPCommandStack stacked = (GCPCommandStack) interpreted;
         stacked.getOptions().withContext(source);
         stacked.setOptionalCredits(getArguments().size() - stacked.size());
+        stacked.setAmbiguousOptionals(true);
 
         // Subtract 1 due to arrays being ZERO indexed, and another 1 due to the command keyword
         int tabCompletedArgIndex = args.length - 2;
