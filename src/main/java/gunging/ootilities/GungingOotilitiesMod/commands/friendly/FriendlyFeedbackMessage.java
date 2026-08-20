@@ -51,7 +51,7 @@ public class FriendlyFeedbackMessage implements Cloneable {
      * @author Gunging
      * @since 1.0.0
      */
-    public void togglePrefix(boolean usePrefix) {
+    public void usesPrefix(boolean usePrefix) {
         this.withPrefix = usePrefix;
     }
 

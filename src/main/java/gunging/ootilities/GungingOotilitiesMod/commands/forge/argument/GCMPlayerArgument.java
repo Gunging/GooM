@@ -6,6 +6,7 @@ import gunging.ootilities.GungingOotilitiesMod.commands.core.parsing.GCPCommandS
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.server.level.ServerPlayer;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -70,5 +71,14 @@ public class GCMPlayerArgument extends GCMContextArgument<ServerPlayer> {
 
         // Done
         return ret;
+    }
+
+    /**
+     * @author Gunging
+     * @since 1.0.0
+     */
+    @Override
+    public @NotNull GCMPlayerArgument withDefaultValue(@Nullable ServerPlayer def) {
+        return (GCMPlayerArgument) super.withDefaultValue(def);
     }
 }

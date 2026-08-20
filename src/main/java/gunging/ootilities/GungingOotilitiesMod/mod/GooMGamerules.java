@@ -13,7 +13,7 @@ public class GooMGamerules {
      *
      * @since 1.0.0
      */
-    boolean sendSuccessFeedback;
+    boolean sendSuccessFeedback = true;
 
     /**
      * @author Gunging
@@ -36,7 +36,7 @@ public class GooMGamerules {
      *
      * @since 1.0.0
      */
-    boolean sendFailFeedback;
+    boolean sendFailFeedback = true;
 
     /**
      * @author Gunging

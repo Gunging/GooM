@@ -1,8 +1,10 @@
 package gunging.ootilities.GungingOotilitiesMod.commands.core.building.argument;
 
+import gunging.ootilities.GungingOotilitiesMod.commands.core.building.GCMExpectedArgument;
 import gunging.ootilities.GungingOotilitiesMod.commands.core.building.GCMStandaloneArgument;
 import gunging.ootilities.GungingOotilitiesMod.commands.core.parsing.argument.GCPProvidedDouble;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 
@@ -47,5 +49,14 @@ public class GCMDoubleArgument extends GCMStandaloneArgument<Double> {
         ret.add("6.7");
         ret.add("-126.7");
         return ret;
+    }
+
+    /**
+     * @author Gunging
+     * @since 1.0.0
+     */
+    @Override
+    public @NotNull GCMDoubleArgument withDefaultValue(@Nullable Double def) {
+        return (GCMDoubleArgument) super.withDefaultValue(def);
     }
 }

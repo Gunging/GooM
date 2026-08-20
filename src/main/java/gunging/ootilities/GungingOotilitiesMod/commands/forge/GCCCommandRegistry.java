@@ -141,7 +141,7 @@ public class GCCCommandRegistry {
              * Calling in help mode, it simply returns line by line the help messages to the command sender
              */
             asForge.executes(css -> {
-                root.getHelp().sendAllTo((bakedMessage -> css.getSource().sendSystemMessage(bakedMessage)));
+                root.help((bakedMessage -> css.getSource().sendSystemMessage(bakedMessage)));
                 return 1;
             });
 
@@ -193,7 +193,7 @@ public class GCCCommandRegistry {
 
         // Always register /help mode
         ret.executes(css -> {
-            node.getHelp().sendAllTo((bakedMessage -> css.getSource().sendSystemMessage(bakedMessage)));
+            node.help((bakedMessage -> css.getSource().sendSystemMessage(bakedMessage)));
             return 1;
         });
 
@@ -221,18 +221,27 @@ public class GCCCommandRegistry {
                         // And really, GooM is very flexible with arguments we don't want to constrain in any way...
                         }).executes(css -> {
 
+                            // Extract arguments
+                            String[] args = extractArguments((GCMCommandNode) node, css);
+
+                            // Run /help when no arguments were provided
+                            if (args.length < 2) {
+                                node.help((bakedMessage -> css.getSource().sendSystemMessage(bakedMessage)));
+                                return 1; }
+
                             // Prep Feedback
                             FriendlyFeedbackProvider ffp = node.newFeedbackProvider();
+                            ffp.setConciseMode(true);
 
                             // Provide options
                             GCPContextOptions options = new GCPContextOptions();
                             options.setCommandSourceStack(css.getSource());
 
                             // Execute this command
-                            ((GCMCommandNode) node).execute(options, extractArguments((GCMCommandNode) node, css), ffp);
+                            ((GCMCommandNode) node).execute(options, args, ffp);
 
                             // Provide Feedback
-                            ffp.sendAllTo((bakedMessage -> css.getSource().sendSystemMessage(bakedMessage)));
+                            ffp.sendConciseTo((bakedMessage -> css.getSource().sendSystemMessage(bakedMessage)));
                             return 1;
                         });
 

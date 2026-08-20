@@ -76,6 +76,25 @@ public class FriendlyFeedbackProvider {
      * @since 1.0.0
      */
     @NotNull public GooMGamerules getGamerules() { return overridingGamerules == null ? GungingOotilitiesMod.getInstance().getGamerules() : overridingGamerules; }
+
+    /**
+     * A mode where instead of several collections of categories, only one message is used
+     *
+     * @since 1.0.0
+     */
+    boolean conciseMode;
+
+    /**
+     * @author Gunging
+     * @since 1.0.0
+     */
+    public boolean isConciseMode() { return conciseMode; }
+
+    /**
+     * @author Gunging
+     * @since 1.0.0
+     */
+    public void setConciseMode(boolean conciseMode) { this.conciseMode = conciseMode; }
     //endregion
 
     //region Collecting Messages
@@ -85,6 +104,13 @@ public class FriendlyFeedbackProvider {
      * @since 1.0.0
      */
     @NotNull HashMap<FriendlyFeedbackCategory, ArrayList<FriendlyFeedbackMessage>> feedback = new HashMap<>();
+
+    /**
+     * Alternate mode where everything is just one message and logging simply concatenates.
+     *
+     * @since 1.0.0
+     */
+    @Nullable FriendlyFeedbackMessage conciseFeedback;
 
     /**
      * Get the feedback of this category that has been registered.
@@ -149,7 +175,20 @@ public class FriendlyFeedbackProvider {
         if (message.isEmpty()) { return; }
 
         // Add, simple
-        getFeedbackOf(category).add(getMessage(message, replaces));
+        FriendlyFeedbackMessage logMessage = getMessage(message, replaces);
+        getFeedbackOf(category).add(logMessage);
+
+        // Add to concise feedback
+        if (conciseMode) {
+
+            // Merge prefix settings
+            if (conciseFeedback == null) { conciseFeedback = getMessage(""); }
+            if (prefixSample.hasPrefix()) { conciseFeedback.usesPrefix(true); }
+            if (conciseFeedback.getSubdivision() == null) { conciseFeedback.setSubdivision(prefixSample.getSubdivision()); }
+
+            // Merge message
+            conciseFeedback.setMessage(conciseFeedback.getMessage() + logMessage.getMessage());
+        }
     }
 
     /**
@@ -210,7 +249,7 @@ public class FriendlyFeedbackProvider {
     public void activatePrefix(boolean usePrefix, @Nullable String subdivision) {
 
         // If used
-        prefixSample.togglePrefix(usePrefix);
+        prefixSample.usesPrefix(usePrefix);
         prefixSample.setSubdivision(subdivision);
     }
 
@@ -235,6 +274,18 @@ public class FriendlyFeedbackProvider {
 
     //region Sending Messages
     /**
+     * @param player Player to send the concise message to
+     *
+     * @author Gunging
+     * @since 1.0.0
+     */
+    public void sendConciseTo(@NotNull FriendlyComponentReceiver player) {
+
+        // Just send the concise message that is here
+        if (conciseFeedback == null) { return; }
+        player.receive(conciseFeedback.forPlayer(getPalette()));
+    }
+    /**
      * @param player Player to send all these messages to
      *
      * @author Gunging
@@ -256,6 +307,18 @@ public class FriendlyFeedbackProvider {
 
         // Get List and foreach
         for (FriendlyFeedbackMessage msg : getFeedbackOf(category)) { player.receive(msg.forPlayer(getPalette())); }
+    }
+    /**
+     * @param console Console to send the concise message to
+     *
+     * @author Gunging
+     * @since 1.0.0
+     */
+    public void sendConciseToConsole(@NotNull FriendlyStringReceiver console) {
+
+        // Just send all categories
+        if (conciseFeedback == null) { return; }
+        console.receive(conciseFeedback.forConsole(getPalette()));
     }
     /**
      * @param console Console to send all these messages to
@@ -436,7 +499,6 @@ public class FriendlyFeedbackProvider {
         if (ffp != null && ffp.getGamerules().isSendErrorFeedback()) {
             ffp.log(FriendlyFeedbackCategory.ERROR, message, replaces); }
     }
-
     /**
      * @param ffp The Friendly Feedback Provider into which to log this win
      * @param message The message to send to the user in category {@link FriendlyFeedbackCategory#SUCCESS}

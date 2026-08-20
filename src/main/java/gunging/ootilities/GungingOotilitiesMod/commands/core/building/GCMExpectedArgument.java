@@ -2,6 +2,7 @@ package gunging.ootilities.GungingOotilitiesMod.commands.core.building;
 
 import gunging.ootilities.GungingOotilitiesMod.commands.core.parsing.GCPCommandStack;
 import gunging.ootilities.GungingOotilitiesMod.commands.core.parsing.GCPProvidedArgument;
+import gunging.ootilities.GungingOotilitiesMod.commands.friendly.FriendlyFeedbackProvider;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -33,10 +34,22 @@ public abstract class GCMExpectedArgument<Value> {
      */
     @NotNull final String argumentDescription;
 
+    /**
+     * @author Gunging
+     * @since 1.0.0
+     */
     public boolean isOptional() { return optional; }
 
+    /**
+     * @author Gunging
+     * @since 1.0.0
+     */
     public @NotNull String getArgumentDescription() { return argumentDescription; }
 
+    /**
+     * @author Gunging
+     * @since 1.0.0
+     */
     public @NotNull String getArgumentKeyword() { return argumentKeyword; }
 
     /**
@@ -202,5 +215,158 @@ public abstract class GCMExpectedArgument<Value> {
      */
     @NotNull public String forSyntaxDisplay() {
         return isOptional() ? "[" + getArgumentKeyword() + "]" : "<" + getArgumentKeyword() + ">";
+    }
+
+    /**
+     * Returns an argument, succeeds only if it originally parsed right and was not null.
+     * <br><br>
+     * <b>Absolutely important to check {@link GCPCommandStack#isFailure()} before accessing expected arguments returned from this. </b>
+     *
+     * @param stack The command stack to read this from
+     * @param ffp Friendly Feedback Provider to write the error onto
+     *
+     * @return Reads the value in here, fails the stack if it was null
+     *
+     * @author Gunging
+     * @since 1.0.0
+     */
+    @NotNull public Value expected(@NotNull GCPCommandStack stack, @Nullable FriendlyFeedbackProvider ffp) {
+
+        // Read
+        GCPProvidedArgument<Value> parsed = read(stack);
+
+        // Force a generic error message I guess
+        if (parsed.getParsed() == null && parsed.getParsingError() == null) {
+            parsed.setParsingError("$bRequired argument $e" + getArgumentKeyword() + "$b missing from '" + parsed.getExplicit() + "'. "); }
+
+        // Log any parsing errors that occurred
+        if (parsed.getParsingError() != null) {
+
+            // Log as failure when soft
+            if (parsed.parsingErrorIsSoft()) {
+                FriendlyFeedbackProvider.logFailure(ffp, parsed.getParsingError());
+
+            // Log as error when hard
+            } else {
+                FriendlyFeedbackProvider.logError(ffp, parsed.getParsingError()); }
+
+            // Damn! I can't believe it is returning null to a non-null!
+            stack.setFailure(true);
+            return null;
+        }
+
+        // Okay now, no error and successful that's sold
+        return parsed.getParsed();
+    }
+
+    /**
+     * Returns an argument, and even if the argument failed to parse it can succeed if a non-null "stock" was
+     * available to return instead. If so, the parsing error is ignored and the stock is used successfully-
+     * <br><br>
+     * <b>Absolutely important to check {@link GCPCommandStack#isFailure()} before accessing expected arguments returned from this. </b>
+     *
+     * @param stack The command stack to read this from
+     *
+     * @param stock If the parsed value was null, replace it with this and the command will succeed.
+     *              If this is also null then the command will ultimately fail though.
+     *
+     * @param ffp Friendly Feedback Provider to write the error onto
+     *
+     * @return Reads the value in here, fails the stack if it was null
+     *
+     * @author Gunging
+     * @since 1.0.0
+     */
+    @NotNull public Value stocked(@NotNull GCPCommandStack stack, @Nullable Value stock, @Nullable FriendlyFeedbackProvider ffp) {
+
+        // Read
+        GCPProvidedArgument<Value> parsed = read(stack);
+
+        // If the stock may be used to alter fate
+        if (stock != null && parsed.getParsed() == null) {
+
+            // Accept stock and absorb any error
+            parsed.setParsed(stock);
+            parsed.setParsingError(null); }
+
+        // Force a generic error message if still invalid
+        if (parsed.getParsed() == null && parsed.getParsingError() == null) {
+            parsed.setParsingError("$bRequired argument $e" + getArgumentKeyword() + "$b missing from '" + parsed.getExplicit() + "'. "); }
+
+        // Log any parsing errors that occurred
+        if (parsed.getParsingError() != null) {
+
+            // Log as failure when soft
+            if (parsed.parsingErrorIsSoft()) {
+                FriendlyFeedbackProvider.logFailure(ffp, parsed.getParsingError());
+
+                // Log as error when hard
+            } else {
+                FriendlyFeedbackProvider.logError(ffp, parsed.getParsingError()); }
+
+            // Damn! I can't believe it is returning null to a non-null!
+            stack.setFailure(true);
+            return null;
+        }
+
+        // Okay now, no error and successful that's sold
+        return parsed.getParsed();
+    }
+
+    /**
+     * Returns an argument, which may have purposedly parsed/defaulted to "null" without it being a parsing error,
+     * as in, it is intended behaviour for it to become "null" in this situation. If the value is null and no parsing
+     * error was generated, the supplied value is used instead. However, in case of parsing errors, the supplied value
+     * is ignored even if it had fitted.
+     * <br><br>
+     * <b>Absolutely important to check {@link GCPCommandStack#isFailure()} before accessing expected arguments returned from this. </b>
+     *
+     * @param stack The command stack to read this from
+     *
+     * @param supply If the parsed value was null, but not as a result of a parsing error,
+     *              replace it with this and the command will succeed.
+     *              If this is also null then the command will ultimately fail though.
+     *
+     * @param ffp Friendly Feedback Provider to write the error onto
+     *
+     * @return Reads the value in here, fails the stack if it was null
+     *
+     * @author Gunging
+     * @since 1.0.0
+     */
+    @NotNull public Value supplied(@NotNull GCPCommandStack stack, @Nullable Value supply, @Nullable FriendlyFeedbackProvider ffp) {
+
+        // Read
+        GCPProvidedArgument<Value> parsed = read(stack);
+
+        // If the stock may be used to alter fate
+        if (supply != null && parsed.getParsed() == null && parsed.isSuccessful()) {
+
+            // Accept stock and absorb any error
+            parsed.setParsed(supply);
+            parsed.setParsingError(null); }
+
+        // Force a generic error message if still invalid
+        if (parsed.getParsed() == null && parsed.getParsingError() == null) {
+            parsed.setParsingError("$bRequired argument $e" + getArgumentKeyword() + "$b missing from '" + parsed.getExplicit() + "'. "); }
+
+        // Log any parsing errors that occurred
+        if (parsed.getParsingError() != null) {
+
+            // Log as failure when soft
+            if (parsed.parsingErrorIsSoft()) {
+                FriendlyFeedbackProvider.logFailure(ffp, parsed.getParsingError());
+
+                // Log as error when hard
+            } else {
+                FriendlyFeedbackProvider.logError(ffp, parsed.getParsingError()); }
+
+            // Damn! I can't believe it is returning null to a non-null!
+            stack.setFailure(true);
+            return null;
+        }
+
+        // Okay now, no error and successful that's sold
+        return parsed.getParsed();
     }
 }

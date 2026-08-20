@@ -201,4 +201,24 @@ public class GCPCommandStack extends GCPArgumentStack {
      * @since 1.0.0
      */
     public void setAmbiguousOptionals(boolean ambiguous) { this.ambiguousOptionals = ambiguous; }
+
+    /**
+     * If, when reading the arguments, any of them failed.
+     * If so this command will not be able to execute.
+     *
+     * @since 1.0.0
+     */
+    boolean failure;
+
+    /**
+     * @author Gunging
+     * @since 1.0.0
+     */
+    public boolean isFailure() { return failure; }
+
+    /**
+     * @author Gunging
+     * @since 1.0.0
+     */
+    public void setFailure(boolean fail) { this.failure = fail; }
 }

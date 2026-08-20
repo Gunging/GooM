@@ -1,6 +1,8 @@
 package gunging.ootilities.GungingOotilitiesMod.commands.core.parsing;
 
 import net.minecraft.commands.CommandSourceStack;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.entity.Entity;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -55,8 +57,7 @@ public class GCPContextOptions implements Cloneable {
      * @author Gunging
      * @since 1.0.0
      */
-    @Override
-    protected GCPContextOptions clone() {
+    @Override protected GCPContextOptions clone() {
         GCPContextOptions ret = new GCPContextOptions("");
         ret.setCommandSourceStack(getCommandSourceStack());
         return ret;
@@ -75,4 +76,20 @@ public class GCPContextOptions implements Cloneable {
         // No source? Adopt the source of the context
         if (getCommandSourceStack() == null) { setCommandSourceStack(context.getCommandSourceStack()); }
     }
+
+    /**
+     * @return If the command sender is a player, the player who sent this command
+     *
+     * @author Gunging
+     * @since 1.0.0
+     */
+    @Nullable public ServerPlayer getSenderPlayer() { return commandSourceStack == null ? null : commandSourceStack.getPlayer(); }
+
+    /**
+     * @return  If the command sender is an entity, the entity who sent this command
+     *
+     * @author Gunging
+     * @since 1.0.0
+     */
+    @Nullable public Entity getSenderEntity() { return commandSourceStack == null ? null : commandSourceStack.getEntity(); }
 }

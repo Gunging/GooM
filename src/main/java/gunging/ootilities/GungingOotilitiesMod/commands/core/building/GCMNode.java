@@ -3,7 +3,9 @@ package gunging.ootilities.GungingOotilitiesMod.commands.core.building;
 import gunging.ootilities.GungingOotilitiesMod.GungingOotilitiesMod;
 import gunging.ootilities.GungingOotilitiesMod.commands.FFPGooM;
 import gunging.ootilities.GungingOotilitiesMod.commands.core.parsing.GCPContextOptions;
+import gunging.ootilities.GungingOotilitiesMod.commands.friendly.FriendlyComponentReceiver;
 import gunging.ootilities.GungingOotilitiesMod.commands.friendly.FriendlyFeedbackProvider;
+import gunging.ootilities.GungingOotilitiesMod.commands.friendly.FriendlyStringReceiver;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -171,4 +173,20 @@ public abstract class GCMNode {
         ret.activatePrefix(true, null);
         return ret;
     }
+
+    /**
+     * @param helper The one who will receive the /help
+     *
+     * @author Gunging
+     * @since 1.0.0
+     */
+    public void help(@NotNull FriendlyComponentReceiver helper) { getHelp().sendAllTo(helper); }
+
+    /**
+     * @param helper The one who will receive the /help
+     *
+     * @author Gunging
+     * @since 1.0.0
+     */
+    public void helpConsole(@NotNull FriendlyStringReceiver helper) { getHelp().sendAllToConsole(helper); }
 }

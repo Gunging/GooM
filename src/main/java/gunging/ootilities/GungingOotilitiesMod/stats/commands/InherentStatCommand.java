@@ -7,8 +7,9 @@ import gunging.ootilities.GungingOotilitiesMod.commands.core.parsing.GCPCommandS
 import gunging.ootilities.GungingOotilitiesMod.commands.core.parsing.argument.GCPProvidedDouble;
 import gunging.ootilities.GungingOotilitiesMod.commands.core.parsing.argument.GCPProvidedStat;
 import gunging.ootilities.GungingOotilitiesMod.commands.forge.argument.GCMPlayerArgument;
-import gunging.ootilities.GungingOotilitiesMod.commands.forge.argument.GCPProvidedPlayer;
 import gunging.ootilities.GungingOotilitiesMod.commands.friendly.FriendlyFeedbackProvider;
+import gunging.ootilities.GungingOotilitiesMod.stats.core.StatDefinition;
+import net.minecraft.server.level.ServerPlayer;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -26,7 +27,7 @@ public class InherentStatCommand extends GCMGooMCommandNode {
      *
      * @since 1.0.0
      */
-    @NotNull GCMPlayerArgument playerArg = (GCMPlayerArgument) new GCMPlayerArgument("player", "The player whose stats to modify. ").withDefaultValue(null);
+    @NotNull GCMPlayerArgument playerArg = new GCMPlayerArgument("player", "The player whose stats to modify. ").withDefaultValue(null);
 
     /**
      * An argument for this commend
@@ -55,7 +56,7 @@ public class InherentStatCommand extends GCMGooMCommandNode {
     public InherentStatCommand() {
         super("base", "Set Base Stat", "Sets the base value of this stat for a specific entity. ");
 
-        // Build arguments
+        // Build arguments (in order)
         addArgument(playerArg);
         addArgument(statArg);
         addArgument(valueArg);
@@ -69,22 +70,16 @@ public class InherentStatCommand extends GCMGooMCommandNode {
      * @since 1.0.0
      */
     @Override @Nullable public String execute(@NotNull GCPCommandStack stack, @Nullable FriendlyFeedbackProvider ffp) {
-        FriendlyFeedbackProvider.logInfo(ffp, "INHERENT Start");
 
-        GCPProvidedPlayer player = (GCPProvidedPlayer) playerArg.read(stack);
-        if (player.getParsingError() != null) { FriendlyFeedbackProvider.logError(ffp, "INHERENT $fPlayer {0}", player.getParsingError()); }
-        else if (player.isDefaulted() && stack.getOptions().getCommandSourceStack() != null) { player.setParsed(stack.getOptions().getCommandSourceStack().getPlayer()); }
-        if (player.getParsed() != null) { FriendlyFeedbackProvider.logInfo(ffp, "INHERENT Player $s{0}$b! ", player.getParsed().getScoreboardName()); }
+        // Read the arguments (in order)
+        ServerPlayer player = playerArg.supplied(stack, stack.getOptions().getSenderPlayer(), ffp);
+        StatDefinition<?> stat = statArg.expected(stack, ffp);
+        Double value = valueArg.expected(stack, ffp);
 
-        GCPProvidedStat stat = (GCPProvidedStat) statArg.read(stack);
-        if (stat.getParsingError() != null) { FriendlyFeedbackProvider.logError(ffp, "INHERENT $fStat {0}", stat.getParsingError()); }
-        if (stat.getParsed() != null) { FriendlyFeedbackProvider.logInfo(ffp, "INHERENT Stat $s{0}$b! ", stat.getParsed().getDefinitionID()); }
+        // Cancel in the case of a failure
+        if (stack.isFailure()) { return null; }
 
-        GCPProvidedDouble value = (GCPProvidedDouble) valueArg.read(stack);
-        if (value.getParsingError() != null) { FriendlyFeedbackProvider.logError(ffp, "INHERENT $fValue {0}", value.getParsingError()); }
-        if (value.getParsed() != null) { FriendlyFeedbackProvider.logInfo(ffp, "INHERENT Value $s{0}$b! ", String.valueOf(value.getParsed())); }
-
-        FriendlyFeedbackProvider.logInfo(ffp, "INHERENT End");
+        FriendlyFeedbackProvider.logSuccess(ffp, "Player $r{0}$b gained $u{1}$b : $s{2}", player.getScoreboardName(), stat.getDefinitionID(), value.toString());
         return "";
     }
 }

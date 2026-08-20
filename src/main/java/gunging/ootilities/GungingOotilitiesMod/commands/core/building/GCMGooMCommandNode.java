@@ -116,12 +116,8 @@ public abstract class GCMGooMCommandNode extends GCMCommandNode {
     @Override
     public @Nullable String execute(@NotNull GCPContextOptions source, @NotNull String[] args, @Nullable FriendlyFeedbackProvider ffp) {
 
-        // Run /help when no arguments were provided
-        if (args.length < 2) {
-            CommandSourceStack css = source.getCommandSourceStack();
-            if (css != null) { getHelp().sendAllTo((css::sendSystemMessage)); }
-            return "";
-        }
+        // We are supposed to have run /help when no arguments were provided
+        if (args.length < 2) { return ""; }
 
         // Fully interpret command
         String[] fullArgs = argsToFullPath(args);
