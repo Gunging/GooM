@@ -181,7 +181,7 @@ public abstract class FriendlyFeedbackPalette {
      * The symbol key <b>#s</b> stands for some 'subdivision' which will
      * be inserted if not null.
      * <br><br>
-     * Example: (<code>&3[&eGooM#s&3] </code>)<p>
+     * Example: (<code>&amp;3[&amp;eGooM#s&amp;3] </code>)<p>
      * <i>Note the trailing space in this prefix example, it is intentional. </i>
      *
      * @author Gunging

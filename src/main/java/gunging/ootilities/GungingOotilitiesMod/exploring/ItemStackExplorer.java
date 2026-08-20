@@ -8,17 +8,17 @@ import java.util.ArrayList;
 /**
  * Represents an abstract inventory slot. Not only
  * abstract in slot, but inventory GUI itself.
- * <p><p>
+ * <br><br>
  * For example, the simplest case slot '0' of the normal
  * player inventory: Simple and straight-forward.
- * <p>
+ * <br>
  * Or maybe, slot 0 of the enderchest? It could be!
- * <p>
+ * <br>
  * Or perhaps a keyword and not an index like the "mainhand" slot.
  * Strictly speaking this is the slot currently selected of the
  * hotbar, so it could be anything 0-8 depending on when it is
  * evaluated.
- * <p>
+ * <br>
  * Or what about a range? Multiple slots! Or inside
  * shulker boxes, or custom inventories altogether.
  *

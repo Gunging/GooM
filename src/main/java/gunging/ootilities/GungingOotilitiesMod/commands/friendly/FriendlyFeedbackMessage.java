@@ -177,9 +177,9 @@ public class FriendlyFeedbackMessage implements Cloneable {
      * Parses a message intended to be read through the console.
      * Consoles don't support many colors, in fact, they support
      * the same colors supported until MC 1.15
-     * <p></p>
+     * <br><br>
      * <b>This does not parse color codes</b> other than those concerning the palette.
-     * <p></p>
+     * <br><br>
      * Will also use this method if parsing a message in a version
      * of minecraft less than 1.16
      *

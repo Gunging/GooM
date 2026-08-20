@@ -92,7 +92,7 @@ public class OotilityNumbers {
     }
     /**
      * Straight up {@link Double#parseDouble(String)}.
-     * <p></p>
+     * <br><br>
      * However, instead of throwing an exception, this method will return <code>null</code>.
      * @return <code>null</code> in case of any error, or your double value.
      * @param d Any text piece that may not even exist.
@@ -137,6 +137,7 @@ public class OotilityNumbers {
      * 
      * @param number Number to round
      * @param decimals Decimals to round it to
+     * @return This double but rounded
      *
      * @since 1.0.0
      * @author Gunging
@@ -149,6 +150,7 @@ public class OotilityNumbers {
      * Rounds a double into an integer
      * 
      * @param number Number to round to an integer
+     * @return This double but rounded to no decimals
      *
      * @since 1.0.0
      * @author Gunging
@@ -159,6 +161,7 @@ public class OotilityNumbers {
      * 
      * @param number Number to round toward negative infinity
      * @param decimals Decimals to round to
+     * @return This double but rounded toward negative infinity
      *
      * @since 1.0.0
      * @author Gunging
@@ -171,6 +174,7 @@ public class OotilityNumbers {
      * Floors a double into an integer
      * 
      * @param number Number to floor toward negative infinity
+     * @return This double but rounded toward negative infinity and no decimals
      *
      * @since 1.0.0
      * @author Gunging
@@ -181,6 +185,7 @@ public class OotilityNumbers {
      *
      * @param number Number to round toward positive infinity
      * @param decimals Decimals to round to
+     * @return This double but rounded toward positive infinity
      *
      * @since 1.0.0
      * @author Gunging
@@ -193,6 +198,7 @@ public class OotilityNumbers {
      * Ceils a double into an integer
      *
      * @param number Number to round toward positive infinity
+     * @return This double but rounded toward positive infinity and no decimals
      *
      * @since 1.0.0
      * @author Gunging
@@ -201,22 +207,31 @@ public class OotilityNumbers {
 
     /**
      * Returns:
-     * <p><b><code>1</code></b> if true
-     * </p><b><code>0</code></b> if false
+     * <br><b><code>1</code></b> if true
+     * <br><b><code>0</code></b> if false
+     *
+     * @param value A boolean value to turn into an int
+     * @return This boolean but as one or zero
      *
      * @since 1.0.0
      * @author Gunging
      */
     public static int IntegerParse(boolean value) { if (value) { return 1; } else { return  0; } }
     /**
-     * Is this integer equal to <code>0</code>?
+     * Is this integer is not equal to <code>0</code>?
+     *
+     * @param value Zero parses to FALSE, TRUE otherwise
+     * @return Whether this integer is not zero
      *
      * @since 1.0.0
      * @author Gunging
      */
     public static boolean BooleanParse(int value) { return value != 0; }
     /**
-     * Is this integer equal to <code>0.0</code>?
+     * Is this double equal to <code>0.0</code>?
+     *
+     * @param value Exactly zero parses to FALSE, TRUE otherwise
+     * @return Whether this double is not zero
      *
      * @since 1.0.0
      * @author Gunging
@@ -343,13 +358,13 @@ public class OotilityNumbers {
      * If given some value that ends in <code>.000</code> (any number of zeros),
      * it will remove the decimal point and the zeros.
      * If there is any decimal number, it will remove all zeros after it:
-     * <p></p>
+     * <br><br>
      * Examples:
-     * <p><b><code>"1.0000"</code></b> will return <b><code>"1"</code></b>
-     * </p><b><code>"1.000100"</code></b> will return <b><code>"1.0001"</code></b>
-     * <p></p>
+     * <br><b><code>"1.0000"</code></b> will return <b><code>"1"</code></b>
+     * <br><b><code>"1.000100"</code></b> will return <b><code>"1.0001"</code></b>
+     * <br><br>
      * Intended to parse '8.0' as an integer value "8"; BRUH
-     * <p></p>
+     * <br><br>
      * If the value is not a number that ends in <code>.0000...</code>, it will return it unchanged.
      *
      * @param source A string that may represent a number that ends with a bunch of zeroes
@@ -394,9 +409,9 @@ public class OotilityNumbers {
     /**
      * When you round a <code>double</code>, and try to use {@link String#valueOf(double)}, it
      * will show up as "<b><code>2.0</code></b>. I think that <code>.0</code> is ugly asf.
-     * <p></p>
+     * <br><br>
      * This method will remove such .0
-     * <p></p>
+     * <br><br>
      * Also, if the input is something like <code>2.03003</code>, and it rounds to 4 decimals as
      * <code>"2.0300"</code>, this will remove those pesky <code>00</code>s and return just <code>"2.03"</code>
      *
@@ -416,7 +431,7 @@ public class OotilityNumbers {
      * Say you have a big number of seconds you want to display to the user.
      * Well, this compresses it into minutes or hours depending on how big
      * this number is, attempting not to exceed 3 characters length.
-     * <p></p>
+     * <br><br>
      * So basically, <code>72</code> will be returned as <code>"72s"</code>,
      * but once you go into like <code>1800</code>, it will become <code>"30m"</code>
      *
@@ -826,8 +841,7 @@ public class OotilityNumbers {
      * @param separator A separator to append in between members.
      *
      * @return A single string containing all the members of the list.
-     *         <p></p>
-     *         <code>null</code> strings are passed as <code>"null"</code>
+     *         <br><br><code>null</code> strings are passed as <code>"null"</code>
      *
      * @since 1.0.0
      * @author Gunging
@@ -1221,10 +1235,10 @@ public class OotilityNumbers {
      * @param g Number from 0 to 255
      * @param b Number from 0 to 255
      *
-     * @param italic If this should encode 1 << 24 for italic
-     * @param bold If this should encode 1 << 25 for bold
-     * @param underline If this should encode 1 << 26 for underline
-     * @param strikethrough If this should encode 1 << 27 for strikethrough
+     * @param italic If this should encode 1 &lt;&lt; 24 for italic
+     * @param bold If this should encode 1 &lt;&lt; 25 for bold
+     * @param underline If this should encode 1 &lt;&lt; 26 for underline
+     * @param strikethrough If this should encode 1 &lt;&lt; 27 for strikethrough
      *
      * @return A compound integer encoding for this color and format
      *
@@ -1276,7 +1290,7 @@ public class OotilityNumbers {
     /**
      * @param compoundFormat The number generated from {@link #bitShiftFormat(int, int, int, boolean, boolean, boolean, boolean)}
      *
-     * @return If it has the italic flag 1 << 24
+     * @return If it has the italic flag 1 &lt;&lt; 24
      *
      * @author Gunging
      * @since 1.0.0
@@ -1293,7 +1307,7 @@ public class OotilityNumbers {
     /**
      * @param compoundFormat The number generated from {@link #bitShiftFormat(int, int, int, boolean, boolean, boolean, boolean)}
      *
-     * @return If it has the bold flag 1 << 25
+     * @return If it has the bold flag 1 &lt;&lt; 25
      *
      * @author Gunging
      * @since 1.0.0
@@ -1310,7 +1324,7 @@ public class OotilityNumbers {
     /**
      * @param compoundFormat The number generated from {@link #bitShiftFormat(int, int, int, boolean, boolean, boolean, boolean)}
      *
-     * @return If it has the underline flag 1 << 26
+     * @return If it has the underline flag 1 &lt;&lt; 26
      *
      * @author Gunging
      * @since 1.0.0
@@ -1327,7 +1341,7 @@ public class OotilityNumbers {
     /**
      * @param compoundFormat The number generated from {@link #bitShiftFormat(int, int, int, boolean, boolean, boolean, boolean)}
      *
-     * @return If it has the strikethrough flag 1 << 27
+     * @return If it has the strikethrough flag 1 &lt;&lt; 27
      *
      * @author Gunging
      * @since 1.0.0

@@ -9,9 +9,9 @@ import java.util.List;
  * Ever wished to write your own toString method on the spot?
  * <br>
  * Well now you can with this handy transcriber.
- * <p></p>
+ * <br><br>
  * Check this example out:
- * <p></p>
+ * <br><br>
  * <code>
  * ArrayList itemNames = OotilityNumbers.transcribeList(itemsList, (o)->OotilityNumbers.getItemName( ((ItemStack)o) ));
  * </code>

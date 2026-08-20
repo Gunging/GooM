@@ -16,11 +16,11 @@ public class DoubleNumberRange extends QuickNumberRange<Double> {
 
     /**
      * Supported Formats:
-     * <p><code>[m]..[M]</code>  (Vanilla range, the way used in command selectors)
-     * </p><code>[n]</code> (Just a number; basically <code>=</code> operator)
-     * <p><code>..[M]</code> (anything up to this; basically less than or equals operator)
-     * </p><code>[m]..</code> (this and on; basically greater than or equals operator)
-     * <p></p>
+     * <br><code>[m]..[M]</code>  (Vanilla range, the way used in command selectors)
+     * <br><code>[n]</code> (Just a number; basically <code>=</code> operator)
+     * <br><code>..[M]</code> (anything up to this; basically less than or equals operator)
+     * <br><code>[m]..</code> (this and on; basically greater than or equals operator)
+     * <br><br>
      * Obviously, number <code>[m]</code> is the minimum, and <code>[M]</code> the maximum;
      * They may not even be specified.
      *

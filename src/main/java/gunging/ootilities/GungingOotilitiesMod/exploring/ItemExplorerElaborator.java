@@ -7,7 +7,7 @@ import org.jetbrains.annotations.NotNull;
  * will be exploring, it represents the actual
  * instance of something in the world that we
  * are about to explore.
- * <p></p>
+ * <br><br>
  * For example, if you sought the "ec20" 20th
  * slot of an enderchest, you must provide a
  * Player object as the elaborator in order to

@@ -13,7 +13,7 @@ import java.util.ArrayList;
  * will be exploring, it represents the actual
  * instance of something in the world that we
  * are about to explore.
- * <p></p>
+ * <br><br>
  * For example, if you have a player, and you know
  * you are looking for its 20th enderchest slot,
  * then the "statement" for the explorer is "ec20"
