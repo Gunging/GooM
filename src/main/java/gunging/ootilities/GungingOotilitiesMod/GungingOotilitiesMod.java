@@ -40,7 +40,7 @@ public class GungingOotilitiesMod {
         context.getModEventBus().addListener(this::OnCommonSetup);
 
         // Startup the mod's systems
-        GCCCommandRegistry.OnModLoadInitialize(context);
+        getCommands().OnModLoadInitialize(context);
     }
 
     /**
@@ -75,8 +75,6 @@ public class GungingOotilitiesMod {
      */
     @NotNull public ExplorerManager getExplorer() {
         if (INVENTORY_EXPLORER!= null) { return INVENTORY_EXPLORER; }
-
-        // Just create a new Renderer without level
         INVENTORY_EXPLORER = new ExplorerManager();
         return INVENTORY_EXPLORER;
     }
@@ -96,10 +94,26 @@ public class GungingOotilitiesMod {
      */
     @NotNull public StatsManager getStats() {
         if (STATS_SYS!= null) { return STATS_SYS; }
-
-        // Just create a new Renderer without level
         STATS_SYS = new StatsManager();
         return STATS_SYS;
+    }
+
+    /**
+     * The Command Registry that handles GooM commands
+     *
+     * @since 1.0.0
+     */
+    GCCCommandRegistry COMMANDS = null;
+    /**
+     * @return The Stats System manager
+     *
+     * @author Gunging
+     * @since 1.0.0
+     */
+    @NotNull public GCCCommandRegistry getCommands() {
+        if (COMMANDS!= null) { return COMMANDS; }
+        COMMANDS = new GCCCommandRegistry();
+        return COMMANDS;
     }
 
     /**
@@ -116,8 +130,6 @@ public class GungingOotilitiesMod {
      */
     @NotNull public GooMGamerules getGamerules() {
         if (GAMERULES!= null) { return GAMERULES; }
-
-        // Just create a new Renderer without level
         GAMERULES = new GooMGamerules();
         return GAMERULES;
     }

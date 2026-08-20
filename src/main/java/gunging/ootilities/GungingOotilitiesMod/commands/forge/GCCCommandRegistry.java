@@ -54,26 +54,26 @@ public class GCCCommandRegistry {
      *
      * @since 1.0.0
      */
-    @NotNull static final HashMap<String, GCMRootNode> roots = new HashMap<>();
+    @NotNull final HashMap<String, GCMRootNode> roots = new HashMap<>();
 
     /**
      * @author Gunging
      * @since 1.0.0
      */
-    @NotNull public static HashMap<String, GCMRootNode> getRoots() { return roots; }
+    @NotNull public HashMap<String, GCMRootNode> getRoots() { return roots; }
 
     /**
      * The root node for GooM
      *
      * @since 1.0.0
      */
-    @NotNull static final GCMRootNode goomRoot = new GCMRootNode("goom");
+    @NotNull final GCMRootNode goomRoot = new GCMRootNode("goom");
 
     /**
      * @author Gunging
      * @since 1.0.0
      */
-    @NotNull public static GCMRootNode getGooM() { return goomRoot; }
+    @NotNull public GCMRootNode getGooM() { return goomRoot; }
 
     /**
      * The standard width of paragraphs for help messages
@@ -85,7 +85,7 @@ public class GCCCommandRegistry {
 
     //region Transcription
     /**
-     * Seemingly, I must register the command argument type or it crashes the game :B
+     * Seemingly, I must register the command argument type, or it crashes the game :B
      *
      * @since 1.0.0
      */
@@ -109,14 +109,16 @@ public class GCCCommandRegistry {
      * @author Gunging
      * @since 1.0.0
      */
-    public static void OnModLoadInitialize(FMLJavaModLoadingContext context) {
+    public void OnModLoadInitialize(FMLJavaModLoadingContext context) {
 
         // Run the registered hold points event
         COMMAND_ARGUMENT_TYPES.register(context.getModEventBus());
     }
 
     /**
-     * Collects all GooM command trees and registers them to the game
+     * Collects all GooM command trees and registers them to the game.
+     * By the way this command fires on world load, so the GooM command
+     * must fire here too.
      *
      * @param event Event ran when commands are registered to minecraft
      *
@@ -126,13 +128,17 @@ public class GCCCommandRegistry {
     @SubscribeEvent
     public static void OnForgeCommandsEvent(@NotNull RegisterCommandsEvent event) {
 
-        // Collect GooM Commands
-        GCCGooMRegisterCommandsEvent goom = new GCCGooMRegisterCommandsEvent();
-        MinecraftForge.EVENT_BUS.post(goom);
+        // Collect GooM Commands from everywhere
+        GCCGooMRegisterCommandsEvent goomEvent = new GCCGooMRegisterCommandsEvent();
+        MinecraftForge.EVENT_BUS.post(goomEvent);
+
+        // Include them in the GooM Registrar
+        GCCCommandRegistry goom = GungingOotilitiesMod.getInstance().getCommands();
+        for (GCMRootNode root : goomEvent.getCommandTrees().values()) { goom.getRoots().put(root.getKeyword(), root); }
 
         // Register them
         CommandDispatcher<CommandSourceStack> dispatcher = event.getDispatcher();
-        for (GCMRootNode root : goom.getCommandTrees().values()) {
+        for (GCMRootNode root : goom.getRoots().values()) {
 
             // Register root node
             LiteralArgumentBuilder<CommandSourceStack> asForge = LiteralArgumentBuilder.literal(root.getKeyword());
@@ -150,7 +156,6 @@ public class GCCCommandRegistry {
 
             // Dispatch
             dispatcher.register(asForge);
-            roots.put(root.getKeyword(), root);
         }
     }
 
@@ -164,20 +169,22 @@ public class GCCCommandRegistry {
      */
     @SubscribeEvent(priority = EventPriority.HIGH)
     public static void RegisterGooMCommands(@NotNull GCCGooMRegisterCommandsEvent event) {
+        GCCCommandRegistry goom = GungingOotilitiesMod.getInstance().getCommands();
+        GCMRootNode goomSingletonRoot = goom.getGooM();
 
         // Include GooM Root
-        event.addRoot(goomRoot);
+        event.addRoot(goomSingletonRoot);
 
         // Build GooM branches
-        goomRoot.addNode(new StatsCommandNode());
+        goomSingletonRoot.addNode(new StatsCommandNode());
 
         // Build /help
-        goomRoot.getHelp().activatePrefix(true, null);
-        goomRoot.getHelp().log(FriendlyFeedbackCategory.INFORMATION, "$rA commands-based utilities library for finesse. ");
-        goomRoot.getHelp().activatePrefix(false, null);
+        FriendlyFeedbackProvider goomHelp = goomSingletonRoot.getHelp();
+        goomHelp.activatePrefix(true, null);
+        goomHelp.log(FriendlyFeedbackCategory.INFORMATION, "$rA commands-based utilities library for finesse. ");
+        goomHelp.activatePrefix(false, null);
         for (String helpLine : OotilityNumbers.chop("GooM provides reliable utilities for map-making. It may be a bit technical, but the promise is low maintenance and backward compatibility — you only have to get it working once and forget. ", GCCCommandRegistry.HELP_PARAGRAPH_WIDTH, "$b")) {
-            goomRoot.getHelp().log(FriendlyFeedbackCategory.INFORMATION, helpLine);
-        }
+            goomHelp.log(FriendlyFeedbackCategory.INFORMATION, helpLine); }
     }
 
     /**
