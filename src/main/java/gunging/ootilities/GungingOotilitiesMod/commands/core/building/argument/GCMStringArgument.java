@@ -1,19 +1,20 @@
 package gunging.ootilities.GungingOotilitiesMod.commands.core.building.argument;
 
+import gunging.ootilities.GungingOotilitiesMod.commands.core.building.GCMExpectedArgument;
 import gunging.ootilities.GungingOotilitiesMod.commands.core.building.GCMStandaloneArgument;
-import gunging.ootilities.GungingOotilitiesMod.commands.core.parsing.argument.GCPProvidedDouble;
+import gunging.ootilities.GungingOotilitiesMod.commands.core.parsing.argument.GCPProvidedString;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 
 /**
- * An argument that expects a double-precision number
+ * An argument that expects a line of text, any text, very foundational
  *
  * @author Gunging
  * @since 1.0.0
  */
-public class GCMDoubleArgument extends GCMStandaloneArgument<Double> {
+public class GCMStringArgument extends GCMStandaloneArgument<String> {
 
     /**
      * @param argumentName        The name of this argument
@@ -22,7 +23,7 @@ public class GCMDoubleArgument extends GCMStandaloneArgument<Double> {
      * @author Gunging
      * @since 1.0.0
      */
-    public GCMDoubleArgument(@NotNull String argumentName, @NotNull String argumentDescription) {
+    public GCMStringArgument(@NotNull String argumentName, @NotNull String argumentDescription) {
         super(argumentName, argumentDescription);
     }
 
@@ -30,8 +31,8 @@ public class GCMDoubleArgument extends GCMStandaloneArgument<Double> {
      * @author Gunging
      * @since 1.0.0
      */
-    @Override public @NotNull GCPProvidedDouble provide(@NotNull String explicit) {
-        return new GCPProvidedDouble(explicit);
+    @Override public @NotNull GCPProvidedString provide(@NotNull String explicit) {
+        return new GCPProvidedString(explicit);
     }
 
     /**
@@ -41,12 +42,12 @@ public class GCMDoubleArgument extends GCMStandaloneArgument<Double> {
     @Override
     public @NotNull ArrayList<String> getUbiquitousSuggestions() {
         ArrayList<String> ret = new ArrayList<>();
-        ret.add("5");
-        ret.add("15");
-        ret.add("3.1416");
-        ret.add("-2.5");
-        ret.add("6.7");
-        ret.add("-126.7");
+        ret.add("Mangoes");
+        ret.add("ANYTHING");
+        ret.add("Text");
+        if (isGreedy()) {
+            ret.add("A phrase or line of text");
+            ret.add("SAMPLE TEXT :O"); }
         return ret;
     }
 
@@ -55,8 +56,8 @@ public class GCMDoubleArgument extends GCMStandaloneArgument<Double> {
      * @since 1.0.0
      */
     @Override
-    public @NotNull GCMDoubleArgument withDefaultValue(@Nullable Double def) {
-        return (GCMDoubleArgument) super.withDefaultValue(def);
+    public @NotNull GCMStringArgument withDefaultValue(@Nullable String def) {
+        return (GCMStringArgument) super.withDefaultValue(def);
     }
 
     /**
@@ -64,7 +65,7 @@ public class GCMDoubleArgument extends GCMStandaloneArgument<Double> {
      * @since 1.0.0
      */
     @Override
-    public @NotNull GCMDoubleArgument withGreedy(boolean greed) {
-        return (GCMDoubleArgument) super.withGreedy(greed);
+    public @NotNull GCMStringArgument withGreedy(boolean greed) {
+        return (GCMStringArgument) super.withGreedy(greed);
     }
 }

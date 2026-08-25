@@ -1,6 +1,7 @@
 package gunging.ootilities.GungingOotilitiesMod.commands.forge;
 
 import com.mojang.brigadier.CommandDispatcher;
+import com.mojang.brigadier.arguments.ArgumentType;
 import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.builder.ArgumentBuilder;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
@@ -14,6 +15,7 @@ import gunging.ootilities.GungingOotilitiesMod.commands.core.parsing.GCPCommandS
 import gunging.ootilities.GungingOotilitiesMod.commands.core.parsing.GCPContextOptions;
 import gunging.ootilities.GungingOotilitiesMod.commands.friendly.FriendlyFeedbackCategory;
 import gunging.ootilities.GungingOotilitiesMod.commands.friendly.FriendlyFeedbackProvider;
+import gunging.ootilities.GungingOotilitiesMod.mod.GMCTell;
 import gunging.ootilities.GungingOotilitiesMod.ootilityception.OotilityNumbers;
 import gunging.ootilities.GungingOotilitiesMod.stats.commands.StatsCommandNode;
 import net.minecraft.commands.CommandSourceStack;
@@ -177,6 +179,7 @@ public class GCCCommandRegistry {
 
         // Build GooM branches
         goomSingletonRoot.addNode(new StatsCommandNode());
+        goomSingletonRoot.addNode(new GMCTell());
 
         // Build /help
         FriendlyFeedbackProvider goomHelp = goomSingletonRoot.getHelp();
@@ -211,8 +214,12 @@ public class GCCCommandRegistry {
             ArrayList<ArgumentBuilder<CommandSourceStack, ?>> argumentNodes = new ArrayList<>();
             for (GCMExpectedArgument<?> goomArgument : ((GCMCommandNode) node).getArgumentsByIndex()) {
 
+                // Option for greedy string
+                ArgumentType<String> chosenArgument = new GooMQuotableString();
+                if (goomArgument.isGreedy()) { chosenArgument = StringArgumentType.greedyString(); }
+
                 // Add arguments as quotable phrases
-                ArgumentBuilder<CommandSourceStack, ?> argumentNode = Commands.argument(goomArgument.getArgumentKeyword(), new GooMQuotableString())
+                ArgumentBuilder<CommandSourceStack, ?> argumentNode = Commands.argument(goomArgument.getArgumentKeyword(), chosenArgument)
 
                         // Tab Completion Delegation
                         .suggests((css, builder) -> {

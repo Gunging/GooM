@@ -2,6 +2,7 @@ package gunging.ootilities.GungingOotilitiesMod.commands.core.building;
 
 import gunging.ootilities.GungingOotilitiesMod.commands.FFPGooM;
 import gunging.ootilities.GungingOotilitiesMod.commands.core.parsing.GCPContextOptions;
+import gunging.ootilities.GungingOotilitiesMod.commands.friendly.FriendlyFeedbackPalette;
 import gunging.ootilities.GungingOotilitiesMod.commands.friendly.FriendlyFeedbackProvider;
 import org.jetbrains.annotations.NotNull;
 
@@ -42,15 +43,9 @@ public class GCMBranchNode extends GCMNode {
      * @author Gunging
      * @since 1.0.0
      */
-    public void addNode(@NotNull GCMNode node) { subnodes.put(node.getKeyword(), node); node.setParent(this); }
-
-    /**
-     * @author Gunging
-     * @since 1.0.0
-     */
-    @Override public void setParent(@NotNull GCMBranchNode parent) {
-        super.setParent(parent);
-        getHelp().setPalette(parent.getRoot().getHelp().getPalette());
+    public void addNode(@NotNull GCMNode node) {
+        subnodes.put(node.getKeyword(), node);
+        node.setParent(this);
     }
 
     /**
@@ -83,5 +78,15 @@ public class GCMBranchNode extends GCMNode {
         // That's it
         ret.addAll(ret2);
         return ret;
+    }
+
+    /**
+     * @author Gunging
+     * @since 1.0.0
+     */
+    @Override
+    public void setPalette(@NotNull FriendlyFeedbackPalette palette) {
+        super.setPalette(palette);
+        for (GCMNode child : getSubnodes().values()) { child.setPalette(palette); }
     }
 }

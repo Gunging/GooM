@@ -120,6 +120,30 @@ public abstract class GCMExpectedArgument<Value> {
     public int getIndex() { return index; }
 
     /**
+     * It means this argument will parse as a "Greedy Phrase" that
+     * takes in the entire rest of the provided input, disregarding
+     * spaces and just taking them as part of the argument provided
+     * for this.
+     * <br><br>
+     * Strictly speaking, this does terminate at the oS= chaining keywords
+     *
+     * @since 1.0.0
+     */
+    boolean greedy;
+
+    /**
+     * @author Gunging
+     * @since 1.0.0
+     */
+    public boolean isGreedy() { return greedy; }
+
+    /**
+     * @author Gunging
+     * @since 1.0.0
+     */
+    @NotNull public GCMExpectedArgument<Value> withGreedy(boolean greed) { this.greedy = greed; return this; }
+
+    /**
      * This method will preferably not be used in favour
      * of the one with context, but sometimes there is
      * no choice

@@ -4,6 +4,7 @@ import gunging.ootilities.GungingOotilitiesMod.GungingOotilitiesMod;
 import gunging.ootilities.GungingOotilitiesMod.commands.FFPGooM;
 import gunging.ootilities.GungingOotilitiesMod.commands.core.parsing.GCPContextOptions;
 import gunging.ootilities.GungingOotilitiesMod.commands.friendly.FriendlyComponentReceiver;
+import gunging.ootilities.GungingOotilitiesMod.commands.friendly.FriendlyFeedbackPalette;
 import gunging.ootilities.GungingOotilitiesMod.commands.friendly.FriendlyFeedbackProvider;
 import gunging.ootilities.GungingOotilitiesMod.commands.friendly.FriendlyStringReceiver;
 import org.jetbrains.annotations.NotNull;
@@ -169,7 +170,7 @@ public abstract class GCMNode {
      * @since 1.0.0
      */
     @NotNull public FriendlyFeedbackProvider newFeedbackProvider() {
-        FriendlyFeedbackProvider ret = new FriendlyFeedbackProvider(new FFPGooM());
+        FriendlyFeedbackProvider ret = new FriendlyFeedbackProvider(getPalette());
         ret.activatePrefix(true, null);
         return ret;
     }
@@ -189,4 +190,26 @@ public abstract class GCMNode {
      * @since 1.0.0
      */
     public void helpConsole(@NotNull FriendlyStringReceiver helper) { getHelp().sendAllToConsole(helper); }
+
+    /**
+     * The Friendly Feedback Palette for this tree
+     *
+     * @since 1.0.0
+     */
+    @NotNull FriendlyFeedbackPalette palette = new FFPGooM();
+
+    /**
+     * @author Gunging
+     * @since 1.0.0
+     */
+    public @NotNull FriendlyFeedbackPalette getPalette() { return palette; }
+
+    /**
+     * @author Gunging
+     * @since 1.0.0
+     */
+    public void setPalette(@NotNull FriendlyFeedbackPalette palette) {
+        this.palette = palette;
+        getHelp().setPalette(palette);
+    }
 }

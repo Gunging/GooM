@@ -78,7 +78,12 @@ public class GCMPlayerArgument extends GCMContextArgument<ServerPlayer> {
      * @since 1.0.0
      */
     @Override
-    public @NotNull GCMPlayerArgument withDefaultValue(@Nullable ServerPlayer def) {
-        return (GCMPlayerArgument) super.withDefaultValue(def);
-    }
+    public @NotNull GCMPlayerArgument withDefaultValue(@Nullable ServerPlayer def) { return (GCMPlayerArgument) super.withDefaultValue(def); }
+
+    /**
+     * @author Gunging
+     * @since 1.0.0
+     */
+    @Override
+    public @NotNull GCMPlayerArgument withGreedy(boolean greed) { return (GCMPlayerArgument) super.withGreedy(greed); }
 }

@@ -5,6 +5,7 @@ import gunging.ootilities.GungingOotilitiesMod.commands.core.building.GCMStandal
 import gunging.ootilities.GungingOotilitiesMod.commands.core.parsing.argument.GCPProvidedStat;
 import gunging.ootilities.GungingOotilitiesMod.stats.core.StatDefinition;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 
@@ -44,5 +45,23 @@ public class GCMStatArgument extends GCMStandaloneArgument<StatDefinition<?>> {
         ArrayList<String> ret = GungingOotilitiesMod.getInstance().getStats().getStatIDs();
         if (ret.isEmpty()) { ret.add("<NO-STATS-LOADED>"); }
         return ret;
+    }
+
+    /**
+     * @author Gunging
+     * @since 1.0.0
+     */
+    @Override
+    public @NotNull GCMStatArgument withDefaultValue(@Nullable StatDefinition<?> def) {
+        return (GCMStatArgument) super.withDefaultValue(def);
+    }
+
+    /**
+     * @author Gunging
+     * @since 1.0.0
+     */
+    @Override
+    public @NotNull GCMStatArgument withGreedy(boolean greed) {
+        return (GCMStatArgument) super.withGreedy(greed);
     }
 }
