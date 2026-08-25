@@ -1,9 +1,11 @@
 package gunging.ootilities.GungingOotilitiesMod.stats.definitions;
 
+import gunging.ootilities.GungingOotilitiesMod.commands.friendly.FriendlyFeedbackProvider;
 import gunging.ootilities.GungingOotilitiesMod.stats.core.StatDefinition;
 import gunging.ootilities.GungingOotilitiesMod.stats.core.StatValue;
 import gunging.ootilities.GungingOotilitiesMod.stats.values.StringListStat;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -111,5 +113,28 @@ public class StringListDefinition extends StatDefinition<List<String>> {
     @NotNull String getFirst(@NotNull StatValue<? extends List<String>> current) {
         if (current.getValue().isEmpty()) { return ""; }
         return current.getValue().get(0);
+    }
+
+    /**
+     * @author Gunging
+     * @since 1.0.0
+     */
+    @Override
+    public @Nullable StatValue<? extends List<String>> operation(@Nullable StatValue<? extends List<String>> current, @Nullable String operation, @Nullable FriendlyFeedbackProvider ffp) {
+
+        // Immediate fail when no operation is provided
+        if (operation == null) { FriendlyFeedbackProvider.logError(ffp, "Value $fnot$b provided. "); return null; }
+        StatValue<? extends List<String>> old = current == null ? getDefault() : current;
+        StatValue<? extends List<String>> ret = old.clone();
+
+        // Are we removing a list entry?
+        if (operation.startsWith("-")) {
+            ret.getValue().remove(operation.substring(1));
+
+        // Just adding
+        } else { ret.getValue().add(operation); }
+
+        // Done
+        return ret;
     }
 }

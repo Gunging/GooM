@@ -1,9 +1,12 @@
 package gunging.ootilities.GungingOotilitiesMod.stats.definitions;
 
+import gunging.ootilities.GungingOotilitiesMod.commands.friendly.FriendlyFeedbackProvider;
+import gunging.ootilities.GungingOotilitiesMod.ootilityception.OotilityNumbers;
 import gunging.ootilities.GungingOotilitiesMod.stats.core.StatDefinition;
 import gunging.ootilities.GungingOotilitiesMod.stats.core.StatValue;
 import gunging.ootilities.GungingOotilitiesMod.stats.values.BooleanStat;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * Represents a metric that expects a boolean
@@ -40,4 +43,37 @@ public class BooleanDefinition extends StatDefinition<Boolean> {
      * @since 1.0.0
      */
     public BooleanDefinition(@NotNull String definitionID) { super(definitionID, new BooleanStat()); }
+
+    /**
+     * @author Gunging
+     * @since 1.0.0
+     */
+    @Override
+    public @Nullable StatValue<? extends Boolean> operation(@Nullable StatValue<? extends Boolean> current, @Nullable String operation, @Nullable FriendlyFeedbackProvider ffp) {
+
+        // Immediate fail when no operation is provided
+        if (operation == null) {
+            FriendlyFeedbackProvider.logError(ffp, "Value $fnot$b provided, expected $etrue$b/$efalse$b. ");
+            return null; }
+        String noCaps = operation.toUpperCase();
+        StatValue<? extends Boolean> old = current == null ? getDefault() : current;
+
+        // Perform boolean operations
+        boolean isOr = operation.startsWith("||");
+        boolean isAnd = operation.startsWith("&&");
+        if (isOr || isAnd) { noCaps = noCaps.substring(2); }
+        Boolean isTrue = OotilityNumbers.BooleanParse(noCaps);
+        if (isTrue == null) {
+            FriendlyFeedbackProvider.logError(ffp, "Could $fnot$b parse $etrue$b/$efalse$b value from $r{0}$b. ", operation);
+            return null; }
+
+        // Compare OR for NEW
+        if (isOr) { return new BooleanStat(old.getValue() || isTrue); }
+
+        // Compare AND for NEW
+        else if (isAnd) { return new BooleanStat(old.getValue() && isTrue); }
+
+        // Simply SET
+        return new BooleanStat(isTrue);
+    }
 }

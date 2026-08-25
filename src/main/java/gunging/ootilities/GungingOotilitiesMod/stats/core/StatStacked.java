@@ -1,5 +1,6 @@
 package gunging.ootilities.GungingOotilitiesMod.stats.core;
 
+import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -147,8 +148,8 @@ public interface StatStacked {
      * @author Gunging
      * @since 1.0.0
      */
+    @Contract("null->null")
     @Nullable default StatInstance<?> getStat(@Nullable String statID) { return getStatTotals().get(statID); }
-
     /**
      * The stat contained here for this stat definition
      *
@@ -157,8 +158,58 @@ public interface StatStacked {
      * @author Gunging
      * @since 1.0.0
      */
+    @Contract("null->null")
     @Nullable default StatInstance<?> getStat(@Nullable StatDefinition<?> statDef) {
         if (statDef == null) { return null; }
         return getStat(statDef.getDefinitionID());
+    }
+
+    /**
+     * The value of the stat here for this stat definition
+     *
+     * @param statDef Stat definition
+     *
+     * @author Gunging
+     * @since 1.0.0
+     */
+    @Contract("null->null")
+    @Nullable default StatValue<?> getValue(@Nullable StatDefinition<?> statDef) {
+        if (statDef == null) { return null; }
+        StatInstance<?> found = getStat(statDef.getDefinitionID());
+        if (found == null) { return null; }
+        return found.getValue();
+    }
+    /**
+     * The value of the stat here for this stat definition
+     * <br>If missing, the stat instance's default value will be returned
+     *
+     * @param statDef Stat definition
+     *
+     * @author Gunging
+     * @since 1.0.0
+     */
+    @Contract("null->null")
+    @Nullable default StatValue<?> getValueOrDefault(@Nullable StatDefinition<?> statDef) {
+        if (statDef == null) { return null; }
+        StatInstance<?> found = getStat(statDef.getDefinitionID());
+        if (found == null) { return statDef.getDefault(); }
+        return found.getValue();
+    }
+    /**
+     * The value of the stat here for this stat definition
+     * <br>If missing, the provided "default" value will return
+     *
+     * @param statDef Stat definition
+     * @param def The value to return if this stat is not in this stat stack
+     *
+     * @author Gunging
+     * @since 1.0.0
+     */
+    @Contract("!null,!null->!null;null,_->null")
+    @Nullable default StatValue<?> getValueOrDefault(@Nullable StatDefinition<?> statDef, @Nullable StatValue<?> def) {
+        if (statDef == null) { return null; }
+        StatInstance<?> found = getStat(statDef.getDefinitionID());
+        if (found == null) { return def; }
+        return found.getValue();
     }
 }

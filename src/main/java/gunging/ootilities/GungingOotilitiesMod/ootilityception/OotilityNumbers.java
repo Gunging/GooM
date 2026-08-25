@@ -24,6 +24,18 @@ import java.util.stream.Stream;
 public class OotilityNumbers {
 
     //region The Purest Math Parsing
+    /**
+     * @return If this boolean value is true
+     * @param b A boolean value that may be null
+     *
+     * @since 1.0.0
+     * @author Gunging
+     */
+    public static boolean If(@Nullable Boolean b) {
+        if (b == null) { return false; }
+        return b;
+    }
+
     /*
      *   Try-Parsers
      */
@@ -84,8 +96,12 @@ public class OotilityNumbers {
         if (b == null) { return null;}
 
         // Well does it work?
-        if (b.equalsIgnoreCase("true")) { return true;
-        } else if (b.equalsIgnoreCase("false")) { return false; }
+        if (b.equalsIgnoreCase("true")) { return true; }
+        else if (b.equalsIgnoreCase("false")) { return false; }
+
+        // Try number parsing
+        Double asNumber = DoubleParse(b);
+        if (asNumber != null) { return asNumber > 0; }
 
         // Nope
         return null;
@@ -330,7 +346,7 @@ public class OotilityNumbers {
      * @since 1.0.0
      * @author Gunging
      */
-    public boolean approximately(double basis, double comparate, double tolerance) {
+    public static boolean approximately(double basis, double comparate, double tolerance) {
         return basis + tolerance >= comparate && basis - tolerance <= comparate;
     }
 
@@ -348,7 +364,7 @@ public class OotilityNumbers {
      * @since 1.0.0
      * @author Gunging
      */
-    public boolean approximatelyPercent(double basis, double comparate, double percent) {
+    public static boolean approximatelyPercent(double basis, double comparate, double percent) {
         return basis * (1 + percent) >= comparate && basis * (1 - percent) <= comparate;
     }
     //endregion
@@ -846,7 +862,7 @@ public class OotilityNumbers {
      * @since 1.0.0
      * @author Gunging
      */
-    @NotNull public static String collapseList(@NotNull ArrayList<String> list, @NotNull String separator) {
+    @NotNull public static String collapseList(@NotNull List<String> list, @NotNull String separator) {
 
         //Yes
         StringBuilder sb = new StringBuilder();

@@ -3,10 +3,17 @@ package gunging.ootilities.GungingOotilitiesMod.stats.commands;
 import gunging.ootilities.GungingOotilitiesMod.commands.core.building.argument.GCMDoubleArgument;
 import gunging.ootilities.GungingOotilitiesMod.commands.core.building.GCMGooMCommandNode;
 import gunging.ootilities.GungingOotilitiesMod.commands.core.building.argument.GCMStatArgument;
+import gunging.ootilities.GungingOotilitiesMod.commands.core.building.argument.GCMStringArgument;
 import gunging.ootilities.GungingOotilitiesMod.commands.core.parsing.GCPCommandStack;
 import gunging.ootilities.GungingOotilitiesMod.commands.forge.argument.GCMPlayerArgument;
 import gunging.ootilities.GungingOotilitiesMod.commands.friendly.FriendlyFeedbackProvider;
+import gunging.ootilities.GungingOotilitiesMod.mixininterfaces.WithStatsStack;
 import gunging.ootilities.GungingOotilitiesMod.stats.core.StatDefinition;
+import gunging.ootilities.GungingOotilitiesMod.stats.core.StatInstance;
+import gunging.ootilities.GungingOotilitiesMod.stats.core.StatStack;
+import gunging.ootilities.GungingOotilitiesMod.stats.core.StatValue;
+import gunging.ootilities.GungingOotilitiesMod.stats.definitions.DoubleDefinition;
+import gunging.ootilities.GungingOotilitiesMod.stats.values.DoubleStat;
 import net.minecraft.server.level.ServerPlayer;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -39,7 +46,7 @@ public class InherentStatCommand extends GCMGooMCommandNode {
      *
      * @since 1.0.0
      */
-    @NotNull GCMDoubleArgument valueArg = new GCMDoubleArgument("value", "The value to set this stat to. ");
+    @NotNull GCMStringArgument valueArg = new GCMStringArgument("value", "The value to set this stat to. ").withGreedy(true);
 
     /**
      * @author Gunging
@@ -71,13 +78,29 @@ public class InherentStatCommand extends GCMGooMCommandNode {
 
         // Read the arguments (in order)
         ServerPlayer player = playerArg.supplied(stack, stack.getOptions().getSenderPlayer(), ffp);
-        StatDefinition<?> stat = statArg.expected(stack, ffp);
-        Double value = valueArg.expected(stack, ffp);
+        StatDefinition stat = statArg.expected(stack, ffp);
+        String value = valueArg.expected(stack, ffp);
 
         // Cancel in the case of a failure
         if (stack.isFailure()) { return null; }
 
-        FriendlyFeedbackProvider.logSuccess(ffp, "Player $r{0}$b gained $u{1}$b : $s{2}", player.getScoreboardName(), stat.getDefinitionID(), value.toString());
-        return "";
+        // Perform operation
+        StatStack playerStack = ((WithStatsStack) player).gungingoom$getStatStack();
+        StatInstance priorInherent = playerStack.getInherentStats().get(stat.getDefinitionID());
+        StatValue original = priorInherent == null ? stat.getDefault() : priorInherent.getValue();
+        StatValue result = stat.operation(original, value, ffp);
+        if (result == null) { return null; }
+
+        // No changes?
+        if (result.equals(original)) {
+            FriendlyFeedbackProvider.logSuccess(ffp, "Stat $u{1}$b of $r{0}$b did not change from $f{2}$b. ", player.getScoreboardName(), stat.getDefinitionID(), result.toString());
+            return null;
+        }
+
+        // Success
+        playerStack.setStat(stat, result);
+        playerStack.recalculateStatTotals();
+        FriendlyFeedbackProvider.logSuccess(ffp, "Stat $u{1}$b of $r{0}$b set to $s{2}$b. ", player.getScoreboardName(), stat.getDefinitionID(), result.toString());
+        return result.toString();
     }
 }

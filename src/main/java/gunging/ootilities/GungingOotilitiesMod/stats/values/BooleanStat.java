@@ -32,4 +32,33 @@ public class BooleanStat extends StatValue<Boolean> {
      * @since 1.0.0
      */
     @Override public BooleanStat clone() { return new BooleanStat(getValue()); }
+
+    /**
+     * @author Gunging
+     * @since 1.0.0
+     */
+    @Override
+    @NotNull public String toString() { return String.valueOf(getValue()); }
+
+    /**
+     * @author Gunging
+     * @since 1.0.0
+     */
+    @Override
+    public boolean equals(Object obj) {
+
+        // Compare as boolean
+        if (obj instanceof Boolean) { return obj.equals(getValue()); }
+
+        // Compare as Stat Value
+        if (obj instanceof StatValue) {
+            StatValue asStat = (StatValue) obj;
+            if (asStat.getValue() instanceof Boolean) {
+                return asStat.getValue().equals(getValue());
+            }
+        }
+
+        // Nothing
+        return false;
+    }
 }

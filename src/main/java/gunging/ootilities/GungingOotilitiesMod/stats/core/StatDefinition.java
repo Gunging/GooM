@@ -1,7 +1,9 @@
 package gunging.ootilities.GungingOotilitiesMod.stats.core;
 
+import gunging.ootilities.GungingOotilitiesMod.commands.friendly.FriendlyFeedbackProvider;
 import gunging.ootilities.GungingOotilitiesMod.ootilityception.OotilityNumbers;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * The representation of something that is, without its actual value.
@@ -71,7 +73,7 @@ public abstract class StatDefinition<Measure> {
      * @author Gunging
      * @since 1.0.0
      */
-    @NotNull public StatValue<? extends Measure> merge(@NotNull StatValue<? extends Measure> current, @NotNull StatValue<?> incoming ){
+    @NotNull public StatValue<? extends Measure> merge(@NotNull StatValue<? extends Measure> current, @NotNull StatValue<?> incoming) {
         if (!accepts(incoming)) { return current; }
 
         // By default, no merge. It just replaces the current with the incoming.
@@ -84,7 +86,17 @@ public abstract class StatDefinition<Measure> {
      * @author Gunging
      * @since 1.0.0
      */
-    public boolean accepts(@NotNull StatValue<?> value) {
-        return getDefault().getClass().isInstance(value.getValue());
-    }
+    public boolean accepts(@NotNull StatValue<?> value) { return getDefault().getClass().isInstance(value.getValue()); }
+
+    /**
+     * @param current The current value of this stat. Note that it may just not exist yet.
+     * @param operation An operation specified by the user
+     * @param ffp Feedback provider in regard to the operation being parsed
+     *
+     * @return The result of applying this operation. Returns <code>null</code> on <b>FAILURE</b>
+     *
+     * @author Gunging
+     * @since 1.0.0
+     */
+    @Nullable public abstract StatValue<? extends Measure> operation(@Nullable StatValue<? extends Measure> current, @Nullable String operation, @Nullable FriendlyFeedbackProvider ffp);
 }

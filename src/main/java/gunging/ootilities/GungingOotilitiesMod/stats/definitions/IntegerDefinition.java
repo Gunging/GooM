@@ -1,10 +1,13 @@
 package gunging.ootilities.GungingOotilitiesMod.stats.definitions;
 
+import gunging.ootilities.GungingOotilitiesMod.commands.friendly.FriendlyFeedbackProvider;
 import gunging.ootilities.GungingOotilitiesMod.ootilityception.OotilityNumbers;
+import gunging.ootilities.GungingOotilitiesMod.ootilityception.PlusMinusPercent;
 import gunging.ootilities.GungingOotilitiesMod.stats.core.StatDefinition;
 import gunging.ootilities.GungingOotilitiesMod.stats.core.StatValue;
 import gunging.ootilities.GungingOotilitiesMod.stats.values.IntegerStat;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * Represents a metric that expects an integer number
@@ -64,5 +67,26 @@ public class IntegerDefinition extends StatDefinition<Integer> {
     @Override
     public boolean accepts(@NotNull StatValue<?> value) {
         return value.getValue() instanceof Number;
+    }
+
+    /**
+     * @author Gunging
+     * @since 1.0.0
+     */
+    @Override
+    public @Nullable StatValue<? extends Integer> operation(@Nullable StatValue<? extends Integer> current, @Nullable String operation, @Nullable FriendlyFeedbackProvider ffp) {
+
+        // Immediate fail when no operation is provided
+        if (operation == null) {
+            FriendlyFeedbackProvider.logError(ffp, "Value $fnot$b provided, expected an integer number. ");
+            return null; }
+
+        // Perform PMP Operation, it MUST parse
+        PlusMinusPercent pmp = PlusMinusPercent.getFromString(operation, ffp);
+        if (pmp == null) { return null; }
+
+        // Apply to the old
+        StatValue<? extends Integer> old = current == null ? getDefault() : current;
+        return new IntegerStat(OotilityNumbers.round(pmp.apply(old.getValue())));
     }
 }

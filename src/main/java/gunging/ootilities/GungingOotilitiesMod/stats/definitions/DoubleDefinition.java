@@ -1,9 +1,13 @@
 package gunging.ootilities.GungingOotilitiesMod.stats.definitions;
 
+import gunging.ootilities.GungingOotilitiesMod.commands.friendly.FriendlyFeedbackProvider;
+import gunging.ootilities.GungingOotilitiesMod.ootilityception.OotilityNumbers;
+import gunging.ootilities.GungingOotilitiesMod.ootilityception.PlusMinusPercent;
 import gunging.ootilities.GungingOotilitiesMod.stats.core.StatDefinition;
 import gunging.ootilities.GungingOotilitiesMod.stats.core.StatValue;
 import gunging.ootilities.GungingOotilitiesMod.stats.values.DoubleStat;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * Represents a metric that expects a double-precision number
@@ -62,7 +66,26 @@ public class DoubleDefinition extends StatDefinition<Double> {
      * @since 1.0.0
      */
     @Override
-    public boolean accepts(@NotNull StatValue<?> value) {
-        return value.getValue() instanceof Number;
+    public boolean accepts(@NotNull StatValue<?> value) { return value.getValue() instanceof Number; }
+
+    /**
+     * @author Gunging
+     * @since 1.0.0
+     */
+    @Override
+    public @Nullable StatValue<? extends Double> operation(@Nullable StatValue<? extends Double> current, @Nullable String operation, @Nullable FriendlyFeedbackProvider ffp) {
+
+        // Immediate fail when no operation is provided
+        if (operation == null) {
+            FriendlyFeedbackProvider.logError(ffp, "Value $fnot$b provided, expected a number. ");
+            return null; }
+
+        // Perform PMP Operation, it MUST parse
+        PlusMinusPercent pmp = PlusMinusPercent.getFromString(operation, ffp);
+        if (pmp == null) { return null; }
+
+        // Apply to the old
+        StatValue<? extends Double> old = current == null ? getDefault() : current;
+        return new DoubleStat(pmp.apply(old.getValue()));
     }
 }
