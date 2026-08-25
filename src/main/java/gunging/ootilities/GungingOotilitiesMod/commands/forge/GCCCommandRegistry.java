@@ -69,7 +69,7 @@ public class GCCCommandRegistry {
      *
      * @since 1.0.0
      */
-    @NotNull final GCMRootNode goomRoot = new GCMRootNode("goom");
+    @NotNull final GCMRootNode goomRoot = new GCMRootNode("goom").withPermissionLevel(2);
 
     /**
      * @author Gunging
@@ -143,7 +143,7 @@ public class GCCCommandRegistry {
         for (GCMRootNode root : goom.getRoots().values()) {
 
             // Register root node
-            LiteralArgumentBuilder<CommandSourceStack> asForge = LiteralArgumentBuilder.literal(root.getKeyword());
+            LiteralArgumentBuilder<CommandSourceStack> asForge = toForgeNode(root);
 
             /*
              * Calling in help mode, it simply returns line by line the help messages to the command sender
@@ -178,7 +178,7 @@ public class GCCCommandRegistry {
         event.addRoot(goomSingletonRoot);
 
         // Build GooM branches
-        goomSingletonRoot.addNode(new StatsCommandNode());
+        goomSingletonRoot.addNode(new StatsCommandNode().withPermissionLevel(2));
         goomSingletonRoot.addNode(new GMCTell());
 
         // Build /help
@@ -196,10 +196,34 @@ public class GCCCommandRegistry {
      * @author Gunging
      * @since 1.0.0
      */
+    @NotNull public static LiteralArgumentBuilder<CommandSourceStack> toForgeNode(@NotNull GCMNode node) {
+
+        // Create Forge Node with the same GooM keyword
+        LiteralArgumentBuilder<CommandSourceStack> ret = Commands.literal(node.getKeyword());
+
+        // Register its permission level
+        if (node instanceof GCMBranchNode) {
+            ret = ret.requires(commandSourceStack ->
+
+                    commandSourceStack.hasPermission(((GCMBranchNode) node).getPermissionLevel())
+
+            );
+        }
+
+        // Done
+        return ret;
+    }
+
+    /**
+     * @param node The GooM node to process into a forge node
+     *
+     * @author Gunging
+     * @since 1.0.0
+     */
     @NotNull public static ArgumentBuilder<CommandSourceStack, ?> forgeCommandNode(@NotNull GCMNode node, CommandDispatcher<CommandSourceStack> dispatcher) {
 
         // Build core around keyword
-        ArgumentBuilder<CommandSourceStack, ?> ret = Commands.literal(node.getKeyword());
+        ArgumentBuilder<CommandSourceStack, ?> ret = toForgeNode(node);
 
         // Always register /help mode
         ret.executes(css -> {

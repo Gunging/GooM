@@ -1,9 +1,7 @@
 package gunging.ootilities.GungingOotilitiesMod.commands.core.building;
 
-import gunging.ootilities.GungingOotilitiesMod.commands.FFPGooM;
 import gunging.ootilities.GungingOotilitiesMod.commands.core.parsing.GCPContextOptions;
 import gunging.ootilities.GungingOotilitiesMod.commands.friendly.FriendlyFeedbackPalette;
-import gunging.ootilities.GungingOotilitiesMod.commands.friendly.FriendlyFeedbackProvider;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -88,5 +86,33 @@ public class GCMBranchNode extends GCMNode {
     public void setPalette(@NotNull FriendlyFeedbackPalette palette) {
         super.setPalette(palette);
         for (GCMNode child : getSubnodes().values()) { child.setPalette(palette); }
+    }
+
+    /**
+     * The permission level that allows accessing this command branch node
+     * <br><b>0: NORMAL</b>
+     * <br><b>2: GAME MASTER</b> (same as placing down command blocks)
+     * <br><b>3: COMMUNITY MASTER</b> (same level as banning players)
+     * <br><b>4: OP</b>
+     *
+     * @since 1.0.0
+     */
+    int permissionLevel;
+
+    /**
+     * @author Gunging
+     * @since 1.0.0
+     */
+    public int getPermissionLevel() {
+        return permissionLevel;
+    }
+
+    /**
+     * @author Gunging
+     * @since 1.0.0
+     */
+    public GCMBranchNode withPermissionLevel(int permissionLevel) {
+        this.permissionLevel = permissionLevel;
+        return this;
     }
 }

@@ -50,4 +50,13 @@ public class GCMRootNode extends GCMBranchNode {
         super.addNode(node);
         node.setPalette(getPalette());
     }
+
+    /**
+     * @author Gunging
+     * @since 1.0.0
+     */
+    @Override
+    public GCMRootNode withPermissionLevel(int permissionLevel) {
+        return (GCMRootNode) super.withPermissionLevel(permissionLevel);
+    }
 }
