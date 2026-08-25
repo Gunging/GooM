@@ -1354,5 +1354,43 @@ public class OotilityNumbers {
         // Confirm its existence
         return eval == (1 << 27);
     }
+
+    /**
+     * @param message Text of which to activate color codes
+     * @return The message but with color codes instead of & placeholders
+     *
+     * @author Gunging
+     * @since 1.0.0
+     */
+    @NotNull public static String colorizeAmpersandToSection(@NotNull String message) {
+
+        // No color codes? No changes
+        if (!message.contains("&")) { return message; }
+
+        String[] sectioned = message.split("&");
+        StringBuilder ret = new StringBuilder(sectioned[0]);
+        for (int i = 1; i < sectioned.length; i++) {
+
+            // Check the character immediately after the code
+            String obs = sectioned[i];
+            if (isSectionColorCode.matcher(obs).matches()) {
+
+                // This was a color code, append section
+                ret.append('§').append(obs);
+
+            // This was not a color code, include normally
+            } else { ret.append('&').append(obs); }
+        }
+
+        // Build
+        return ret.toString();
+    }
+
+    /**
+     * Checks specifically if a string (expectedly, a character) is a minecraft color code
+     *
+     * @since 1.0.0
+     */
+    @NotNull public static final Pattern isSectionColorCode = Pattern.compile("(?s-m)^[0-9A-Fa-f|kmolnrKMOLNR].*");
     //endregion
 }

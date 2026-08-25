@@ -204,11 +204,7 @@ public class GCCCommandRegistry {
         // Register its permission level
         if (node instanceof GCMBranchNode) {
             ret = ret.requires(commandSourceStack ->
-
-                    commandSourceStack.hasPermission(((GCMBranchNode) node).getPermissionLevel())
-
-            );
-        }
+                    commandSourceStack.hasPermission(((GCMBranchNode) node).getPermissionLevel()) ); }
 
         // Done
         return ret;

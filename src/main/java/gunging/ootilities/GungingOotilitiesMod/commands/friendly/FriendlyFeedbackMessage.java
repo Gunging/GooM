@@ -1,5 +1,6 @@
 package gunging.ootilities.GungingOotilitiesMod.commands.friendly;
 
+import gunging.ootilities.GungingOotilitiesMod.ootilityception.OotilityNumbers;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import org.jetbrains.annotations.NotNull;
@@ -167,7 +168,7 @@ public class FriendlyFeedbackMessage implements Cloneable {
         }
 
         // Add colored message
-        actualMessage.append(pal.parseForPlayer(getMessage()));
+        actualMessage.append(pal.parseForPlayer(OotilityNumbers.colorizeAmpersandToSection(getMessage())));
 
         // Return built
         return actualMessage;
@@ -197,7 +198,7 @@ public class FriendlyFeedbackMessage implements Cloneable {
         }
 
         // Add colored message
-        actualMessage.append(pal.parseForConsole(getMessage()));
+        actualMessage.append(pal.parseForConsole(OotilityNumbers.colorizeAmpersandToSection(getMessage())));
 
         // Return built
         return actualMessage.toString();

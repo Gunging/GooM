@@ -42,9 +42,13 @@ public class GCMStringArgument extends GCMStandaloneArgument<String> {
     @Override
     public @NotNull ArrayList<String> getUbiquitousSuggestions() {
         ArrayList<String> ret = new ArrayList<>();
-        ret.add("Mangoes");
+        ret.add("&6&lMangoes");
         ret.add("ANYTHING");
-        ret.add("Text");
+        ret.add("&cC&6o&el&ao&br&3f&9u&dl&5l");
+        ret.add("&kMagic");
+        ret.add("&mStrikethrough");
+        ret.add("&nUnderline");
+        ret.add("&oItalics");
         if (isGreedy()) {
             ret.add("A phrase or line of text");
             ret.add("SAMPLE TEXT :O"); }
