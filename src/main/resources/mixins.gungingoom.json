@@ -19,6 +19,7 @@
     "LivingEntityMixin",
     "PlayerListMixin",
     "PlayerMixin",
+    "ServerEntityMixin",
     "ServerGamePacketListenerMixin"
   ],
   "injectors": {

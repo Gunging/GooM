@@ -63,6 +63,7 @@ public class GOOMClientsidePacketHandler {
         StatStack asStack = asStats.gungingoom$getStatStack();
         asStack.deserializeInherent(syncing.getSerializedInherent(), null);
         asStack.getRefreshedStatTotals();
+        asStack.getDirtyInherent().clear();
     }
 
     /**

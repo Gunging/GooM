@@ -51,7 +51,8 @@ public abstract class ServerEntityMixin {
             WithStatsStack asStats = (WithStatsStack) entity;
             StatStack asStack = asStats.gungingoom$getStatStack();
             if (!asStack.getDirtyInherent().isEmpty()) {
-                GOOMNetworkManager.broadcastEntityUpdate(entity, new GMNClientboundInherentStatsEntity((LivingEntity) this.entity)); }
+                GOOMNetworkManager.broadcastEntityUpdate(entity, new GMNClientboundInherentStatsEntity((LivingEntity) this.entity));
+            }
             asStack.getDirtyInherent().clear();
         }
     }
