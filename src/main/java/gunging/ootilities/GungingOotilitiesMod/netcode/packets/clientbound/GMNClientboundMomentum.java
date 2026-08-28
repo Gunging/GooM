@@ -60,7 +60,7 @@ public class GMNClientboundMomentum {
     }
 
     /**
-     * @param buf The list of statements received from the network
+     * @param buf The position and velocity received from the network
      *
      * @since 1.0.0
      * @author Gunging
@@ -86,8 +86,6 @@ public class GMNClientboundMomentum {
     }
 
     /**
-     * Find the holder, entity, and item, and link them together
-     *
      * @since 1.0.0
      * @author Gunging
      */

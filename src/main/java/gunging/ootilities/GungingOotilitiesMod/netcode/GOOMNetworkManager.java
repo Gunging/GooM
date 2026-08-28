@@ -2,6 +2,7 @@ package gunging.ootilities.GungingOotilitiesMod.netcode;
 
 import gunging.ootilities.GungingOotilitiesMod.GungingOotilitiesMod;
 import gunging.ootilities.GungingOotilitiesMod.netcode.packets.clientbound.GMNClientLoginRequest;
+import gunging.ootilities.GungingOotilitiesMod.netcode.packets.clientbound.GMNClientboundInherentStatsEntity;
 import gunging.ootilities.GungingOotilitiesMod.netcode.packets.clientbound.GMNClientboundMomentum;
 import gunging.ootilities.GungingOotilitiesMod.netcode.packets.clientbound.GMNClientboundStatementSync;
 import gunging.ootilities.GungingOotilitiesMod.netcode.packets.serverbound.GMNServerboundStatementSyncRequest;
@@ -64,6 +65,11 @@ public class GOOMNetworkManager {
                 .encoder(GMNClientLoginRequest::encode)
                 .decoder(GMNClientLoginRequest::new)
                 .consumerMainThread(GMNClientLoginRequest::handle).add();
+
+        MAIN_CHANNEL.messageBuilder(GMNClientboundInherentStatsEntity.class, i++, NetworkDirection.PLAY_TO_CLIENT)
+                .encoder(GMNClientboundInherentStatsEntity::encode)
+                .decoder(GMNClientboundInherentStatsEntity::new)
+                .consumerMainThread(GMNClientboundInherentStatsEntity::handle).add();
     }
 
     /**

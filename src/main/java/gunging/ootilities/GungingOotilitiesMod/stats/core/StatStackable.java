@@ -56,14 +56,32 @@ public interface StatStackable {
      * @since 1.0.0
      */
     @NotNull default String serializeInherent() {
+        return serializeInherent(false);
+    }
+
+    /**
+     * @param forClientboundNetwork If these will be sent over the network to clients,
+     *                              in which case we do not need to send server-sided stats
+     *                              and the dirty network map will be sent instead.
+     *
+     * @return The inherent stats contained in here, serialized.
+     *
+     * @author Gunging
+     * @since 1.0.0
+     */
+    @NotNull default String serializeInherent(boolean forClientboundNetwork) {
         StringBuilder ret = new StringBuilder();
         boolean first = true;
 
+        // Choose which map to send
+        HashMap<String, StatInstance<?>> map = forClientboundNetwork ? getDirtyInherent() : getInherentStats();
+
         // Add every stat
-        for (StatInstance<?> stat : getInherentStats().values()) {
+        for (StatInstance<?> stat : map.values()) {
+            if (forClientboundNetwork && stat.getDefinition().isServerSided()) { continue; }
 
             // No need to save stats with the default value
-            if (stat.isDefault()) { continue; }
+            if (!forClientboundNetwork && stat.isDefault()) { continue; }
 
             // Semicolon as separator
             if (first) { first = false; } else { ret.append(OotilityNumbers.SERIALIZATION_SEPARATOR); }
@@ -117,4 +135,13 @@ public interface StatStackable {
      * @since 1.0.0
      */
     @NotNull HashMap<String, StatInstance<?>> getRefreshedCharacteristicTotals();
+
+    /**
+     * Inherent stat changes accumulated since last
+     * time they were sent over the network.
+     *
+     * @author Gunging
+     * @since 1.0.0
+     */
+    @NotNull HashMap<String, StatInstance<?>> getDirtyInherent();
 }

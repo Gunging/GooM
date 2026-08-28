@@ -37,8 +37,6 @@ public class GMNClientLoginRequest {
     public void encode(@NotNull FriendlyByteBuf buff) {}
 
     /**
-     * Find the holder, entity, and item, and link them together
-     *
      * @since 1.0.0
      * @author Gunging
      */

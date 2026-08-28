@@ -3,14 +3,21 @@ package gunging.ootilities.GungingOotilitiesMod.netcode;
 import gunging.ootilities.GungingOotilitiesMod.GungingOotilitiesMod;
 import gunging.ootilities.GungingOotilitiesMod.exploring.ExplorerManager;
 import gunging.ootilities.GungingOotilitiesMod.instants.GOOMClientsidePlayerLoginEvent;
+import gunging.ootilities.GungingOotilitiesMod.mixininterfaces.WithStatsStack;
 import gunging.ootilities.GungingOotilitiesMod.netcode.packets.clientbound.GMNClientLoginRequest;
+import gunging.ootilities.GungingOotilitiesMod.netcode.packets.clientbound.GMNClientboundInherentStatsEntity;
 import gunging.ootilities.GungingOotilitiesMod.netcode.packets.clientbound.GMNClientboundStatementSync;
 import gunging.ootilities.GungingOotilitiesMod.netcode.packets.clientbound.GMNClientboundMomentum;
+import gunging.ootilities.GungingOotilitiesMod.stats.core.StatStack;
 import net.minecraft.client.Minecraft;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.level.Level;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.network.NetworkEvent;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.function.Supplier;
 
@@ -21,6 +28,42 @@ import java.util.function.Supplier;
  * @author Gunging
  */
 public class GOOMClientsidePacketHandler {
+
+    /**
+     * @return The world where this network context is taking place.
+     *
+     * @since 1.0.0
+     * @author Gunging
+     */
+    @Nullable public static Level getContextWorld(@NotNull Supplier<NetworkEvent.Context> contextSupplier) {
+        Level world = Minecraft.getInstance().level;
+        if (world == null) {
+            if (Minecraft.getInstance().player == null) { return null; }
+            world = Minecraft.getInstance().player.level(); }
+        return world;
+    }
+
+    /**
+     * @param syncing Information to sync statement network indices
+     * @param contextSupplier The network context by which this is taking place
+     *
+     * @since 1.0.0
+     * @author Gunging
+     */
+    public static void handleInherentStatsEntity(@NotNull GMNClientboundInherentStatsEntity syncing, @NotNull Supplier<NetworkEvent.Context> contextSupplier) {
+
+        // Identify
+        Level world = getContextWorld(contextSupplier);
+        if (world == null) { return; }
+        LivingEntity target = syncing.getInherentEntity(world);
+        if (target == null) { return; }
+
+        // Apply provided stats
+        WithStatsStack asStats = (WithStatsStack) target;
+        StatStack asStack = asStats.gungingoom$getStatStack();
+        asStack.deserializeInherent(syncing.getSerializedInherent(), null);
+        asStack.getRefreshedStatTotals();
+    }
 
     /**
      * @param syncing Information to sync statement network indices

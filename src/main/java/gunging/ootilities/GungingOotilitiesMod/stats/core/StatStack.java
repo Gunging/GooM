@@ -56,6 +56,14 @@ public class StatStack implements StatStacked, StatStackable {
     @NotNull HashMap<String, StatInstance<?>> characteristic = new HashMap<>();
 
     /**
+     * Registers stat changes to inherent stats
+     * that must be sent over the network.
+     *
+     * @since 1.0.0
+     */
+    @NotNull HashMap<String, StatInstance<?>> dirtyNetwork = new HashMap<>();
+
+    /**
      * If this or its children are known to have changes
      *
      * @since 1.0.0
@@ -114,6 +122,7 @@ public class StatStack implements StatStacked, StatStackable {
 
         // Register this in the inherent stats
         inherent.put(stat.getDefinition().getDefinitionID(), stat);
+        dirtyNetwork.put(stat.getDefinition().getDefinitionID(), stat);
 
         // Register stat changes for me and all of my parents
         if (stat.getDefinition().isCharacteristic()) {
@@ -127,7 +136,11 @@ public class StatStack implements StatStacked, StatStackable {
      * @author Gunging
      */
     @Override public <M> void setStat(@NotNull StatDefinition<M> statDefinition, @Nullable StatValue<? extends M> data) {
-        if (data == null) { inherent.remove(statDefinition.definitionID); return; }
+        if (data == null) {
+            inherent.remove(statDefinition.getDefinitionID());
+            dirtyNetwork.put(statDefinition.getDefinitionID(),
+                    new StatInstance<M>(statDefinition, statDefinition.getDefault()));
+            return; }
         setStat(new StatInstance<M>(statDefinition, data));
     }
 
@@ -148,6 +161,12 @@ public class StatStack implements StatStacked, StatStackable {
         if (hasStatTotalChanges()) { recalculateStatTotals(); }
         return getCharacteristicTotals();
     }
+
+    /**
+     * @since 1.0.0
+     * @author Gunging
+     */
+    @Override public @NotNull HashMap<String, StatInstance<?>> getDirtyInherent() { return dirtyNetwork; }
 
     /**
      * @since 1.0.0
