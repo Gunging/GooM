@@ -133,6 +133,8 @@ public class StatStack implements StatStacked, StatStackable {
         // Begin by including the stats of the children
         for (StatStacked child : getChildStacks()) {
             for (StatInstance<?> stat : child.getRefreshedStatTotals().values()) {
+
+                // Find the totals already gathered from other children
                 StatInstance<?> inTotals = totals.get(stat.getDefinition());
 
                 // If this stat is missing, accept it as new
@@ -148,6 +150,9 @@ public class StatStack implements StatStacked, StatStackable {
 
         // Then merge inherent
         for (StatInstance<?> stat : getInherentStats().values()) {
+            if (!stat.getDefinition().isValid()) { continue; }
+
+            // Find the totals already gathered from children
             StatInstance<?> inTotals = totals.get(stat.getDefinition());
 
             // If this stat is missing, accept it as new

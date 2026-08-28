@@ -1408,5 +1408,40 @@ public class OotilityNumbers {
      * @since 1.0.0
      */
     @NotNull public static final Pattern isSectionColorCode = Pattern.compile("(?s-m)^[0-9A-Fa-f|kmolnrKMOLNR].*");
+
+    /**
+     * The certified list separator character in GooM is the semicolon,
+     * so it escapes that, as well as angle brackets that are used for
+     * placeholders.
+     *
+     * @return Changes all special serialization characters for placeholders
+     *
+     * @author Gunging
+     * @since 1.0.0
+     */
+    @NotNull public static String escapeForSerialization(@NotNull String unescaped) {
+        return unescaped.replace("<", "<%l>").replace(">", "<%r>").replace(SERIALIZATION_SEPARATOR, "<%sc>");
+    }
+
+    /**
+     * The certified list separator character in GooM is the semicolon,
+     * so it escapes that, as well as angle brackets that are used for
+     * placeholders.
+     *
+     * @return Changes all serialization placeholders characters for normal characters
+     *
+     * @author Gunging
+     * @since 1.0.0
+     */
+    @NotNull public static String unescapeFromSerialization(@NotNull String escaped) {
+        return escaped.replace("<%sc>", SERIALIZATION_SEPARATOR).replace("<%r>", ">").replace("<%l>", "<");
+    }
+
+    /**
+     * The official separator for serialization
+     *
+     * @since 1.0.0
+     */
+    @NotNull public static final String SERIALIZATION_SEPARATOR = ";";
     //endregion
 }

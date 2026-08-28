@@ -1,9 +1,11 @@
 package gunging.ootilities.GungingOotilitiesMod.stats.definitions;
 
 import gunging.ootilities.GungingOotilitiesMod.commands.friendly.FriendlyFeedbackProvider;
+import gunging.ootilities.GungingOotilitiesMod.ootilityception.OotilityNumbers;
 import gunging.ootilities.GungingOotilitiesMod.stats.core.StatDefinition;
 import gunging.ootilities.GungingOotilitiesMod.stats.core.StatValue;
 import gunging.ootilities.GungingOotilitiesMod.stats.values.StringListStat;
+import gunging.ootilities.GungingOotilitiesMod.stats.values.StringStat;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -136,5 +138,31 @@ public class StringListDefinition extends StatDefinition<List<String>> {
 
         // Done
         return ret;
+    }
+
+    /**
+     * @author Gunging
+     * @since 1.0.0
+     */
+    @Override
+    public @NotNull String whenSerialized(@NotNull StatValue<? extends List<String>> current) {
+        StringBuilder ret = new StringBuilder();
+        boolean first = true;
+        for (String content : current.getValue()) {
+            if (first) { first = false; } else { ret.append(OotilityNumbers.SERIALIZATION_SEPARATOR); }
+            ret.append(OotilityNumbers.escapeForSerialization(content)); }
+        return ret.toString();
+    }
+
+    /**
+     * @author Gunging
+     * @since 1.0.0
+     */
+    @Override
+    public @Nullable StatValue<? extends List<String>> whenDeserialized(@NotNull String serialized, @Nullable FriendlyFeedbackProvider ffp) {
+        ArrayList<String> escaped = OotilityNumbers.split(serialized, OotilityNumbers.SERIALIZATION_SEPARATOR);
+        ArrayList<String> ret = new ArrayList<>();
+        for (String content : escaped) { ret.add(OotilityNumbers.unescapeFromSerialization(content)); }
+        return new StringListStat(ret);
     }
 }

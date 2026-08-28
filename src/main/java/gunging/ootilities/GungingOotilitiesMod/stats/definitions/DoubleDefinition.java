@@ -5,6 +5,7 @@ import gunging.ootilities.GungingOotilitiesMod.ootilityception.OotilityNumbers;
 import gunging.ootilities.GungingOotilitiesMod.ootilityception.PlusMinusPercent;
 import gunging.ootilities.GungingOotilitiesMod.stats.core.StatDefinition;
 import gunging.ootilities.GungingOotilitiesMod.stats.core.StatValue;
+import gunging.ootilities.GungingOotilitiesMod.stats.values.BooleanStat;
 import gunging.ootilities.GungingOotilitiesMod.stats.values.DoubleStat;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -87,5 +88,27 @@ public class DoubleDefinition extends StatDefinition<Double> {
         // Apply to the old
         StatValue<? extends Double> old = current == null ? getDefault() : current;
         return new DoubleStat(pmp.apply(old.getValue()));
+    }
+
+    /**
+     * @author Gunging
+     * @since 1.0.0
+     */
+    @Override
+    public @NotNull String whenSerialized(@NotNull StatValue<? extends Double> current) {
+        return current.getValue().toString();
+    }
+
+    /**
+     * @author Gunging
+     * @since 1.0.0
+     */
+    @Override
+    public @Nullable StatValue<? extends Double> whenDeserialized(@NotNull String serialized, @Nullable FriendlyFeedbackProvider ffp) {
+        Double ret = OotilityNumbers.DoubleParse(serialized);
+        if (ret == null) {
+            FriendlyFeedbackProvider.logError(ffp, "Expected a number instead of '$u{0}$b'. ", serialized);
+            return null; }
+        return new DoubleStat(ret);
     }
 }

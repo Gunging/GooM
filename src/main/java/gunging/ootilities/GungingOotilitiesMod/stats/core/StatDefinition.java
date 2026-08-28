@@ -99,4 +99,40 @@ public abstract class StatDefinition<Measure> {
      * @since 1.0.0
      */
     @Nullable public abstract StatValue<? extends Measure> operation(@Nullable StatValue<? extends Measure> current, @Nullable String operation, @Nullable FriendlyFeedbackProvider ffp);
+
+    /**
+     * @return If this definition only exists in the server.
+     *         The alternative syncs the value from server to
+     *         client when changes are recalculated.
+     *
+     * @author Gunging
+     * @since 1.0.0
+     */
+    public boolean isServerSided() { return true; }
+
+    /**
+     * @return If this stat definition is good to be used.
+     *
+     * @author Gunging
+     * @since 1.0.0
+     */
+    public boolean isValid() { return true; }
+
+    /**
+     * @param current The stat value to serialize
+     * @return The representation of this as a string
+     *
+     * @author Gunging
+     * @since 1.0.0
+     */
+    @NotNull public abstract String whenSerialized(@NotNull StatValue<? extends Measure> current);
+
+    /**
+     * @param serialized The serialized value for this stat
+     * @return The value, rebuilt from this string
+     *
+     * @author Gunging
+     * @since 1.0.0
+     */
+    @Nullable public abstract StatValue<? extends Measure> whenDeserialized(@NotNull String serialized, @Nullable FriendlyFeedbackProvider ffp);
 }

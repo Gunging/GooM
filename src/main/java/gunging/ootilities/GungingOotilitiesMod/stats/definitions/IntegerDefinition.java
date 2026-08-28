@@ -89,4 +89,26 @@ public class IntegerDefinition extends StatDefinition<Integer> {
         StatValue<? extends Integer> old = current == null ? getDefault() : current;
         return new IntegerStat(OotilityNumbers.round(pmp.apply(old.getValue())));
     }
+
+    /**
+     * @author Gunging
+     * @since 1.0.0
+     */
+    @Override
+    public @NotNull String whenSerialized(@NotNull StatValue<? extends Integer> current) {
+        return current.getValue().toString();
+    }
+
+    /**
+     * @author Gunging
+     * @since 1.0.0
+     */
+    @Override
+    public @Nullable StatValue<? extends Integer> whenDeserialized(@NotNull String serialized, @Nullable FriendlyFeedbackProvider ffp) {
+        Integer ret = OotilityNumbers.IntegerParse(serialized);
+        if (ret == null) {
+            FriendlyFeedbackProvider.logError(ffp, "Expected an integer number instead of '$u{0}$b'. ", serialized);
+            return null; }
+        return new IntegerStat(ret);
+    }
 }

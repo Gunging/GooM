@@ -5,6 +5,7 @@ import gunging.ootilities.GungingOotilitiesMod.ootilityception.OotilityNumbers;
 import gunging.ootilities.GungingOotilitiesMod.stats.core.StatDefinition;
 import gunging.ootilities.GungingOotilitiesMod.stats.core.StatValue;
 import gunging.ootilities.GungingOotilitiesMod.stats.values.BooleanStat;
+import gunging.ootilities.GungingOotilitiesMod.stats.values.StringStat;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -64,7 +65,7 @@ public class BooleanDefinition extends StatDefinition<Boolean> {
         if (isOr || isAnd) { noCaps = noCaps.substring(2); }
         Boolean isTrue = OotilityNumbers.BooleanParse(noCaps);
         if (isTrue == null) {
-            FriendlyFeedbackProvider.logError(ffp, "Could $fnot$b parse $etrue$b/$efalse$b value from $r{0}$b. ", operation);
+            FriendlyFeedbackProvider.logError(ffp, "Could $fnot$b parse $etrue$b/$efalse$b value from '$r{0}$b'. ", operation);
             return null; }
 
         // Compare OR for NEW
@@ -75,5 +76,27 @@ public class BooleanDefinition extends StatDefinition<Boolean> {
 
         // Simply SET
         return new BooleanStat(isTrue);
+    }
+
+    /**
+     * @author Gunging
+     * @since 1.0.0
+     */
+    @Override
+    public @NotNull String whenSerialized(@NotNull StatValue<? extends Boolean> current) {
+        return current.getValue().toString();
+    }
+
+    /**
+     * @author Gunging
+     * @since 1.0.0
+     */
+    @Override
+    public @Nullable StatValue<? extends Boolean> whenDeserialized(@NotNull String serialized, @Nullable FriendlyFeedbackProvider ffp) {
+        Boolean ret = OotilityNumbers.BooleanParse(serialized);
+        if (ret == null) {
+            FriendlyFeedbackProvider.logError(ffp, "Could not parse $etrue$b/$efalse$b from '$u{0}$b'. ", serialized);
+            return null; }
+        return new BooleanStat(ret);
     }
 }

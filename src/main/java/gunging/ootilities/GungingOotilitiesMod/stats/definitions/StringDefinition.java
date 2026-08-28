@@ -1,8 +1,6 @@
 package gunging.ootilities.GungingOotilitiesMod.stats.definitions;
 
 import gunging.ootilities.GungingOotilitiesMod.commands.friendly.FriendlyFeedbackProvider;
-import gunging.ootilities.GungingOotilitiesMod.ootilityception.OotilityNumbers;
-import gunging.ootilities.GungingOotilitiesMod.ootilityception.PlusMinusPercent;
 import gunging.ootilities.GungingOotilitiesMod.stats.core.StatDefinition;
 import gunging.ootilities.GungingOotilitiesMod.stats.core.StatValue;
 import gunging.ootilities.GungingOotilitiesMod.stats.values.StringStat;
@@ -57,5 +55,23 @@ public class StringDefinition extends StatDefinition<String> {
 
         // Only SET is supported
         return new StringStat(operation);
+    }
+
+    /**
+     * @author Gunging
+     * @since 1.0.0
+     */
+    @Override
+    public @NotNull String whenSerialized(@NotNull StatValue<? extends String> current) {
+        return current.getValue();
+    }
+
+    /**
+     * @author Gunging
+     * @since 1.0.0
+     */
+    @Override
+    public @Nullable StatValue<? extends String> whenDeserialized(@NotNull String serialized, @Nullable FriendlyFeedbackProvider ffp) {
+        return new StringStat(serialized);
     }
 }

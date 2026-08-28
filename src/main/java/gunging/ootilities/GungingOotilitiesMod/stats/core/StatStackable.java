@@ -1,5 +1,7 @@
 package gunging.ootilities.GungingOotilitiesMod.stats.core;
 
+import gunging.ootilities.GungingOotilitiesMod.commands.friendly.FriendlyFeedbackProvider;
+import gunging.ootilities.GungingOotilitiesMod.ootilityception.OotilityNumbers;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -46,4 +48,53 @@ public interface StatStackable {
      * @since 1.0.0
      */
     <M> void setStat(@NotNull StatDefinition<M> statDefinition, @Nullable StatValue<? extends M> data);
+
+    /**
+     * @return The inherent stats contained in here, serialized.
+     *
+     * @author Gunging
+     * @since 1.0.0
+     */
+    @NotNull default String serializeInherent() {
+        StringBuilder ret = new StringBuilder();
+        boolean first = true;
+
+        // Add every stat
+        for (StatInstance<?> stat : getInherentStats().values()) {
+
+            // Semicolon as separator
+            if (first) { first = false; } else { ret.append(OotilityNumbers.SERIALIZATION_SEPARATOR); }
+
+            // STAT_DEFINITION=<VALUE>
+            ret.append(OotilityNumbers.escapeForSerialization(stat.serializeFull()));
+        }
+
+        // Return result
+        return ret.toString();
+    }
+
+    /**
+     * This undoes {@link #serializeInherent()}
+     *
+     * @param serialized The serialized stats to read and include in the inherent list
+     *
+     * @author Gunging
+     * @since 1.0.0
+     */
+    default void deserializeInherent(@Nullable String serialized, @Nullable FriendlyFeedbackProvider ffp) {
+        if (serialized == null) { return; }
+        if (serialized.isEmpty()) { return; }
+
+        // Split by separator
+        for (String chunk : OotilityNumbers.split(serialized, OotilityNumbers.SERIALIZATION_SEPARATOR)) {
+            if (chunk.isEmpty()) { return; }
+
+            // Attempt to parse
+            StatInstance<?> parsed = StatInstance.deserializeFull(OotilityNumbers.unescapeFromSerialization(chunk), ffp);
+            if (parsed == null) { continue; }
+
+            // Include in inherent if parsed
+            setStat(parsed);
+        }
+    }
 }
