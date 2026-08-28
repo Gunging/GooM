@@ -62,6 +62,9 @@ public interface StatStackable {
         // Add every stat
         for (StatInstance<?> stat : getInherentStats().values()) {
 
+            // No need to save stats with the default value
+            if (stat.isDefault()) { continue; }
+
             // Semicolon as separator
             if (first) { first = false; } else { ret.append(OotilityNumbers.SERIALIZATION_SEPARATOR); }
 
@@ -97,4 +100,21 @@ public interface StatStackable {
             setStat(parsed);
         }
     }
+
+    /**
+     * The characteristic stats contained herein
+     *
+     * @author Gunging
+     * @since 1.0.0
+     */
+    @NotNull HashMap<String, StatInstance<?>> getCharacteristicTotals();
+
+    /**
+     * Consider recalculating totals if there are changes,
+     * then return the latest characteristic totals for real.
+     *
+     * @author Gunging
+     * @since 1.0.0
+     */
+    @NotNull HashMap<String, StatInstance<?>> getRefreshedCharacteristicTotals();
 }

@@ -119,6 +119,14 @@ public abstract class StatDefinition<Measure> {
     public boolean isValid() { return true; }
 
     /**
+     * @return If this stat must not be collected by parents
+     *
+     * @author Gunging
+     * @since 1.0.0
+     */
+    public boolean isCharacteristic() { return false; }
+
+    /**
      * @param current The stat value to serialize
      * @return The representation of this as a string
      *

@@ -46,6 +46,16 @@ public class StatStack implements StatStacked, StatStackable {
     @NotNull HashMap<String, StatInstance<?>> totals = new HashMap<>();
 
     /**
+     * The cached characteristic stats of this provider.
+     * Characteristic stats are Inherent stats that do
+     * not get synced with the parent, staying in this
+     * Stat Stack only.
+     *
+     * @since 1.0.0
+     */
+    @NotNull HashMap<String, StatInstance<?>> characteristic = new HashMap<>();
+
+    /**
      * If this or its children are known to have changes
      *
      * @since 1.0.0
@@ -69,6 +79,12 @@ public class StatStack implements StatStacked, StatStackable {
      * @author Gunging
      */
     @Override public @NotNull HashMap<String, StatInstance<?>> getStatTotals() { return totals; }
+
+    /**
+     * @since 1.0.0
+     * @author Gunging
+     */
+    @Override public @NotNull HashMap<String, StatInstance<?>> getCharacteristicTotals() { return characteristic; }
 
     /**
      * @since 1.0.0
@@ -100,7 +116,10 @@ public class StatStack implements StatStacked, StatStackable {
         inherent.put(stat.getDefinition().getDefinitionID(), stat);
 
         // Register stat changes for me and all of my parents
-        parentalChainRegisterChanges();
+        if (stat.getDefinition().isCharacteristic()) {
+            registerStatTotalChanges();
+        } else {
+            parentalChainRegisterChanges(); }
     }
 
     /**
@@ -125,14 +144,25 @@ public class StatStack implements StatStacked, StatStackable {
      * @since 1.0.0
      * @author Gunging
      */
+    @Override public @NotNull HashMap<String, StatInstance<?>> getRefreshedCharacteristicTotals() {
+        if (hasStatTotalChanges()) { recalculateStatTotals(); }
+        return getCharacteristicTotals();
+    }
+
+    /**
+     * @since 1.0.0
+     * @author Gunging
+     */
     @Override public void recalculateStatTotals() {
 
         // Reset totals
         totals.clear();
+        characteristic.clear();
 
         // Begin by including the stats of the children
         for (StatStacked child : getChildStacks()) {
             for (StatInstance<?> stat : child.getRefreshedStatTotals().values()) {
+                if (stat.getDefinition().isCharacteristic()) { continue; }
 
                 // Find the totals already gathered from other children
                 StatInstance<?> inTotals = totals.get(stat.getDefinition());
@@ -159,10 +189,12 @@ public class StatStack implements StatStacked, StatStackable {
             if (inTotals == null) {
                 totals.put(stat.getDefinition().getDefinitionID(), stat);
 
-                // If it already was there, merge it
-            } else {
-                inTotals.merge(stat);
-            }
+            // If it already was there, merge it
+            } else { inTotals.merge(stat); }
+
+            // Include in characteristic totals as well
+            if (stat.getDefinition().isCharacteristic()) {
+                characteristic.put(stat.getDefinition().getDefinitionID(), stat); }
         }
 
         // Refreshed
