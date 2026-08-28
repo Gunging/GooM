@@ -1,9 +1,8 @@
 package gunging.ootilities.GungingOotilitiesMod.stats.commands;
 
-import gunging.ootilities.GungingOotilitiesMod.commands.core.building.argument.GCMDoubleArgument;
 import gunging.ootilities.GungingOotilitiesMod.commands.core.building.GCMGooMCommandNode;
 import gunging.ootilities.GungingOotilitiesMod.commands.core.building.argument.GCMStatArgument;
-import gunging.ootilities.GungingOotilitiesMod.commands.core.building.argument.GCMStringArgument;
+import gunging.ootilities.GungingOotilitiesMod.commands.core.building.argument.GCMStatValueArgument;
 import gunging.ootilities.GungingOotilitiesMod.commands.core.parsing.GCPCommandStack;
 import gunging.ootilities.GungingOotilitiesMod.commands.forge.argument.GCMPlayerArgument;
 import gunging.ootilities.GungingOotilitiesMod.commands.friendly.FriendlyFeedbackProvider;
@@ -12,8 +11,6 @@ import gunging.ootilities.GungingOotilitiesMod.stats.core.StatDefinition;
 import gunging.ootilities.GungingOotilitiesMod.stats.core.StatInstance;
 import gunging.ootilities.GungingOotilitiesMod.stats.core.StatStack;
 import gunging.ootilities.GungingOotilitiesMod.stats.core.StatValue;
-import gunging.ootilities.GungingOotilitiesMod.stats.definitions.DoubleDefinition;
-import gunging.ootilities.GungingOotilitiesMod.stats.values.DoubleStat;
 import net.minecraft.server.level.ServerPlayer;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -46,7 +43,7 @@ public class InherentStatCommand extends GCMGooMCommandNode {
      *
      * @since 1.0.0
      */
-    @NotNull GCMStringArgument valueArg = new GCMStringArgument("value", "The value to set this stat to. ").withGreedy(true);
+    @NotNull GCMStatValueArgument valueArg = new GCMStatValueArgument("value", "The value to set this stat to. ").withGreedy(true);
 
     /**
      * @author Gunging

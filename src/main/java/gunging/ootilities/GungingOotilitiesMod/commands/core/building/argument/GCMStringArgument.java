@@ -1,6 +1,5 @@
 package gunging.ootilities.GungingOotilitiesMod.commands.core.building.argument;
 
-import gunging.ootilities.GungingOotilitiesMod.commands.core.building.GCMExpectedArgument;
 import gunging.ootilities.GungingOotilitiesMod.commands.core.building.GCMStandaloneArgument;
 import gunging.ootilities.GungingOotilitiesMod.commands.core.parsing.argument.GCPProvidedString;
 import org.jetbrains.annotations.NotNull;
