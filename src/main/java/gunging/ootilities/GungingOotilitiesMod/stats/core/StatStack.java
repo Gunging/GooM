@@ -15,7 +15,7 @@ import java.util.HashMap;
  * @author Gunging
  * @since 1.0.0
  */
-public class StatStack implements StatStacked, StatStackable {
+public class StatStack implements StatStacked, StatStackable, StatRestackable {
 
     /**
      * The children this Stat Stack inherits from
@@ -69,6 +69,23 @@ public class StatStack implements StatStacked, StatStackable {
      * @since 1.0.0
      */
     boolean knownChanges;
+
+    /**
+     * Method to run when the stat stack is reloaded and changes applied.
+     *
+     * @since 1.0.0
+     */
+    @Nullable WhenRestacked restacked;
+
+    /**
+     * @author Gunging
+     * @since 1.0.0
+     */
+    @Override
+    public @NotNull StatStack withWhenReloaded(@Nullable WhenRestacked restacked) {
+        this.restacked = restacked;
+        return this;
+    }
 
     /**
      * @since 1.0.0
@@ -218,5 +235,6 @@ public class StatStack implements StatStacked, StatStackable {
 
         // Refreshed
         knownChanges = false;
+        if (restacked != null) { restacked.whenStatStackReloaded(this); }
     }
 }

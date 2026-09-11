@@ -119,6 +119,15 @@ public abstract class StatDefinition<Measure> {
     public boolean isValid() { return true; }
 
     /**
+     * @return If this stat should be hidden from edition
+     *         interfaces and commands.
+     *
+     * @author Gunging
+     * @since 1.0.0
+     */
+    public boolean isInternal() { return false; }
+
+    /**
      * @return If this stat must not be collected by parents
      *
      * @author Gunging

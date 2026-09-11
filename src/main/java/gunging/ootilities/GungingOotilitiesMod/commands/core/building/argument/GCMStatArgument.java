@@ -42,7 +42,7 @@ public class GCMStatArgument extends GCMStandaloneArgument<StatDefinition<?>> {
      */
     @Override
     public @NotNull ArrayList<String> getUbiquitousSuggestions() {
-        ArrayList<String> ret = GungingOotilitiesMod.getInstance().getStats().getStatIDs();
+        ArrayList<String> ret = GungingOotilitiesMod.getInstance().getStats().getStatIDs(true);
         if (ret.isEmpty()) { ret.add("<NO-STATS-LOADED>"); }
         return ret;
     }

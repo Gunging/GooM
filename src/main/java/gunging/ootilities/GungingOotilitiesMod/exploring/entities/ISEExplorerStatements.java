@@ -6,6 +6,8 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.EquipmentSlot;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.ArrayList;
+
 /**
  * Special slot names for use with {@link ISEEntityExplorer} elaboration.
  *
@@ -44,6 +46,28 @@ public class ISEExplorerStatements {
             default:
                 return MAINHAND;
         }
+    }
+
+    /**
+     * @return All the statements included in this class
+     *
+     * @since 1.0.0
+     * @author Gunging
+     */
+    @NotNull public ArrayList<ISEEntityStatement> getAllStatements() {
+        ArrayList<ISEEntityStatement> ret = new ArrayList<>();
+
+        ret.add(ARMOR);
+        ret.add(HANDS);
+        ret.add(MAINHAND);
+        ret.add(OFFHAND);
+        ret.add(HEAD);
+        ret.add(CHEST);
+        ret.add(LEGS);
+        ret.add(FEET);
+        ret.add(ALL_EQUIPMENT);
+
+        return ret;
     }
 
     /**

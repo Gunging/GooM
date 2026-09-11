@@ -6,6 +6,8 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.EquipmentSlot;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.ArrayList;
+
 /**
  * Special slot names for use with {@link ISPPlayerExplorer} elaboration.
  *
@@ -22,8 +24,7 @@ public class ISPExplorerStatements {
      * @since 1.0.0
      * @author Gunging
      */
-    @NotNull
-    public static ISPPlayerStatement getByEquipmentSlot(@NotNull EquipmentSlot slot) {
+    @NotNull public static ISPPlayerStatement getByEquipmentSlot(@NotNull EquipmentSlot slot) {
         switch (slot) {
             case FEET:
                 return FEET;
@@ -44,6 +45,41 @@ public class ISPExplorerStatements {
             default:
                 return MAINHAND;
         }
+    }
+
+    /**
+     * @return All the statements included in this class
+     *
+     * @since 1.0.0
+     * @author Gunging
+     */
+    @NotNull public ArrayList<ISPPlayerStatement> getAllStatements() {
+        ArrayList<ISPPlayerStatement> ret = new ArrayList<>();
+
+        ret.add(STANDARD);
+        ret.add(MAINHAND);
+        ret.add(OFFHAND);
+        ret.add(HEAD);
+        ret.add(CHEST);
+        ret.add(LEGS);
+        ret.add(FEET);
+        ret.add(ARMOR);
+        ret.add(CURSOR);
+        ret.add(TRUE_CURSOR);
+        ret.add(MAIN);
+        ret.add(STASH);
+        ret.add(HANDS);
+        ret.add(HOTBAR);
+        ret.add(ALL);
+        ret.add(CRAFTING);
+        ret.add(CRAFTING_RESULT);
+        ret.add(ALL_CRAFTING);
+        ret.add(ALL_EXTENDED);
+        ret.add(ENDERCHEST);
+        ret.add(ALL_ENDERCHEST);
+        ret.add(ALL_EQUIPMENT);
+
+        return ret;
     }
 
     /**

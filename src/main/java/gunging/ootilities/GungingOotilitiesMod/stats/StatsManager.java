@@ -9,6 +9,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Map;
 
 /**
  * The manager class where Stats are registered
@@ -41,7 +42,26 @@ public class StatsManager {
      * @since 1.0.0
      * @author Gunging
      */
-    @NotNull public ArrayList<String> getStatIDs() { return new ArrayList<>(registeredStats.keySet()); }
+    @NotNull public ArrayList<String> getStatIDs(boolean hideInternal) {
+        ArrayList<String> ret = new ArrayList<>();
+
+        for (Map.Entry<String, StatDefinition<?>> stat : registeredStats.entrySet()) {
+
+            // Add Stat IDs skipping internal when appropriate
+            if (hideInternal && stat.getValue().isInternal()) { continue; }
+            ret.add(stat.getKey());
+        }
+
+        return ret;
+    }
+
+    /**
+     * @return The internal IDs of all loaded stats
+     *
+     * @since 1.0.0
+     * @author Gunging
+     */
+    @NotNull public ArrayList<String> getStatIDs() { return getStatIDs(false); }
 
     /**
      * This means registering stats is closed now

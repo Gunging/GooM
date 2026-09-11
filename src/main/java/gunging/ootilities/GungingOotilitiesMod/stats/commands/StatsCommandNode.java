@@ -21,7 +21,8 @@ public class StatsCommandNode extends GCMBranchNode {
         super("stats");
 
         // Build tree
-        addNode(new InherentStatCommand());
+        addNode(new PlayerStatCommand());
+        addNode(new ItemStatCommand());
 
         // Build /help
         getHelp().activatePrefix(true, "Stats");

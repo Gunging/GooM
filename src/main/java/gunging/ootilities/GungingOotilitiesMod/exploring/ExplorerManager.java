@@ -7,6 +7,7 @@ import gunging.ootilities.GungingOotilitiesMod.netcode.packets.clientbound.GMNCl
 import net.minecraft.ResourceLocationException;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -372,5 +373,48 @@ public class ExplorerManager {
         HashMap<String, ItemExplorerStatement<?,?>> statements = statementsByNamespace.get(namespace);
         if (statements == null) { return new ArrayList<>(); }
         return new ArrayList<>(statements.values());
+    }
+
+    /**
+     * Executes an exploration query provided a statement and a target
+     *
+     * @return All the items found by the specified explorer statement in the provider elaborator target
+     *
+     * @since 1.0.0
+     * @author Gunging
+     */
+    @SuppressWarnings({"rawtypes", "unchecked"})
+    @NotNull public static HashMap<ItemStackLocation, ItemStack> realize(@NotNull ItemExplorerStatement statement, @NotNull Object target) {
+        HashMap<ItemStackLocation, ItemStack> ret = new HashMap<>();
+        if (!statement.acceptsElaborator(target)) { return ret; }
+
+        // Abstract explorer execution
+        ItemExplorerElaborator wrap = statement.prepareElaborator(target);
+        ItemStackExplorer explorer = statement.prepareExplorer();
+        ArrayList<ItemStackExplorer> elaborated = explorer.elaborate(wrap);
+        for (ItemStackExplorer search : elaborated) {
+            ItemStackLocation result = search.realize(wrap);
+            if (result == null) { continue; }
+            ItemStack item = result.getItemStack();
+            if (item == null) { continue; }
+            if (item == ItemStack.EMPTY) { continue; }
+            if (item.getCount() == 0) { continue; }
+            ret.put(result, item);
+        }
+
+        // That is the result
+        return ret;
+    }
+
+    /**
+     * Executes an exploration query provided a statement and a target
+     *
+     * @return All the items found by the specified explorer statement in the provider elaborator target
+     *
+     * @since 1.0.0
+     * @author Gunging
+     */
+    @NotNull public static <E> ArrayList<ItemStack> search(@NotNull ItemExplorerStatement<ItemExplorerElaborator<E>,E> statement, @NotNull E target) {
+        return new ArrayList<>(realize(statement, target).values());
     }
 }

@@ -22,7 +22,7 @@ import org.jetbrains.annotations.Nullable;
  * @author Gunging
  * @since 1.0.0
  */
-public class InherentStatCommand extends GCMGooMCommandNode {
+public class PlayerStatCommand extends GCMGooMCommandNode {
 
     /**
      * An argument for this commend
@@ -55,8 +55,8 @@ public class InherentStatCommand extends GCMGooMCommandNode {
      * @author Gunging
      * @since 1.0.0
      */
-    public InherentStatCommand() {
-        super("base", "Set Base Stat", "Sets the base value of this stat for a specific entity. ");
+    public PlayerStatCommand() {
+        super("player", "Set Player Stat", "Sets the base value of this stat for a player. ");
 
         // Build arguments (in order)
         addArgument(playerArg);
@@ -64,7 +64,7 @@ public class InherentStatCommand extends GCMGooMCommandNode {
         addArgument(valueArg);
 
         // Build /help
-        buildHelp("$rChange the base stats of an entity. ", "The base stats of an entity are unique to itself regardless of its equipment or environment. For players, these changes are retained after death or relog. ");
+        buildHelp("$rChange the base stats of a player. ", "The base stats of an entity are unique to itself regardless of its equipment or environment. For players, these changes are retained after death or relog. ");
     }
 
     /**

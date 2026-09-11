@@ -16,6 +16,7 @@
     "ContainerSynchronizerMixin",
     "InventoryMenuMixin",
     "InventoryMixin",
+    "ItemStackMixin",
     "LivingEntityMixin",
     "PlayerListMixin",
     "PlayerMixin",
