@@ -393,4 +393,43 @@ public abstract class GCMExpectedArgument<Value> {
         // Okay now, no error and successful that's sold
         return parsed.getParsed();
     }
+
+    /**
+     * Returns an argument, allowing null values through as long as no parsing errors were involved.
+     * <br><br>
+     * <b>Absolutely important to check {@link GCPCommandStack#isFailure()} before accessing expected arguments returned from this. </b>
+     *
+     * @param stack The command stack to read this from
+     *
+     * @param ffp Friendly Feedback Provider to write the error onto
+     *
+     * @return Reads the value in here, ignores stack errors generated from this arument and always returns the default
+     *
+     * @author Gunging
+     * @since 1.0.0
+     */
+    @Nullable public Value defaulted(@NotNull GCPCommandStack stack, @Nullable FriendlyFeedbackProvider ffp) {
+
+        // Read
+        GCPProvidedArgument<Value> parsed = read(stack);
+
+        // Log any parsing errors that occurred
+        if (parsed.getParsingError() != null) {
+
+            // Log as failure when soft
+            if (parsed.parsingErrorIsSoft()) {
+                FriendlyFeedbackProvider.logFailure(ffp, parsed.getParsingError());
+
+            // Log as error when hard
+            } else {
+                FriendlyFeedbackProvider.logError(ffp, parsed.getParsingError()); }
+
+            // Bad
+            stack.setFailure(true);
+            return null;
+        }
+
+        // Okay now, no error and successful that's sold
+        return parsed.getParsed();
+    }
 }

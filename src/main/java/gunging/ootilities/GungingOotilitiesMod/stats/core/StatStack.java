@@ -29,7 +29,7 @@ public class StatStack implements StatStacked, StatStackable, StatRestackable {
      *
      * @since 1.0.0
      */
-    @Nullable StatStack parent;
+    @Nullable StatStacked parent;
 
     /**
      * The stats belonging to this stat stack specifically
@@ -98,6 +98,12 @@ public class StatStack implements StatStacked, StatStackable, StatRestackable {
      * @author Gunging
      */
     @Override public @Nullable StatStacked getParentStack() { return parent; }
+
+    /**
+     * @since 1.0.0
+     * @author Gunging
+     */
+    public void setParentStack(@Nullable StatStacked parent) { this.parent = parent; }
 
     /**
      * @since 1.0.0

@@ -26,6 +26,7 @@ public abstract class StatDefinition<Measure> {
         assert (OotilityNumbers.isInternalStandard(definitionID)) : "Invalid stat definition ID '" + definitionID + "'";
         this.definitionID = definitionID;
         this.defaultValue = def;
+        this.defaultDisplayName = definitionID.replace("_", " ");
     }
 
     /**
@@ -152,4 +153,28 @@ public abstract class StatDefinition<Measure> {
      * @since 1.0.0
      */
     @Nullable public abstract StatValue<? extends Measure> whenDeserialized(@NotNull String serialized, @Nullable FriendlyFeedbackProvider ffp);
+
+    /**
+     * A more friendly name to give to this stat
+     * if the options for this are missing.
+     *
+     * @since 1.0.0
+     */
+    @NotNull String defaultDisplayName;
+
+    /**
+     * @param displayName A human-friendly name to call this stat
+     * @return This same object. Builder pattern.
+     *
+     * @author Gunging
+     * @since 1.0.0
+     */
+    @NotNull public StatDefinition<Measure> withDefaultDisplayName(@NotNull String displayName) { this.defaultDisplayName = displayName; return this; }
+
+    /**
+     * Returns the human-friendly display name of this stat
+     *
+     * @since 1.0.0
+     */
+    @NotNull public String getDisplayName() { return defaultDisplayName; }
 }

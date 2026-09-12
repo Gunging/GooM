@@ -4,6 +4,7 @@ import gunging.ootilities.GungingOotilitiesMod.GungingOotilitiesMod;
 import gunging.ootilities.GungingOotilitiesMod.exploring.entities.ISEExplorerStatements;
 import gunging.ootilities.GungingOotilitiesMod.exploring.players.ISPExplorerStatements;
 import gunging.ootilities.GungingOotilitiesMod.netcode.packets.clientbound.GMNClientboundStatementSync;
+import gunging.ootilities.GungingOotilitiesMod.ootilityception.OotilityNumbers;
 import net.minecraft.ResourceLocationException;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
@@ -396,9 +397,7 @@ public class ExplorerManager {
             ItemStackLocation result = search.realize(wrap);
             if (result == null) { continue; }
             ItemStack item = result.getItemStack();
-            if (item == null) { continue; }
-            if (item == ItemStack.EMPTY) { continue; }
-            if (item.getCount() == 0) { continue; }
+            if (OotilityNumbers.isAir(item)) { continue; }
             ret.put(result, item);
         }
 

@@ -74,4 +74,13 @@ public class StringDefinition extends StatDefinition<String> {
     public @Nullable StatValue<? extends String> whenDeserialized(@NotNull String serialized, @Nullable FriendlyFeedbackProvider ffp) {
         return new StringStat(serialized);
     }
+
+    /**
+     * @author Gunging
+     * @since 1.0.0
+     */
+    @Override
+    public @NotNull StringDefinition withDefaultDisplayName(@NotNull String displayName) {
+        return (StringDefinition) super.withDefaultDisplayName(displayName);
+    }
 }

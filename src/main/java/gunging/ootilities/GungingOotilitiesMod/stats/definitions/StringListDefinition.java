@@ -165,4 +165,13 @@ public class StringListDefinition extends StatDefinition<List<String>> {
         for (String content : escaped) { ret.add(OotilityNumbers.unescapeFromSerialization(content)); }
         return new StringListStat(ret);
     }
+
+    /**
+     * @author Gunging
+     * @since 1.0.0
+     */
+    @Override
+    public @NotNull StringListDefinition withDefaultDisplayName(@NotNull String displayName) {
+        return (StringListDefinition) super.withDefaultDisplayName(displayName);
+    }
 }

@@ -111,4 +111,13 @@ public class DoubleDefinition extends StatDefinition<Double> {
             return null; }
         return new DoubleStat(ret);
     }
+
+    /**
+     * @author Gunging
+     * @since 1.0.0
+     */
+    @Override
+    public @NotNull DoubleDefinition withDefaultDisplayName(@NotNull String displayName) {
+        return (DoubleDefinition) super.withDefaultDisplayName(displayName);
+    }
 }

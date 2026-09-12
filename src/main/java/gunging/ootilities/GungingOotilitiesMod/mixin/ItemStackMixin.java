@@ -70,20 +70,4 @@ public abstract class ItemStackMixin extends net.minecraftforge.common.capabilit
             other.gungingoom$getStatStack().getRefreshedStatTotals();
         }
     }
-
-    @WrapOperation(method = "getTooltipLines", at = @At(value = "INVOKE", target = "Lnet/minecraftforge/event/ForgeEventFactory;onItemTooltip(Lnet/minecraft/world/item/ItemStack;Lnet/minecraft/world/entity/player/Player;Ljava/util/List;Lnet/minecraft/world/item/TooltipFlag;)Lnet/minecraftforge/event/entity/player/ItemTooltipEvent;", remap = false))
-    public ItemTooltipEvent onBuildLore(ItemStack itemStack, @org.jetbrains.annotations.Nullable Player entityPlayer, List<Component> list, TooltipFlag flags, Operation<ItemTooltipEvent> original) {
-
-        // No stats? I am done
-        if (gungingoom$stats.getStatTotals().isEmpty()) { return original.call(itemStack, entityPlayer, list, flags); }
-
-        // Include GooM Stats in this list
-        for (StatInstance<?> stat : gungingoom$stats.getStatTotals().values()) {
-            MutableComponent mutablecomponent = OotilityNumbers.applyStyle(Component.empty().append(" • ").append(stat.serializeFull()), OotilityNumbers.bitShiftRGB(230, 230, 100));
-            list.add(mutablecomponent);
-        }
-
-        // Actually call
-        return original.call(itemStack, entityPlayer, list, flags);
-    }
 }

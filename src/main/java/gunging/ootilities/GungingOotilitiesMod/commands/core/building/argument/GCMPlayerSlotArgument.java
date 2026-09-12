@@ -3,6 +3,8 @@ package gunging.ootilities.GungingOotilitiesMod.commands.core.building.argument;
 import gunging.ootilities.GungingOotilitiesMod.GungingOotilitiesMod;
 import gunging.ootilities.GungingOotilitiesMod.commands.core.building.GCMStandaloneArgument;
 import gunging.ootilities.GungingOotilitiesMod.commands.core.parsing.argument.GCPProvidedPlayerSlot;
+import gunging.ootilities.GungingOotilitiesMod.exploring.ItemExplorerStatement;
+import gunging.ootilities.GungingOotilitiesMod.exploring.entities.ISEExplorerStatements;
 import gunging.ootilities.GungingOotilitiesMod.exploring.players.ISPExplorerStatements;
 import gunging.ootilities.GungingOotilitiesMod.exploring.players.ISPPlayerStatement;
 import net.minecraft.resources.ResourceLocation;
@@ -46,18 +48,18 @@ public class GCMPlayerSlotArgument extends GCMStandaloneArgument<ISPPlayerStatem
     public @NotNull ArrayList<String> getUbiquitousSuggestions() {
 
         // Build basic examples
-        ArrayList<ISPPlayerStatement> suggestions = new ArrayList<>();
-        suggestions.add(ISPExplorerStatements.MAINHAND);
-        suggestions.add(ISPExplorerStatements.OFFHAND);
-        suggestions.add(ISPExplorerStatements.HEAD);
-        suggestions.add(ISPExplorerStatements.CHEST);
-        suggestions.add(ISPExplorerStatements.LEGS);
-        suggestions.add(ISPExplorerStatements.FEET);
-        suggestions.add(ISPExplorerStatements.ARMOR);
+        ArrayList<ItemExplorerStatement> suggestions = new ArrayList<>();
+        suggestions.add(ISEExplorerStatements.MAINHAND);
+        suggestions.add(ISEExplorerStatements.OFFHAND);
+        suggestions.add(ISEExplorerStatements.HEAD);
+        suggestions.add(ISEExplorerStatements.CHEST);
+        suggestions.add(ISEExplorerStatements.LEGS);
+        suggestions.add(ISEExplorerStatements.FEET);
+        suggestions.add(ISEExplorerStatements.ARMOR);
         suggestions.add(ISPExplorerStatements.CURSOR);
         suggestions.add(ISPExplorerStatements.MAIN);
         suggestions.add(ISPExplorerStatements.STASH);
-        suggestions.add(ISPExplorerStatements.HANDS);
+        suggestions.add(ISEExplorerStatements.HANDS);
         suggestions.add(ISPExplorerStatements.HOTBAR);
         suggestions.add(ISPExplorerStatements.ALL);
 
@@ -65,7 +67,7 @@ public class GCMPlayerSlotArgument extends GCMStandaloneArgument<ISPPlayerStatem
         ArrayList<String> ret = new ArrayList<>();
         ret.add("5");
         ret.add("0-4");
-        for (ISPPlayerStatement slot : suggestions) { ret.add(slot.getStatementName().getPath()); }
+        for (ItemExplorerStatement slot : suggestions) { ret.add(slot.getStatementName().getPath()); }
 
         // Include all registered
         for (ResourceLocation regSlot : GungingOotilitiesMod.getInstance().getExplorer().getRegisteredStatements().keySet()) {

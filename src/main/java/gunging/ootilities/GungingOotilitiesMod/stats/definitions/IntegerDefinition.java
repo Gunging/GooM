@@ -111,4 +111,13 @@ public class IntegerDefinition extends StatDefinition<Integer> {
             return null; }
         return new IntegerStat(ret);
     }
+
+    /**
+     * @author Gunging
+     * @since 1.0.0
+     */
+    @Override
+    public @NotNull IntegerDefinition withDefaultDisplayName(@NotNull String displayName) {
+        return (IntegerDefinition) super.withDefaultDisplayName(displayName);
+    }
 }

@@ -371,6 +371,21 @@ public class OotilityNumbers {
 
     //region Nice UI Functions
     /**
+     * @param item Item Stack to check
+     *
+     * @return If this item is to be ignored as an "empty" or "null" item
+     *
+     * @since 1.0.0
+     * @author Gunging
+     */
+    @Contract("null->true")
+    public static boolean isAir(@Nullable ItemStack item) {
+        if (item == null) { return true; }
+        if (item == ItemStack.EMPTY) { return true; }
+        return item.getCount() == 0;
+    }
+
+    /**
      * If given some value that ends in <code>.000</code> (any number of zeros),
      * it will remove the decimal point and the zeros.
      * If there is any decimal number, it will remove all zeros after it:

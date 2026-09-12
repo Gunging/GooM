@@ -99,4 +99,13 @@ public class BooleanDefinition extends StatDefinition<Boolean> {
             return null; }
         return new BooleanStat(ret);
     }
+
+    /**
+     * @author Gunging
+     * @since 1.0.0
+     */
+    @Override
+    public @NotNull BooleanDefinition withDefaultDisplayName(@NotNull String displayName) {
+        return (BooleanDefinition) super.withDefaultDisplayName(displayName);
+    }
 }

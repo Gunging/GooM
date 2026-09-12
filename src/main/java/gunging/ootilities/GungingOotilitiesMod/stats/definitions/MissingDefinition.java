@@ -16,9 +16,7 @@ public class MissingDefinition extends StringDefinition {
      * @author Gunging
      * @since 1.0.0
      */
-    public MissingDefinition(@NotNull String definitionID) {
-        super(definitionID);
-    }
+    public MissingDefinition(@NotNull String definitionID) { super(definitionID); }
 
     /**
      * @author Gunging
