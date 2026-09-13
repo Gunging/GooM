@@ -66,7 +66,7 @@ public class GCMPlayerSlotArgument extends GCMStandaloneArgument<ISPPlayerStatem
         // Include basic examples
         ArrayList<String> ret = new ArrayList<>();
         ret.add("5");
-        ret.add("0-4");
+        ret.add("0..4");
         for (ItemExplorerStatement slot : suggestions) { ret.add(slot.getStatementName().getPath()); }
 
         // Include all registered

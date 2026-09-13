@@ -1,11 +1,14 @@
 package gunging.ootilities.GungingOotilitiesMod.stats.definitions;
 
 import gunging.ootilities.GungingOotilitiesMod.commands.friendly.FriendlyFeedbackProvider;
+import gunging.ootilities.GungingOotilitiesMod.ootilityception.OotilityNumbers;
 import gunging.ootilities.GungingOotilitiesMod.stats.core.StatDefinition;
 import gunging.ootilities.GungingOotilitiesMod.stats.core.StatValue;
 import gunging.ootilities.GungingOotilitiesMod.stats.values.StringStat;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
+import java.util.ArrayList;
 
 /**
  * Represents a metric that expects a line of text
@@ -33,7 +36,7 @@ public class StringDefinition extends StatDefinition<String> {
      * @author Gunging
      * @since 1.0.0
      */
-    public StringDefinition(@NotNull String definitionID, @NotNull String def) { super(definitionID, new StringStat(def)); }
+    public StringDefinition(@NotNull String definitionID, @NotNull String def) { this(definitionID, new StringStat(def)); }
 
     /**
      * @param definitionID The unique identifier of this stat
@@ -41,7 +44,7 @@ public class StringDefinition extends StatDefinition<String> {
      * @author Gunging
      * @since 1.0.0
      */
-    public StringDefinition(@NotNull String definitionID) { super(definitionID, new StringStat()); }
+    public StringDefinition(@NotNull String definitionID) { this(definitionID, new StringStat()); }
 
     /**
      * @author Gunging
@@ -80,7 +83,7 @@ public class StringDefinition extends StatDefinition<String> {
      * @since 1.0.0
      */
     @Override
-    public @NotNull StringDefinition withDefaultDisplayName(@NotNull String displayName) {
-        return (StringDefinition) super.withDefaultDisplayName(displayName);
+    public @NotNull StringDefinition withDisplayFeature(@NotNull String feature, @NotNull String value) {
+        return (StringDefinition) super.withDisplayFeature(feature, value);
     }
 }

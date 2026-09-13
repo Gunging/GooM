@@ -9,6 +9,8 @@ import gunging.ootilities.GungingOotilitiesMod.stats.values.IntegerStat;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.ArrayList;
+
 /**
  * Represents a metric that expects an integer number
  *
@@ -26,6 +28,7 @@ public class IntegerDefinition extends StatDefinition<Integer> {
      */
     public IntegerDefinition(@NotNull String definitionID, @NotNull StatValue<? extends Integer> def) {
         super(definitionID, def);
+        withDisplayFeature(StatDefinition.DISPLAY_FEATURE_FORMAT, "#symbol-color##symbol#<#9f9f9f> #name-color##name#:<#9f9f9f> #value-color-neutral##plus##value#");
     }
 
     /**
@@ -35,7 +38,7 @@ public class IntegerDefinition extends StatDefinition<Integer> {
      * @author Gunging
      * @since 1.0.0
      */
-    public IntegerDefinition(@NotNull String definitionID, int def) { super(definitionID, new IntegerStat(def)); }
+    public IntegerDefinition(@NotNull String definitionID, int def) { this(definitionID, new IntegerStat(def)); }
 
     /**
      * @param definitionID The unique identifier of this stat
@@ -43,7 +46,7 @@ public class IntegerDefinition extends StatDefinition<Integer> {
      * @author Gunging
      * @since 1.0.0
      */
-    public IntegerDefinition(@NotNull String definitionID) { super(definitionID, new IntegerStat()); }
+    public IntegerDefinition(@NotNull String definitionID) { this(definitionID, new IntegerStat()); }
 
     /**
      * @author Gunging
@@ -117,7 +120,29 @@ public class IntegerDefinition extends StatDefinition<Integer> {
      * @since 1.0.0
      */
     @Override
-    public @NotNull IntegerDefinition withDefaultDisplayName(@NotNull String displayName) {
-        return (IntegerDefinition) super.withDefaultDisplayName(displayName);
+    public @NotNull ArrayList<String> whenDisplayed(@NotNull StatValue<? extends Integer> current) {
+
+        // If the super determined not to display this, then no more replacing is needed
+        ArrayList<String> ret = new ArrayList<>();
+        if (isDefault(current)) { return ret; }
+        int value = current.getValue();
+
+        // Cook format
+        String singleLine = getDisplayFeature(DISPLAY_FEATURE_FORMAT)
+                .replace(StatDefinition.DISPLAY_FEATURE_PLUS_VALUE, value >= 0 ? "+" : "-")
+                .replace(StatDefinition.DISPLAY_FEATURE_EXACT_VALUE, OotilityNumbers.readableRounding(value, 0));
+
+        // Cook further
+        ret.add(cookDisplayFeatures(singleLine));
+        return ret;
+    }
+
+    /**
+     * @author Gunging
+     * @since 1.0.0
+     */
+    @Override
+    public @NotNull IntegerDefinition withDisplayFeature(@NotNull String feature, @NotNull String value) {
+        return (IntegerDefinition) super.withDisplayFeature(feature, value);
     }
 }

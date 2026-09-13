@@ -174,6 +174,17 @@ public interface ItemExplorerStatement<Elaborator extends ItemExplorerElaborator
     @Nullable ItemExplorerStatement<Elaborator, E> withOptions(@NotNull String options);
 
     /**
+     * If options are not expected, the Explorer Manager will only look for exact matches
+     * of this statement or its aliases and ignore the possibility of options being provided.
+     *
+     * @return If this explorer statement supports having options.
+     *
+     * @since 1.0.0
+     * @author Gunging
+     */
+    default boolean expectsOptions() { return false; }
+
+    /**
      * @return The class of the target of the elaborator.
      *
      * @author Gunging

@@ -5,7 +5,6 @@ import gunging.ootilities.GungingOotilitiesMod.ootilityception.OotilityNumbers;
 import gunging.ootilities.GungingOotilitiesMod.stats.core.StatDefinition;
 import gunging.ootilities.GungingOotilitiesMod.stats.core.StatValue;
 import gunging.ootilities.GungingOotilitiesMod.stats.values.StringListStat;
-import gunging.ootilities.GungingOotilitiesMod.stats.values.StringStat;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -29,6 +28,10 @@ public class StringListDefinition extends StatDefinition<List<String>> {
      */
     public StringListDefinition(@NotNull String definitionID, @NotNull StatValue<? extends List<String>> def) {
         super(definitionID, def);
+        withDisplayFeature(StatDefinition.DISPLAY_FEATURE_FORMAT, "#symbol-color##symbol#<#9f9f9f> #name-color##name#");
+        withDisplayFeature(DISPLAY_FEATURE_LIST_FORMAT, "#list-symbol-color##list-symbol#<#9f9f9f> #value-color-neutral##value#");
+        withDisplayFeature(DISPLAY_FEATURE_LIST_SYMBOL, "•");
+        withDisplayFeature(DISPLAY_FEATURE_LIST_SYMBOL_COLOR, getDisplayFeature(StatDefinition.DISPLAY_FEATURE_SYMBOL_COLOR));
     }
 
     /**
@@ -38,7 +41,7 @@ public class StringListDefinition extends StatDefinition<List<String>> {
      * @author Gunging
      * @since 1.0.0
      */
-    public StringListDefinition(@NotNull String definitionID, @NotNull ArrayList<String> def) { super(definitionID, new StringListStat(def)); }
+    public StringListDefinition(@NotNull String definitionID, @NotNull ArrayList<String> def) { this(definitionID, new StringListStat(def)); }
 
 
     /**
@@ -47,7 +50,7 @@ public class StringListDefinition extends StatDefinition<List<String>> {
      * @author Gunging
      * @since 1.0.0
      */
-    public StringListDefinition(@NotNull String definitionID) { super(definitionID, new StringListStat()); }
+    public StringListDefinition(@NotNull String definitionID) { this(definitionID, new StringListStat()); }
 
     /**
      * @author Gunging
@@ -165,13 +168,55 @@ public class StringListDefinition extends StatDefinition<List<String>> {
         for (String content : escaped) { ret.add(OotilityNumbers.unescapeFromSerialization(content)); }
         return new StringListStat(ret);
     }
+    /**
+     * The format by which other display features will display
+     *
+     * @since 1.0.0
+     */
+    public static final String DISPLAY_FEATURE_LIST_FORMAT = "#list-format#";
+    /**
+     * When specifying a display format, the placeholder for the symbol icon
+     *
+     * @since 1.0.0
+     */
+    public static final String DISPLAY_FEATURE_LIST_SYMBOL = "#list-symbol#";
+    /**
+     * When specifying a display format, the placeholder for the color of the symbol
+     *
+     * @since 1.0.0
+     */
+    public static final String DISPLAY_FEATURE_LIST_SYMBOL_COLOR = "#list-symbol-color#";
 
     /**
      * @author Gunging
      * @since 1.0.0
      */
     @Override
-    public @NotNull StringListDefinition withDefaultDisplayName(@NotNull String displayName) {
-        return (StringListDefinition) super.withDefaultDisplayName(displayName);
+    public @NotNull ArrayList<String> whenDisplayed(@NotNull StatValue<? extends List<String>> current) {
+        ArrayList<String> ret = super.whenDisplayed(current);
+        if (ret.isEmpty()) { return ret; }
+
+        // List all the entries in this string list
+        for (String entry : current.getValue()) {
+
+            // Format of this entry
+            String singleLine = getDisplayFeature(DISPLAY_FEATURE_LIST_FORMAT)
+                    .replace(StatDefinition.DISPLAY_FEATURE_EXACT_VALUE, entry);
+
+            // Cook this entry
+            ret.add(cookDisplayFeatures(singleLine));
+        }
+
+        // Done
+        return ret;
+    }
+
+    /**
+     * @author Gunging
+     * @since 1.0.0
+     */
+    @Override
+    public @NotNull StringListDefinition withDisplayFeature(@NotNull String feature, @NotNull String value) {
+        return (StringListDefinition) super.withDisplayFeature(feature, value);
     }
 }

@@ -27,6 +27,7 @@ public class GCPProvidedPlayerSlot extends GCPProvidedArgument<ISPPlayerStatemen
 
         // Parse this explorer statement
         ItemExplorerStatement<?,?> decoded = GungingOotilitiesMod.getInstance().getExplorer().decodeStatement(explicit);
+
         if (decoded == null) {
             setParsingError("$bExpected a slot instead of '$f" + explicit + "$b'. ");
             return; }

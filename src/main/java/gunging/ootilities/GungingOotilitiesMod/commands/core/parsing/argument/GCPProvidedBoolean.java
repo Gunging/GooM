@@ -5,12 +5,12 @@ import gunging.ootilities.GungingOotilitiesMod.ootilityception.OotilityNumbers;
 import org.jetbrains.annotations.NotNull;
 
 /**
- * An instance of a double argument that was provided
+ * An instance of a boolean argument that was provided
  *
  * @author Gunging
  * @since 1.0.0
  */
-public class GCPProvidedDouble extends GCPProvidedArgument<Double> {
+public class GCPProvidedBoolean extends GCPProvidedArgument<Boolean> {
 
     /**
      * @param explicit The text provided by the user
@@ -18,11 +18,11 @@ public class GCPProvidedDouble extends GCPProvidedArgument<Double> {
      * @author Gunging
      * @since 1.0.0
      */
-    public GCPProvidedDouble(@NotNull String explicit) {
+    public GCPProvidedBoolean(@NotNull String explicit) {
         super(explicit);
 
         // Parse this value
-        setParsed(OotilityNumbers.DoubleParse(explicit));
-        if (getParsed() == null) { setParsingError("$bExpected a number instead of '$f" + explicit + "$b'. ");  }
+        setParsed(OotilityNumbers.BooleanParse(explicit));
+        if (getParsed() == null) { setParsingError("$bExpected $etrue$b/$efalse$b instead of '$f" + explicit + "$b'. ");  }
     }
 }

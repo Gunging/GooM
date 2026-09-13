@@ -104,7 +104,7 @@ public class ItemStatCommand extends GCMGooMCommandNode {
         // Find the items
         HashMap<ItemStackLocation, ItemStack> items = ExplorerManager.realize(slot, player);
         if (items.isEmpty()) {
-            FriendlyFeedbackProvider.logSuccess(ffp, "No items found in '$f{0}$b' of '$r{1}$b'. ", slot.getStatementName().toString(), player.getScoreboardName());
+            FriendlyFeedbackProvider.logSuccess(ffp, "No items found in '$r{0}$b' of '$f{1}$b'. ", slot.toString(), player.getScoreboardName());
             return null;
         }
 
@@ -126,7 +126,7 @@ public class ItemStatCommand extends GCMGooMCommandNode {
 
             // Success
             } else {
-                successes.add(location.getStatement().getStatementName().toString());
+                successes.add(location.getStatement().toString());
                 itemStats.setStat(stat, result);
                 itemStats.recalculateStatTotals();
                 FriendlyFeedbackProvider.logSuccess(ffp, "Stat $u{1}$b of $r{0}$b set to $s{2}$b. ", item.getDisplayName().getString(), stat.getDefinitionID(), result.toString());

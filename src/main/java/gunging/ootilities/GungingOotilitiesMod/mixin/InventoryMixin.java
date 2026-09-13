@@ -22,7 +22,6 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 
 @Mixin(Inventory.class)
 public abstract class InventoryMixin implements WithTransitiveStack {
@@ -114,7 +113,9 @@ public abstract class InventoryMixin implements WithTransitiveStack {
         if (gungingoom$stats == null) {
             gungingoom$stats = new TransitiveStack(this);
             gungingoom$stats.setParentStack(gungingoom$getParentStack());
+            gungingoom$stats.preStatTotalsReloaded(sm -> gungingoom$refreshEquipmentStats());
             gungingoom$getParentStack().getChildStacks().add(gungingoom$stats);
+            gungingoom$stats.parentalChainRegisterChanges();
         }
         return gungingoom$stats;
     }
@@ -124,33 +125,33 @@ public abstract class InventoryMixin implements WithTransitiveStack {
         gungingoom$getContainedStatStacks();
     }
 
-    @Override
-    public @NotNull ArrayList<StatStacked> gungingoom$getChildStacks() {
-        ArrayList<StatStacked> ret = new ArrayList<>();
+    @Unique
+    public void gungingoom$refreshEquipmentStats() {
+        gungingoom$getContainedStatStacks().getChildStacks().clear();
 
         // Armor
         for (ItemStack item : armor) {
             if (OotilityNumbers.isAir(item)) { continue; }
             WithStatsStack asStats = (WithStatsStack) (Object) item;
-            ret.add(asStats.gungingoom$getStatStack());
+            gungingoom$getContainedStatStacks().getChildStacks().add(asStats.gungingoom$getStatStack());
         }
 
         // Offhand
         for (ItemStack item : offhand) {
             if (OotilityNumbers.isAir(item)) { continue; }
             WithStatsStack asStats = (WithStatsStack) (Object) item;
-            ret.add(asStats.gungingoom$getStatStack());
+            gungingoom$getContainedStatStacks().getChildStacks().add(asStats.gungingoom$getStatStack());
         }
 
         // Mainhand
         ItemStack main = getSelected();
         if (!OotilityNumbers.isAir(main)) {
             WithStatsStack asStats = (WithStatsStack) (Object) main;
-            ret.add(asStats.gungingoom$getStatStack()); }
+            gungingoom$getContainedStatStacks().getChildStacks().add(asStats.gungingoom$getStatStack()); }
+    }
 
-        // Those are the Stat Stacks in question
-        gungingoom$getContainedStatStacks().recalculateStatTotals();
-        gungingoom$getContainedStatStacks().parentalChainRegisterChanges();
-        return ret;
+    @Override
+    public @NotNull ArrayList<StatStacked> gungingoom$getChildStacks() {
+        return gungingoom$getContainedStatStacks().getChildStacks();
     }
 }

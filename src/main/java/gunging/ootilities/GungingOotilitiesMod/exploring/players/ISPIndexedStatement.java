@@ -192,4 +192,10 @@ public abstract class ISPIndexedStatement extends ISPPlayerStatement {
         if (rebuilt == null) { return null; }
         return this.of(rebuilt);
     }
+
+    /**
+     * @author Gunging
+     * @since 1.0.0
+     */
+    @Override public boolean expectsOptions() { return true; }
 }

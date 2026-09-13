@@ -9,6 +9,8 @@ import gunging.ootilities.GungingOotilitiesMod.stats.values.StringStat;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.ArrayList;
+
 /**
  * Represents a metric that expects a boolean
  *
@@ -26,6 +28,7 @@ public class BooleanDefinition extends StatDefinition<Boolean> {
      */
     public BooleanDefinition(@NotNull String definitionID, @NotNull StatValue<? extends Boolean> def) {
         super(definitionID, def);
+        withDisplayFeature(StatDefinition.DISPLAY_FEATURE_FORMAT, "#symbol-color##symbol#<#9f9f9f> #name-color##name#");
     }
 
     /**
@@ -35,7 +38,7 @@ public class BooleanDefinition extends StatDefinition<Boolean> {
      * @author Gunging
      * @since 1.0.0
      */
-    public BooleanDefinition(@NotNull String definitionID, boolean def) { super(definitionID, new BooleanStat(def)); }
+    public BooleanDefinition(@NotNull String definitionID, boolean def) { this(definitionID, new BooleanStat(def)); }
 
     /**
      * @param definitionID The unique identifier of this stat
@@ -43,7 +46,7 @@ public class BooleanDefinition extends StatDefinition<Boolean> {
      * @author Gunging
      * @since 1.0.0
      */
-    public BooleanDefinition(@NotNull String definitionID) { super(definitionID, new BooleanStat()); }
+    public BooleanDefinition(@NotNull String definitionID) { this(definitionID, new BooleanStat()); }
 
     /**
      * @author Gunging
@@ -105,7 +108,7 @@ public class BooleanDefinition extends StatDefinition<Boolean> {
      * @since 1.0.0
      */
     @Override
-    public @NotNull BooleanDefinition withDefaultDisplayName(@NotNull String displayName) {
-        return (BooleanDefinition) super.withDefaultDisplayName(displayName);
+    public @NotNull BooleanDefinition withDisplayFeature(@NotNull String feature, @NotNull String value) {
+        return (BooleanDefinition) super.withDisplayFeature(feature, value);
     }
 }

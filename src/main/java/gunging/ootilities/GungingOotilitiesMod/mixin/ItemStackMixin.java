@@ -3,17 +3,11 @@ package gunging.ootilities.GungingOotilitiesMod.mixin;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import gunging.ootilities.GungingOotilitiesMod.mixininterfaces.WithStatsStack;
-import gunging.ootilities.GungingOotilitiesMod.ootilityception.OotilityNumbers;
 import gunging.ootilities.GungingOotilitiesMod.stats.core.StatInstance;
 import gunging.ootilities.GungingOotilitiesMod.stats.core.StatStack;
 import gunging.ootilities.GungingOotilitiesMod.stats.registry.GOOMStats;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.MutableComponent;
-import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.TooltipFlag;
-import net.minecraftforge.event.entity.player.ItemTooltipEvent;
 import org.jetbrains.annotations.NotNull;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -23,7 +17,6 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import javax.annotation.Nullable;
-import java.util.List;
 
 @Mixin(ItemStack.class)
 public abstract class ItemStackMixin extends net.minecraftforge.common.capabilities.CapabilityProvider<ItemStack> implements net.minecraftforge.common.extensions.IForgeItemStack, WithStatsStack {
@@ -35,7 +28,7 @@ public abstract class ItemStackMixin extends net.minecraftforge.common.capabilit
 
     protected ItemStackMixin(Class<ItemStack> baseClass) { super(baseClass); }
 
-    @Unique @NotNull StatStack gungingoom$stats = new StatStack().withWhenReloaded((stacc) -> gungingoom$sendMyStatChanges());
+    @Unique @NotNull StatStack gungingoom$stats = new StatStack().postInherentStatsChanged((stacc) -> gungingoom$sendMyStatChanges());
     @Override public @NotNull StatStack gungingoom$getStatStack() { return gungingoom$stats; }
 
     @Unique

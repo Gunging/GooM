@@ -8,6 +8,8 @@ import gunging.ootilities.GungingOotilitiesMod.stats.values.StringStat;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.ArrayList;
+
 /**
  * A metric and its measure, a definition with a value.
  * <br><br>
@@ -132,9 +134,7 @@ public class StatInstance<Measure> implements Cloneable {
      * @author Gunging
      * @since 1.0.0
      */
-    public void serializeFull(@NotNull StringBuilder iterator) {
-        serializeFull(this, iterator);
-    }
+    public void serializeFull(@NotNull StringBuilder iterator) { serializeFull(this, iterator); }
 
     /**
      * @return The representation of this stat instance as a string
@@ -203,5 +203,15 @@ public class StatInstance<Measure> implements Cloneable {
         StatValue parsed = stat.whenDeserialized(value, ffp);
         if (parsed == null) { return null; }
         return new StatInstance<>(stat, parsed);
+    }
+
+    /**
+     * @return Generates the lines of lore this stat would show
+     *
+     * @author Gunging
+     * @since 1.0.0
+     */
+    @NotNull public ArrayList<String> whenDisplayed() {
+        return getDefinition().whenDisplayed(getValue());
     }
 }

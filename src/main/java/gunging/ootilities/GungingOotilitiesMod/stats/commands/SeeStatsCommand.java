@@ -1,6 +1,8 @@
 package gunging.ootilities.GungingOotilitiesMod.stats.commands;
 
+import gunging.ootilities.GungingOotilitiesMod.commands.FFPGooM;
 import gunging.ootilities.GungingOotilitiesMod.commands.core.building.GCMGooMCommandNode;
+import gunging.ootilities.GungingOotilitiesMod.commands.core.building.argument.GCMBooleanArgument;
 import gunging.ootilities.GungingOotilitiesMod.commands.core.building.argument.GCMPlayerSlotArgument;
 import gunging.ootilities.GungingOotilitiesMod.commands.core.parsing.GCPCommandStack;
 import gunging.ootilities.GungingOotilitiesMod.commands.forge.argument.GCMPlayerArgument;
@@ -11,6 +13,7 @@ import gunging.ootilities.GungingOotilitiesMod.exploring.players.ISPPlayerStatem
 import gunging.ootilities.GungingOotilitiesMod.mixininterfaces.WithStatsStack;
 import gunging.ootilities.GungingOotilitiesMod.ootilityception.OotilityNumbers;
 import gunging.ootilities.GungingOotilitiesMod.stats.core.*;
+import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.NotNull;
@@ -43,10 +46,17 @@ public class SeeStatsCommand extends GCMGooMCommandNode {
     @NotNull GCMPlayerSlotArgument slotArg = new GCMPlayerSlotArgument("slot", "The location of the item in the player's inventory. ").withDefaultValue(null);
 
     /**
+     * An argument for this commend
+     *
+     * @since 1.0.0
+     */
+    @NotNull GCMBooleanArgument advancedArg = new GCMBooleanArgument("advanced", "If showing advanced information. ").withDefaultValue(false);
+
+    /**
      * @author Gunging
      * @since 1.0.0
      */
-    @Override public @NotNull String getCommandSubdivision() { return "Item Stats"; }
+    @Override public @NotNull String getCommandSubdivision() { return "See Stats"; }
 
     /**
      * @author Gunging
@@ -58,9 +68,10 @@ public class SeeStatsCommand extends GCMGooMCommandNode {
         // Build arguments (in order)
         addArgument(playerArg);
         addArgument(slotArg);
+        addArgument(advancedArg);
 
         // Build /help
-        buildHelp("$rPrint the stats of player or item. ", "Show in the chat the totals of every GooM stat of this player or item. It also shows how much is the base of this stat for that player or item, and the difference is presumably modifiers or equipment. ");
+        buildHelp("$rPrint the stats of player or item. ", "Show in the chat the totals of every GooM stat of this player or item. In advanced mode, it also shows how much is the base of this stat for that player or item, as in, without modifiers or equipment. ");
     }
 
     /**
@@ -73,14 +84,19 @@ public class SeeStatsCommand extends GCMGooMCommandNode {
         // Read the arguments (in order)
         ServerPlayer player = playerArg.supplied(stack, stack.getOptions().getSenderPlayer(), ffp);
         ISPPlayerStatement slot = slotArg.defaulted(stack, ffp);
+        boolean advanced = advancedArg.supplied(stack, true, ffp);
 
         // Cancel in the case of a failure
         if (stack.isFailure()) { return null; }
 
+        CommandSourceStack forgeContext = stack.getOptions().getCommandSourceStack();
+
         // When checking a player
         if (slot == null) {
-            FriendlyFeedbackProvider.logInfo(ffp, "Stats of $r{0}$b: ", player.getScoreboardName());
-            printStatStack(((WithStatsStack) player).gungingoom$getStatStack(), ffp);
+            FriendlyFeedbackProvider seeFFP = new FriendlyFeedbackProvider(ffp == null ? new FFPGooM() : ffp.getPalette());
+            FriendlyFeedbackProvider.logInfo(seeFFP, "Stats of $r{0}$b: ", player.getScoreboardName());
+            printStatStack(((WithStatsStack) player).gungingoom$getStatStack(), advanced, seeFFP);
+            if (forgeContext != null) { seeFFP.sendAllTo(forgeContext::sendSystemMessage); }
             return "";
         }
 
@@ -92,23 +108,22 @@ public class SeeStatsCommand extends GCMGooMCommandNode {
         }
 
         // Modify every item
-        ArrayList<String> successes = new ArrayList<>();
-        FriendlyFeedbackProvider.logInfo(ffp, "Stats of $r{0}$b's selected items: ", player.getScoreboardName());
+        FriendlyFeedbackProvider seeFFP = new FriendlyFeedbackProvider(ffp == null ? new FFPGooM() : ffp.getPalette());
+        FriendlyFeedbackProvider.logInfo(seeFFP, "Stats of $r{0}$b's queried items: ", player.getScoreboardName());
         for (Map.Entry<ItemStackLocation, ItemStack> pair : items.entrySet()) {
-            ItemStackLocation location = pair.getKey();
-            ItemStack item = pair.getValue();
 
-            // Record Success
-            successes.add(location.getStatement().getStatementName().toString());
-            FriendlyFeedbackProvider.logInfo(ffp, "Item $r{0}$b: ", item.getDisplayName().getString());
+            // Title item
+            ItemStack item = pair.getValue();
+            FriendlyFeedbackProvider.logInfo(seeFFP, "Item $r{0}$b: ", item.getDisplayName().getString());
 
             // Perform operation
             StatStack itemStats = ((WithStatsStack) (Object) item).gungingoom$getStatStack();
-            printStatStack(itemStats, ffp);
+            printStatStack(itemStats, advanced, seeFFP);
         }
+        if (forgeContext != null) { seeFFP.sendAllTo(forgeContext::sendSystemMessage); }
 
         // Return the list of slots that succeeded
-        return successes.isEmpty() ? null : OotilityNumbers.collapseList(successes, ";");
+        return "";
     }
 
     /**
@@ -117,17 +132,26 @@ public class SeeStatsCommand extends GCMGooMCommandNode {
      * Will use the {@link gunging.ootilities.GungingOotilitiesMod.commands.friendly.FriendlyFeedbackCategory#INFORMATION} category
      *
      * @param stats The stats to print
+     * @param advanced If show advanced information
      * @param ffp Friendly Feedback Provider to include this to
      *
      * @author Gunging
      * @since 1.0.0
      */
-    public static void printStatStack(@NotNull StatStacked stats, @Nullable FriendlyFeedbackProvider ffp) {
+    public static void printStatStack(@NotNull StatStacked stats, boolean advanced, @Nullable FriendlyFeedbackProvider ffp) {
         if (ffp == null) { return; }
 
         // Append every stat
         for (StatInstance<?> stat : stats.getRefreshedStatTotals().values()) {
+            ArrayList<String> whenDisplayed = stat.whenDisplayed();
 
+            // In simple view, we really only print lore
+            if (!advanced) {
+                for (String lore : whenDisplayed) { FriendlyFeedbackProvider.logInfo(ffp, lore); }
+                continue;
+            }
+
+            // In advanced mode, we may also be looking for base stat values and hidden stats
             StatInstance<?> inherent = null;
             if (stats instanceof StatStackable) {
                 StatStackable asSource = (StatStackable) stats;
@@ -135,11 +159,13 @@ public class SeeStatsCommand extends GCMGooMCommandNode {
 
             // No inherent? Normal append
             if (inherent == null) {
-                FriendlyFeedbackProvider.logInfo(ffp, "  {0}$b:$r {1}", stat.getDefinition().getDisplayName(), stat.getValue().toString());
+                FriendlyFeedbackProvider.logInfo(ffp, "  {0}$b:$r {1}", stat.getDefinition().getDefinitionID(), stat.getValue().toString());
+                for (String lore : whenDisplayed) { FriendlyFeedbackProvider.logInfo(ffp, lore); }
 
             // With inherent? Append base
             } else {
-                FriendlyFeedbackProvider.logInfo(ffp, "  {0}$b:$r {1} $e(Base: $i{2}$3)", stat.getDefinition().getDisplayName(), stat.getValue().toString(), inherent.getValue().toString());
+                FriendlyFeedbackProvider.logInfo(ffp, "  {0}$b:$r {1} $e(Base: $i{2}$e)", stat.getDefinition().getDefinitionID(), stat.getValue().toString(), inherent.getValue().toString());
+                for (String lore : whenDisplayed) { FriendlyFeedbackProvider.logInfo(ffp, lore); }
             }
         }
     }

@@ -207,6 +207,15 @@ public class ExplorerManager {
         for (Map.Entry<String, ItemExplorerStatement<?,?>> pair : byNamespace.entrySet()) {
             String statement = pair.getKey();
 
+            // Prioritize exact match first
+            if (keyOptions.equals(statement)) { return pair.getValue().withOptions(""); }
+        }
+
+        // Then look for "near matches" in regard to the options
+        for (Map.Entry<String, ItemExplorerStatement<?,?>> pair : byNamespace.entrySet()) {
+            if (!pair.getValue().expectsOptions()) { continue; }
+            String statement = pair.getKey();
+
             // Okay we found the one
             if (keyOptions.startsWith(statement)) {
                 String options = keyOptions.substring(statement.length());

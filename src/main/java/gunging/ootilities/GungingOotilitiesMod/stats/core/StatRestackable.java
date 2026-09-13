@@ -12,12 +12,32 @@ import org.jetbrains.annotations.Nullable;
 public interface StatRestackable {
 
     /**
-     * @param restacked The lambda to run when this stat stack was reloaded
+     * @param restacked The lambda to run right before the stat totals are recalculated
      *
      * @return This same Stat Stack, it is a builder pattern.
      *
      * @author Gunging
      * @since 1.0.0
      */
-    @NotNull StatStackable withWhenReloaded(@Nullable WhenRestacked restacked);
+    @NotNull StatStackable preStatTotalsReloaded(@Nullable WhenRestacked restacked);
+
+    /**
+     * @param restacked The lambda to run right after the stat totals are recalculated
+     *
+     * @return This same Stat Stack, it is a builder pattern.
+     *
+     * @author Gunging
+     * @since 1.0.0
+     */
+    @NotNull StatStackable postStatTotalsReloaded(@Nullable WhenRestacked restacked);
+
+    /**
+     * @param restacked The lambda to run right after changes are made to the inherent stats list
+     *
+     * @return This same Stat Stack, it is a builder pattern.
+     *
+     * @author Gunging
+     * @since 1.0.0
+     */
+    @NotNull StatStackable postInherentStatsChanged(@Nullable WhenRestacked restacked);
 }

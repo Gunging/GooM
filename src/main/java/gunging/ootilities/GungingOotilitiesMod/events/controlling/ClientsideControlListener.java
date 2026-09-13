@@ -1,7 +1,10 @@
 package gunging.ootilities.GungingOotilitiesMod.events.controlling;
 
 import gunging.ootilities.GungingOotilitiesMod.GungingOotilitiesMod;
+import gunging.ootilities.GungingOotilitiesMod.events.extension.ClientsideEntityEquipmentChangeEvent;
+import gunging.ootilities.GungingOotilitiesMod.events.extension.ServersideEntityEquipmentChangeEvent;
 import gunging.ootilities.GungingOotilitiesMod.mixininterfaces.WithStatsStack;
+import gunging.ootilities.GungingOotilitiesMod.mixininterfaces.WithTransitiveStack;
 import gunging.ootilities.GungingOotilitiesMod.netcode.GOOMNetworkManager;
 import gunging.ootilities.GungingOotilitiesMod.netcode.packets.serverbound.GMNServerboundStatementSyncRequest;
 import gunging.ootilities.GungingOotilitiesMod.ootilityception.OotilityNumbers;
@@ -10,6 +13,8 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.event.entity.EntityJoinLevelEvent;
@@ -52,7 +57,7 @@ public class ClientsideControlListener {
      * @since 1.0.0
      * @author Gunging
      */
-    //@SubscribeEvent
+    @SubscribeEvent
     public static void onItemTooltips(@NotNull ItemTooltipEvent event) {
 
         // Identify Stats Stack
@@ -60,11 +65,28 @@ public class ClientsideControlListener {
         WithStatsStack asStats = (WithStatsStack) (Object) asItem;
         if (asStats.gungingoom$getStatStack().getStatTotals().isEmpty()) { return; }
 
-        // If it has any stats
         // Include GooM Stats in this list
         for (StatInstance<?> stat : asStats.gungingoom$getStatStack().getStatTotals().values()) {
-            MutableComponent mutablecomponent = OotilityNumbers.applyStyle(Component.empty().append(" • "), OotilityNumbers.bitShiftRGB(230, 230, 100)).append(OotilityNumbers.applyStyle(Component.empty().append(stat.serializeFull()), OotilityNumbers.bitShiftRGB(230, 230, 230)));
-            event.getToolTip().add(mutablecomponent);
+            for (String lore : stat.whenDisplayed()) {
+                MutableComponent mutablecomponent = OotilityNumbers.colorize(lore);
+                event.getToolTip().add(mutablecomponent);
+            }
         }
+    }
+
+    /**
+     * When the equipment changes, naturally we must recalculate the stat totals of this player
+     *
+     * @param event The event indicating that a player's equipment was modified
+     *
+     * @since 1.0.0
+     * @author Gunging
+     */
+    @SubscribeEvent
+    public static void onPlayerEquipmentChanges(@NotNull ClientsideEntityEquipmentChangeEvent event) {
+        if (!(event.getEntity() instanceof Player)) { return; }
+        Player player = (Player) event.getEntity();
+        WithTransitiveStack asStats = (WithTransitiveStack) player.getInventory();
+        asStats.gungingoom$getContainedStatStacks().parentalChainRegisterChanges();
     }
 }

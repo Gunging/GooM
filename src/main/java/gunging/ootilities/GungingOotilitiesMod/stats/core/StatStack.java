@@ -71,74 +71,80 @@ public class StatStack implements StatStacked, StatStackable, StatRestackable {
     boolean knownChanges;
 
     /**
-     * Method to run when the stat stack is reloaded and changes applied.
-     *
+     * @author Gunging
      * @since 1.0.0
      */
-    @Nullable WhenRestacked restacked;
+    @Override
+    public @NotNull ArrayList<StatStacked> getChildStacks() { return children; }
 
     /**
      * @author Gunging
      * @since 1.0.0
      */
     @Override
-    public @NotNull StatStack withWhenReloaded(@Nullable WhenRestacked restacked) {
-        this.restacked = restacked;
-        return this;
+    public @Nullable StatStacked getParentStack() {return parent;}
+
+    /**
+     * @author Gunging
+     * @since 1.0.0
+     */
+    public void setParentStack(@Nullable StatStacked parent) {this.parent = parent;}
+
+    /**
+     * @author Gunging
+     * @since 1.0.0
+     */
+    @Override
+    public @NotNull HashMap<String, StatInstance<?>> getStatTotals() {return totals;}
+
+    /**
+     * @author Gunging
+     * @since 1.0.0
+     */
+    @Override
+    public @NotNull HashMap<String, StatInstance<?>> getCharacteristicTotals() {return characteristic;}
+
+    /**
+     * If making changes to this map, you MUST run {@link #doPostInherentChanges()} when
+     * you are done. Otherwise, things that are listening to changes of the inherent stats
+     * will break.
+     *
+     * @author Gunging
+     * @since 1.0.0
+     */
+    @Override
+    public @NotNull HashMap<String, StatInstance<?>> getInherentStats() {return inherent;}
+
+    /**
+     * Call this when making changes to the Inherent Stats map externally,
+     * as this is called automatically when doing it through {@link #setStat(StatInstance)}
+     *
+     * @author Gunging
+     * @since 1.0.0
+     */
+    public void doPostInherentChanges() {
+        if (postInherentChanges != null) {
+            postInherentChanges.whenStatStackReloaded(this);
+        }
     }
 
     /**
-     * @since 1.0.0
      * @author Gunging
-     */
-    @Override public @NotNull ArrayList<StatStacked> getChildStacks() { return children; }
-
-    /**
      * @since 1.0.0
-     * @author Gunging
-     */
-    @Override public @Nullable StatStacked getParentStack() { return parent; }
-
-    /**
-     * @since 1.0.0
-     * @author Gunging
-     */
-    public void setParentStack(@Nullable StatStacked parent) { this.parent = parent; }
-
-    /**
-     * @since 1.0.0
-     * @author Gunging
-     */
-    @Override public @NotNull HashMap<String, StatInstance<?>> getStatTotals() { return totals; }
-
-    /**
-     * @since 1.0.0
-     * @author Gunging
-     */
-    @Override public @NotNull HashMap<String, StatInstance<?>> getCharacteristicTotals() { return characteristic; }
-
-    /**
-     * @since 1.0.0
-     * @author Gunging
      */
     @Override
-    public @NotNull HashMap<String, StatInstance<?>> getInherentStats() { return inherent; }
+    public boolean hasStatTotalChanges() {return knownChanges;}
 
     /**
-     * @since 1.0.0
      * @author Gunging
+     * @since 1.0.0
      */
-    @Override public boolean hasStatTotalChanges() { return knownChanges; }
+    @Override
+    public void registerStatTotalChanges() {knownChanges = true;}
 
     /**
-     * @since 1.0.0
      * @author Gunging
-     */
-    @Override public void registerStatTotalChanges() { knownChanges = true; }
-
-    /**
      * @since 1.0.0
-     * @author Gunging
      */
     @Override
     public void setStat(@NotNull StatInstance<?> stat) {
@@ -146,56 +152,65 @@ public class StatStack implements StatStacked, StatStackable, StatRestackable {
         // Register this in the inherent stats
         inherent.put(stat.getDefinition().getDefinitionID(), stat);
         dirtyNetwork.put(stat.getDefinition().getDefinitionID(), stat);
+        doPostInherentChanges();
 
         // Register stat changes for me and all of my parents
         if (stat.getDefinition().isCharacteristic()) {
             registerStatTotalChanges();
         } else {
-            parentalChainRegisterChanges(); }
+            parentalChainRegisterChanges();
+        }
     }
 
     /**
-     * @since 1.0.0
      * @author Gunging
+     * @since 1.0.0
      */
-    @Override public <M> void setStat(@NotNull StatDefinition<M> statDefinition, @Nullable StatValue<? extends M> data) {
+    @Override
+    public <M> void setStat(@NotNull StatDefinition<M> statDefinition, @Nullable StatValue<? extends M> data) {
         if (data == null) {
             inherent.remove(statDefinition.getDefinitionID());
             dirtyNetwork.put(statDefinition.getDefinitionID(),
                     new StatInstance<M>(statDefinition, statDefinition.getDefault()));
-            return; }
+            doPostInherentChanges();
+            return;
+        }
         setStat(new StatInstance<M>(statDefinition, data));
     }
 
     /**
-     * @since 1.0.0
      * @author Gunging
+     * @since 1.0.0
      */
-    @Override public @NotNull HashMap<String, StatInstance<?>> getRefreshedStatTotals() {
-        if (hasStatTotalChanges()) { recalculateStatTotals(); }
+    @Override
+    public @NotNull HashMap<String, StatInstance<?>> getRefreshedStatTotals() {
+        if (hasStatTotalChanges()) {recalculateStatTotals();}
         return getStatTotals();
     }
 
     /**
-     * @since 1.0.0
      * @author Gunging
+     * @since 1.0.0
      */
-    @Override public @NotNull HashMap<String, StatInstance<?>> getRefreshedCharacteristicTotals() {
-        if (hasStatTotalChanges()) { recalculateStatTotals(); }
+    @Override
+    public @NotNull HashMap<String, StatInstance<?>> getRefreshedCharacteristicTotals() {
+        if (hasStatTotalChanges()) {recalculateStatTotals();}
         return getCharacteristicTotals();
     }
 
     /**
-     * @since 1.0.0
      * @author Gunging
+     * @since 1.0.0
      */
-    @Override public @NotNull HashMap<String, StatInstance<?>> getDirtyInherent() { return dirtyNetwork; }
+    @Override
+    public @NotNull HashMap<String, StatInstance<?>> getDirtyInherent() {return dirtyNetwork;}
 
     /**
-     * @since 1.0.0
      * @author Gunging
+     * @since 1.0.0
      */
     @Override public void recalculateStatTotals() {
+        if (preStatTotals != null) {preStatTotals.whenStatStackReloaded(this);}
 
         // Reset totals
         totals.clear();
@@ -204,16 +219,16 @@ public class StatStack implements StatStacked, StatStackable, StatRestackable {
         // Begin by including the stats of the children
         for (StatStacked child : getChildStacks()) {
             for (StatInstance<?> stat : child.getRefreshedStatTotals().values()) {
-                if (stat.getDefinition().isCharacteristic()) { continue; }
+                if (stat.getDefinition().isCharacteristic()) {continue;}
 
                 // Find the totals already gathered from other children
-                StatInstance<?> inTotals = totals.get(stat.getDefinition());
+                StatInstance<?> inTotals = totals.get(stat.getDefinition().getDefinitionID());
 
                 // If this stat is missing, accept it as new
                 if (inTotals == null) {
                     totals.put(stat.getDefinition().getDefinitionID(), stat);
 
-                // If it already was there, merge it
+                    // If it already was there, merge it
                 } else {
                     inTotals.merge(stat);
                 }
@@ -222,25 +237,71 @@ public class StatStack implements StatStacked, StatStackable, StatRestackable {
 
         // Then merge inherent
         for (StatInstance<?> stat : getInherentStats().values()) {
-            if (!stat.getDefinition().isValid()) { continue; }
+            if (!stat.getDefinition().isValid()) {continue;}
 
             // Find the totals already gathered from children
-            StatInstance<?> inTotals = totals.get(stat.getDefinition());
+            StatInstance<?> inTotals = totals.get(stat.getDefinition().getDefinitionID());
 
             // If this stat is missing, accept it as new
             if (inTotals == null) {
                 totals.put(stat.getDefinition().getDefinitionID(), stat);
 
-            // If it already was there, merge it
-            } else { inTotals.merge(stat); }
+                // If it already was there, merge it
+            } else {inTotals.merge(stat);}
 
             // Include in characteristic totals as well
             if (stat.getDefinition().isCharacteristic()) {
-                characteristic.put(stat.getDefinition().getDefinitionID(), stat); }
+                characteristic.put(stat.getDefinition().getDefinitionID(), stat);
+            }
         }
 
         // Refreshed
         knownChanges = false;
-        if (restacked != null) { restacked.whenStatStackReloaded(this); }
+        if (postStatTotals != null) {postStatTotals.whenStatStackReloaded(this);}
+    }
+
+    /**
+     * Method to run before the stat stack is reloaded and changes applied.
+     *
+     * @since 1.0.0
+     */
+    @Nullable WhenRestacked preStatTotals;
+    /**
+     * @author Gunging
+     * @since 1.0.0
+     */
+    @Override public @NotNull StatStack preStatTotalsReloaded(@Nullable WhenRestacked restacked) {
+        this.preStatTotals = restacked;
+        return this;
+    }
+
+    /**
+     * Method to run when the stat stack is reloaded and changes applied.
+     *
+     * @since 1.0.0
+     */
+    @Nullable WhenRestacked postStatTotals;
+    /**
+     * @author Gunging
+     * @since 1.0.0
+     */
+    @Override public @NotNull StatStack postStatTotalsReloaded(@Nullable WhenRestacked restacked) {
+        this.postStatTotals = restacked;
+        return this;
+    }
+
+    /**
+     * Method to run after changes are made to the base stats of this stat stack
+     *
+     * @since 1.0.0
+     */
+    @Nullable WhenRestacked postInherentChanges;
+    /**
+     * @author Gunging
+     * @since 1.0.0
+     */
+    @Override public @NotNull StatStack postInherentStatsChanged(@Nullable WhenRestacked restacked) {
+        this.postInherentChanges = restacked;
+        return this;
     }
 }

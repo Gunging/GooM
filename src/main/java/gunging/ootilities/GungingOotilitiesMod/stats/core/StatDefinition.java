@@ -5,6 +5,11 @@ import gunging.ootilities.GungingOotilitiesMod.ootilityception.OotilityNumbers;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Random;
+
 /**
  * The representation of something that is, without its actual value.
  * <br><br>
@@ -26,7 +31,14 @@ public abstract class StatDefinition<Measure> {
         assert (OotilityNumbers.isInternalStandard(definitionID)) : "Invalid stat definition ID '" + definitionID + "'";
         this.definitionID = definitionID;
         this.defaultValue = def;
-        this.defaultDisplayName = definitionID.replace("_", " ");
+
+        // Default stat stuff
+        withDisplayFeature(DISPLAY_FEATURE_FORMAT, "#symbol-color##symbol#<#9f9f9f> #name-color##name##name-color#:<#9f9f9f> #value-color-neutral##value#");
+        withDisplayFeature(DISPLAY_FEATURE_SYMBOL_COLOR, "<#" + Integer.toHexString((new Random(definitionID.hashCode())).nextInt()) + ">");
+        withDisplayFeature(DISPLAY_FEATURE_SYMBOL, "■");
+        withDisplayFeature(DISPLAY_FEATURE_NAME_COLOR, "");
+        withDisplayFeature(DISPLAY_FEATURE_NAME, definitionID.replace("_", " "));
+        withDisplayFeature(DISPLAY_FEATURE_VALUE_COLOR_NEUTRAL, DISPLAY_COLOR_NEUTRAL);
     }
 
     /**
@@ -154,27 +166,168 @@ public abstract class StatDefinition<Measure> {
      */
     @Nullable public abstract StatValue<? extends Measure> whenDeserialized(@NotNull String serialized, @Nullable FriendlyFeedbackProvider ffp);
 
+    //region Default Display
     /**
-     * A more friendly name to give to this stat
-     * if the options for this are missing.
+     * The format by which other display features will display
      *
      * @since 1.0.0
      */
-    @NotNull String defaultDisplayName;
+    public static final String DISPLAY_FEATURE_FORMAT = "#format#";
+    /**
+     * When specifying a display format, the placeholder for the symbol icon
+     *
+     * @since 1.0.0
+     */
+    public static final String DISPLAY_FEATURE_SYMBOL = "#symbol#";
+    /**
+     * When specifying a display format, the placeholder for the color of the symbol
+     *
+     * @since 1.0.0
+     */
+    public static final String DISPLAY_FEATURE_SYMBOL_COLOR = "#symbol-color#";
+    /**
+     * When specifying a display format, the placeholder for the display name of this stat
+     *
+     * @since 1.0.0
+     */
+    public static final String DISPLAY_FEATURE_NAME = "#name#";
+    /**
+     * When specifying a display format, the placeholder for the color of the display name of this stat
+     *
+     * @since 1.0.0
+     */
+    public static final String DISPLAY_FEATURE_NAME_COLOR = "#name-color#";
+    /**
+     * When specifying a display format, the placeholder for the sign of numeric value
+     *
+     * @since 1.0.0
+     */
+    public static final String DISPLAY_FEATURE_PLUS_VALUE = "#plus#";
+    /**
+     * When specifying a display format, the placeholder for the exact value of this stat (numeric)
+     *
+     * @since 1.0.0
+     */
+    public static final String DISPLAY_FEATURE_EXACT_VALUE = "#value#";
+    /**
+     * When specifying a display format, the placeholder for the approximate value of this stat (numeric)
+     *
+     * @since 1.0.0
+     */
+    public static final String DISPLAY_FEATURE_APPROXIMATE_VALUE = "#approximate#";
+    /**
+     * When specifying a display format, the placeholder for a vague estimate of the value of this stat (numeric)
+     *
+     * @since 1.0.0
+     */
+    public static final String DISPLAY_FEATURE_COARSE_VALUE = "#coarse#";
+    /**
+     * When specifying a display format, the placeholder for the qualitative assessment of this stat (not numeric)
+     *
+     * @since 1.0.0
+     */
+    public static final String DISPLAY_FEATURE_QUALITATIVE_VALUE = "#qualitative#";
+    /**
+     * When specifying a display format, the color of the value when neutral
+     *
+     * @since 1.0.0
+     */
+    public static final String DISPLAY_FEATURE_VALUE_COLOR_NEUTRAL = "#value-color-neutral#";
+    /**
+     * When specifying a display format, the color of the value accounting for desirability
+     *
+     * @since 1.0.0
+     */
+    public static final String DISPLAY_FEATURE_VALUE_COLOR_DESIRABLE = "#value-color-desirable#";
+    /**
+     * The default color to be used for the value of this stat
+     *
+     * @since 1.0.0
+     */
+    public static String DISPLAY_COLOR_NEUTRAL = "<#fefefe>";
+    /**
+     * The default color to be used for the value of this stat when desirable
+     *
+     * @since 1.0.0
+     */
+    public static String DISPLAY_COLOR_DESIRABLE = "<#9effa3>";
+    /**
+     * The default color to be used for the value of this stat when undesirable
+     *
+     * @since 1.0.0
+     */
+    public static String DISPLAY_COLOR_UNDESIRABLE = "<#ff9e9e>";
 
     /**
-     * @param displayName A human-friendly name to call this stat
+     * Prepares a list of tooltip lines to show the value of this stat.
+     *
+     * @since 1.0.0
+     */
+    @NotNull public ArrayList<String> whenDisplayed(@NotNull StatValue<? extends Measure> current) {
+
+        // Default stats are not written
+        if (isDefault(current)) { return new ArrayList<>(); }
+
+        // Otherwise, write out per the format
+        String format = getDisplayFeature(DISPLAY_FEATURE_FORMAT);
+        if (format.isEmpty()) { return new ArrayList<>(); }
+
+        // Cook and finish
+        ArrayList<String> ret = new ArrayList<>();
+        ret.add(cookDisplayFeatures(format));
+        return ret;
+    }
+
+    /**
+     * Attempts to replace all the display placeholders this stat knows
+     *
+     * @param format The format to mass-replace according to the display features
+     *
+     * @author Gunging
+     * @since 1.0.0
+     */
+    @NotNull public String cookDisplayFeatures(@NotNull String format) {
+        String ret = format;
+
+        // Replace every display feature
+        for (Map.Entry<String, String> pair : displayFeatures.entrySet()) {
+            ret = ret.replace(pair.getKey(), pair.getValue());
+        }
+
+        return ret;
+    }
+
+    /**
+     * The format placeholders when displaying this stat
+     *
+     * @since 1.0.0
+     */
+    @NotNull HashMap<String, String> displayFeatures = new HashMap<>();
+    /**
+     * @param feature The name of the feature
+     * @param value The default value of the feature
+     *
      * @return This same object. Builder pattern.
      *
      * @author Gunging
      * @since 1.0.0
      */
-    @NotNull public StatDefinition<Measure> withDefaultDisplayName(@NotNull String displayName) { this.defaultDisplayName = displayName; return this; }
-
+    @NotNull public StatDefinition<Measure> withDisplayFeature(@NotNull String feature, @NotNull String value) { displayFeatures.put(feature, value); return this; }
     /**
-     * Returns the human-friendly display name of this stat
+     * The format placeholders when displaying this stat
      *
      * @since 1.0.0
      */
-    @NotNull public String getDisplayName() { return defaultDisplayName; }
+    @NotNull public HashMap<String, String> getDisplayFeatures() { return displayFeatures; }
+    /**
+     * The format placeholders when displaying this stat
+     *
+     * @since 1.0.0
+     */
+    @NotNull public String getDisplayFeature(@NotNull String feature) {
+        String ret = getDisplayFeatures().get(feature);
+        if (ret == null) { return ""; }
+        return ret;
+    }
+    //endregion
 }

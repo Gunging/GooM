@@ -371,6 +371,18 @@ public class OotilityNumbers {
 
     //region Nice UI Functions
     /**
+     * @param text Line of text with section signs, legacy ampersands, hex codes, and so on
+     * @return This text but as a "mutable component"
+     *
+     * @since 1.0.0
+     * @author Gunging
+     */
+    @NotNull public static MutableComponent colorize(@NotNull String text) {
+        String sectioned = colorizeAmpersandToSection(text);
+        return Component.literal(sectioned);
+    }
+
+    /**
      * @param item Item Stack to check
      *
      * @return If this item is to be ignored as an "empty" or "null" item
