@@ -21,7 +21,7 @@ public class GOOMStats {
      */
     public static DoubleDefinition AURA = new DoubleDefinition("GOOM_AURA")
             .withDisplayFeature(StatDefinition.DISPLAY_FEATURE_NAME,"Aura")
-            .withDisplayFeature(StatDefinition.DISPLAY_FEATURE_FORMAT, "#symbol-color##symbol#<#9f9f9f> #name-color##name##name-color#:<#9f9f9f> #value-color-neutral##value##units#")
+            .withDisplayFeature(StatDefinition.DISPLAY_FEATURE_FORMAT, "#symbol-color##symbol#<#9f9f9f> #name-color##name##name-color#:<#9f9f9f> #value-color-neutral##plus##value##units#")
             .withSignificanceBasis(10000)
             .withUnits(0.001, "K");
 
@@ -32,7 +32,7 @@ public class GOOMStats {
      */
     public static DoubleDefinition NIRVANA_COMPLETION = new DoubleDefinition("GOOM_NIRVANA")
             .withDisplayFeature(StatDefinition.DISPLAY_FEATURE_NAME,"Nirvana Completion")
-            .withDisplayFeature(StatDefinition.DISPLAY_FEATURE_FORMAT, "#symbol-color##symbol#<#9f9f9f> #name-color##name##name-color#:<#9f9f9f> #value-color-neutral##approximate##units#")
+            .withDisplayFeature(StatDefinition.DISPLAY_FEATURE_FORMAT, "#symbol-color##symbol#<#9f9f9f> #name-color##name##name-color#:<#9f9f9f> #value-color-neutral##plus##approximate##units#")
             .withSignificanceBasis(1)
             .withUnits(100, "%");
 

@@ -47,13 +47,13 @@ public class IntegerStat extends StatValue<Integer> {
     public boolean equals(Object obj) {
 
         // Compare as boolean
-        if (obj instanceof Number) { return OotilityNumbers.approximatelyPercent(getValue(), (double) (Number) obj, 0.02D); }
+        if (obj instanceof Number) { return OotilityNumbers.approximatelyPercent(getValue(), (double) (Number) obj, 0.0002D); }
 
         // Compare as Stat Value
         if (obj instanceof StatValue) {
             StatValue asStat = (StatValue) obj;
             if (asStat.getValue() instanceof Number) {
-                return OotilityNumbers.approximatelyPercent(getValue(), (double) (Number) asStat.getValue(), 0.02D);
+                return OotilityNumbers.approximatelyPercent(getValue(), (double) (Number) asStat.getValue(), 0.0002D);
             }
         }
 
