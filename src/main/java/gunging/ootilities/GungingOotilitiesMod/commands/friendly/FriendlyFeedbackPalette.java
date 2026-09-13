@@ -274,48 +274,11 @@ public abstract class FriendlyFeedbackPalette {
      * @since 1.0.0
      */
     @NotNull public MutableComponent parseForPlayer(@NotNull String message) {
-        MutableComponent ret = Component.empty();
 
-        int lastL = 0;
-        int lastStyle = getBodyFormat();
-        for (int l = 0; l < (message.length() - 1); l++) {
-
-            // Scan each character in looking for a color code
-            int codeStyle = -1;
-            if (message.charAt(l) == '$') {
-                char code = message.charAt(l + 1);
-                switch (code) {
-                    case 'b': codeStyle = getBodyFormat(); break;
-                    case 'e': codeStyle = getExampleFormat(); break;
-                    case 'i', 'u': codeStyle = getInputFormat(); break;
-                    case 's': codeStyle = getSuccessFormat(); break;
-                    case 'f': codeStyle = getFailureFormat(); break;
-                    case 'r': codeStyle = getResultFormat(); break;
-                    default: break;
-                }
-            }
-
-            // Not interested in locations that contain no format codes
-            if (codeStyle < 0) { continue; }
-
-            // Include in the result the previous text
-            String excerpt = message.substring(lastL, l);
-            if (!excerpt.isEmpty()) { ret.append(OotilityNumbers.applyStyle(Component.literal(excerpt), lastStyle)); }
-
-            // Update metrics
-            lastL = l + 2;
-            lastStyle = codeStyle;
-        }
-
-        // Append the last segment
-        if (lastL < message.length()) {
-            String excerpt = message.substring(lastL);
-            if (!excerpt.isEmpty()) { ret.append(OotilityNumbers.applyStyle(Component.literal(excerpt), lastStyle)); }
-        }
-
-        // Ay
-        return ret;
+        // Ay this got upgraded to a static GooM method!
+        return OotilityNumbers.colorize(message, this);
     }
+
     /**
      * Used when messages are sent to the console, or other context that doesn't support components.
      *
@@ -326,8 +289,8 @@ public abstract class FriendlyFeedbackPalette {
      */
     @NotNull public String parseForConsole(@NotNull String message) {
 
-        // Ay
-        return message
+        // Basic replacing
+        String ret = message
                 .replace("$b", consoleBodyFormat())
                 .replace("$e", consoleExampleFormat())
                 .replace("$i", consoleInputFormat())
@@ -335,5 +298,8 @@ public abstract class FriendlyFeedbackPalette {
                 .replace("$s", consoleSuccessFormat())
                 .replace("$f", consoleFailureFormat())
                 .replace("$r", consoleResultFormat());
+
+        // Ay
+        return OotilityNumbers.colorizeAmpersandToSection(ret);
     }
 }

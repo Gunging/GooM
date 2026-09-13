@@ -159,11 +159,13 @@ public class SeeStatsCommand extends GCMGooMCommandNode {
 
             // No inherent? Normal append
             if (inherent == null) {
+                FriendlyFeedbackProvider.logInfo(ffp, " ");
                 FriendlyFeedbackProvider.logInfo(ffp, "  {0}$b:$r {1}", stat.getDefinition().getDefinitionID(), stat.getValue().toString());
                 for (String lore : whenDisplayed) { FriendlyFeedbackProvider.logInfo(ffp, lore); }
 
             // With inherent? Append base
             } else {
+                FriendlyFeedbackProvider.logInfo(ffp, " ");
                 FriendlyFeedbackProvider.logInfo(ffp, "  {0}$b:$r {1} $e(Base: $i{2}$e)", stat.getDefinition().getDefinitionID(), stat.getValue().toString(), inherent.getValue().toString());
                 for (String lore : whenDisplayed) { FriendlyFeedbackProvider.logInfo(ffp, lore); }
             }

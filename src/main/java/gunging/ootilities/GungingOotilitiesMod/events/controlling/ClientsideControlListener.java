@@ -2,22 +2,16 @@ package gunging.ootilities.GungingOotilitiesMod.events.controlling;
 
 import gunging.ootilities.GungingOotilitiesMod.GungingOotilitiesMod;
 import gunging.ootilities.GungingOotilitiesMod.events.extension.ClientsideEntityEquipmentChangeEvent;
-import gunging.ootilities.GungingOotilitiesMod.events.extension.ServersideEntityEquipmentChangeEvent;
 import gunging.ootilities.GungingOotilitiesMod.mixininterfaces.WithStatsStack;
-import gunging.ootilities.GungingOotilitiesMod.mixininterfaces.WithTransitiveStack;
 import gunging.ootilities.GungingOotilitiesMod.netcode.GOOMNetworkManager;
 import gunging.ootilities.GungingOotilitiesMod.netcode.packets.serverbound.GMNServerboundStatementSyncRequest;
 import gunging.ootilities.GungingOotilitiesMod.ootilityception.OotilityNumbers;
 import gunging.ootilities.GungingOotilitiesMod.stats.core.StatInstance;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
-import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.MutableComponent;
-import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.event.entity.EntityJoinLevelEvent;
 import net.minecraftforge.event.entity.player.ItemTooltipEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -68,8 +62,7 @@ public class ClientsideControlListener {
         // Include GooM Stats in this list
         for (StatInstance<?> stat : asStats.gungingoom$getStatStack().getStatTotals().values()) {
             for (String lore : stat.whenDisplayed()) {
-                MutableComponent mutablecomponent = OotilityNumbers.colorize(lore);
-                event.getToolTip().add(mutablecomponent);
+                event.getToolTip().add(OotilityNumbers.colorize(lore));
             }
         }
     }
@@ -86,7 +79,7 @@ public class ClientsideControlListener {
     public static void onPlayerEquipmentChanges(@NotNull ClientsideEntityEquipmentChangeEvent event) {
         if (!(event.getEntity() instanceof Player)) { return; }
         Player player = (Player) event.getEntity();
-        WithTransitiveStack asStats = (WithTransitiveStack) player.getInventory();
-        asStats.gungingoom$getContainedStatStacks().parentalChainRegisterChanges();
+        WithStatsStack asStats = (WithStatsStack) player.getInventory();
+        asStats.gungingoom$getStatStack().parentalChainRegisterChanges();
     }
 }

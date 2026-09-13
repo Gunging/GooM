@@ -34,7 +34,7 @@ public abstract class StatDefinition<Measure> {
 
         // Default stat stuff
         withDisplayFeature(DISPLAY_FEATURE_FORMAT, "#symbol-color##symbol#<#9f9f9f> #name-color##name##name-color#:<#9f9f9f> #value-color-neutral##value#");
-        withDisplayFeature(DISPLAY_FEATURE_SYMBOL_COLOR, "<#" + Integer.toHexString((new Random(definitionID.hashCode())).nextInt()) + ">");
+        withDisplayFeature(DISPLAY_FEATURE_SYMBOL_COLOR, "<#" + Integer.toHexString((new Random(definitionID.hashCode() - 67)).nextInt()) + ">");
         withDisplayFeature(DISPLAY_FEATURE_SYMBOL, "■");
         withDisplayFeature(DISPLAY_FEATURE_NAME_COLOR, "");
         withDisplayFeature(DISPLAY_FEATURE_NAME, definitionID.replace("_", " "));

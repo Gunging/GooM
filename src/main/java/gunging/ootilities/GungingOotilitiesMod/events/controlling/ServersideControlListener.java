@@ -2,7 +2,7 @@ package gunging.ootilities.GungingOotilitiesMod.events.controlling;
 
 import gunging.ootilities.GungingOotilitiesMod.GungingOotilitiesMod;
 import gunging.ootilities.GungingOotilitiesMod.events.extension.ServersideEntityEquipmentChangeEvent;
-import gunging.ootilities.GungingOotilitiesMod.mixininterfaces.WithTransitiveStack;
+import gunging.ootilities.GungingOotilitiesMod.mixininterfaces.WithStatsStack;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -29,7 +29,7 @@ public class ServersideControlListener {
     public static void onPlayerEquipmentChanges(@NotNull ServersideEntityEquipmentChangeEvent event) {
         if (!(event.getEntity() instanceof ServerPlayer)) { return; }
         ServerPlayer player = (ServerPlayer) event.getEntity();
-        WithTransitiveStack asStats = (WithTransitiveStack) player.getInventory();
-        asStats.gungingoom$getContainedStatStacks().parentalChainRegisterChanges();
+        WithStatsStack asStats = (WithStatsStack) player.getInventory();
+        asStats.gungingoom$getStatStack().parentalChainRegisterChanges();
     }
 }

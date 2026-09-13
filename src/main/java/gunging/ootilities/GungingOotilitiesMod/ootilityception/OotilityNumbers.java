@@ -1,5 +1,7 @@
 package gunging.ootilities.GungingOotilitiesMod.ootilityception;
 
+import gunging.ootilities.GungingOotilitiesMod.commands.FFPGooM;
+import gunging.ootilities.GungingOotilitiesMod.commands.friendly.FriendlyFeedbackPalette;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.world.item.ItemStack;
@@ -145,6 +147,20 @@ public class OotilityNumbers {
             // That's an L
         } catch (NumberFormatException ignored) { return null; }
     }
+
+    /**
+     * @param hex An integer enclosed in a hex string, such as FF = 255 or fe = 254
+     * @return An integer from 0 to 255, -1 if failure
+     *
+     * @since 1.0.0
+     * @author Gunging
+     */
+    public static int HexIntParse(@NotNull String hex) {
+        try {
+            return Integer.valueOf(hex, 16);
+        } catch (NumberFormatException ignored) { return -1; }
+    }
+
     //endregion
 
     //region Math Utilities
@@ -370,18 +386,6 @@ public class OotilityNumbers {
     //endregion
 
     //region Nice UI Functions
-    /**
-     * @param text Line of text with section signs, legacy ampersands, hex codes, and so on
-     * @return This text but as a "mutable component"
-     *
-     * @since 1.0.0
-     * @author Gunging
-     */
-    @NotNull public static MutableComponent colorize(@NotNull String text) {
-        String sectioned = colorizeAmpersandToSection(text);
-        return Component.literal(sectioned);
-    }
-
     /**
      * @param item Item Stack to check
      *
@@ -1416,7 +1420,7 @@ public class OotilityNumbers {
 
             // Check the character immediately after the code
             String obs = sectioned[i];
-            if (isSectionColorCode.matcher(obs).matches()) {
+            if (startsWithSectionColorCode.matcher(obs).matches()) {
 
                 // This was a color code, append section
                 ret.append('§').append(obs);
@@ -1434,7 +1438,7 @@ public class OotilityNumbers {
      *
      * @since 1.0.0
      */
-    @NotNull public static final Pattern isSectionColorCode = Pattern.compile("(?s-m)^[0-9A-Fa-f|kmolnrKMOLNR].*");
+    @NotNull public static final Pattern startsWithSectionColorCode = Pattern.compile("(?s-m)^[0-9A-Fa-f|kmolnrKMOLNR].*");
 
     /**
      * The certified list separator character in GooM is the semicolon,
@@ -1470,5 +1474,123 @@ public class OotilityNumbers {
      * @since 1.0.0
      */
     @NotNull public static final String SERIALIZATION_SEPARATOR = ";";
+
+    /**
+     * Checks specifically if a string (expectedly, a character) is a GooM palette color code
+     *
+     * @since 1.0.0
+     */
+    @NotNull public static final Pattern startsWithGooMPaletteCode = Pattern.compile("(?s-m)^[beiursf].*");
+
+    /**
+     * @param text Line of text with section signs, legacy ampersands, hex codes, and so on
+     * @return This text but as a "mutable component"
+     *
+     * @since 1.0.0
+     * @author Gunging
+     */
+    @NotNull public static MutableComponent colorize(@NotNull String text) { return colorize(text, new FFPGooM()); }
+
+    /**
+     * @param text Line of text with section signs, legacy ampersands, hex codes, and so on
+     * @param palette Palette to parse GooM Palette Format Codes
+     * @return This text but as a "mutable component"
+     *
+     * @since 1.0.0
+     * @author Gunging
+     */
+    @NotNull public static MutableComponent colorize(@NotNull String text, @Nullable FriendlyFeedbackPalette palette) {
+
+        // Prepare context
+        String sectioned = colorizeAmpersandToSection(text);
+        ArrayList<ColorBit> taggedContent = new ArrayList<>();
+        int sectionLength = sectioned.length();
+        int hexTagOpen = -1;
+        int hexContrivance = 0;
+        boolean escaped = false;
+        String latestFormat = "";
+        int contentOpen = 0;
+
+        // We are going to multi-interpret these components for real
+        for (int pos = 0; pos < sectionLength; pos++) {
+
+            // Read this character, escaping if necessary
+            if (escaped) { continue; }
+            char obs = sectioned.charAt(pos);
+            if (obs == '\\') { escaped = true; continue; }
+
+            // Inside a hex tag, nothing else matters
+            if (hexTagOpen >= 0) {
+
+                // Close at the next closing tag
+                if (obs == '<') { hexContrivance++; }
+                if (obs == '>') { hexContrivance--; }
+
+                // This is the ending character
+                if (hexContrivance <= 0) {
+
+                    // Cut Format
+                    int hexTagFrom = hexTagOpen + 1;
+                    latestFormat = sectioned.substring(hexTagFrom, pos);
+
+                    // Restore
+                    contentOpen = pos + 1;
+                    hexTagOpen = -1;
+                }
+                continue;
+            }
+
+            // Begin hex tag parsing
+            if (obs == '<' && (pos + 1 < sectionLength)) {
+
+                // Determine if this is a worthy tag
+                boolean asHex = (sectioned.charAt(pos + 1) == '#');
+                boolean asGradient = false; //todo IYKYK
+
+                // Worthy tag detected, begin Hex Tag crop
+                if (asHex || asGradient) {
+                    hexTagOpen = pos;
+                    hexContrivance = 1;
+
+                    // And finish the last content
+                    String contentCut = sectioned.substring(contentOpen, pos);
+                    taggedContent.add(new ColorBit(latestFormat, contentCut));
+                    continue;
+                }
+            }
+
+            // Detect palette parsing
+            if (obs == '$' && (pos + 1 < sectionLength)) {
+
+                // Detect a palette code
+                String paletteBit = sectioned.substring(pos + 1, pos + 2);
+                if (startsWithGooMPaletteCode.matcher(paletteBit).matches()) {
+
+                    // Finish the last content
+                    String contentCut = sectioned.substring(contentOpen, pos);
+                    taggedContent.add(new ColorBit(latestFormat, contentCut));
+
+                    // Then begin the next content with updated format
+                    latestFormat = paletteBit;
+                    contentOpen = pos + 2;
+                    pos++;
+                    continue;
+                }
+            }
+        }
+
+        // Finish the last content
+        String contentCut = sectioned.substring(contentOpen);
+        taggedContent.add(new ColorBit(latestFormat, contentCut));
+
+        // Mutate and colorize
+        MutableComponent ret = Component.empty();
+        for (ColorBit col : taggedContent) {
+            if (col.getContent().isEmpty()) { continue; }
+            ret.append(col.forgeBake(palette));
+        }
+        return ret;
+    }
+
     //endregion
 }

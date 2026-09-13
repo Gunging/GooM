@@ -217,7 +217,7 @@ public class DoubleDefinition extends StatDefinition<Double> {
         String NO = StatDefinition.DISPLAY_COLOR_UNDESIRABLE;
         String singleLine = getDisplayFeature(DISPLAY_FEATURE_FORMAT)
                 .replace(StatDefinition.DISPLAY_FEATURE_VALUE_COLOR_DESIRABLE, isDesirable() ? value >= 0 ? YES : NO : value >= 0 ? NO : YES)
-                .replace(StatDefinition.DISPLAY_FEATURE_PLUS_VALUE, value >= 0 ? "+" : "-")
+                .replace(StatDefinition.DISPLAY_FEATURE_PLUS_VALUE, value >= 0 ? "+" : "")
                 .replace(StatDefinition.DISPLAY_FEATURE_EXACT_VALUE, OotilityNumbers.readableRounding(exactQuanta, logDecimals))
                 .replace(StatDefinition.DISPLAY_FEATURE_APPROXIMATE_VALUE, OotilityNumbers.readableRounding(approximateQuanta, logDecimals - 2))
                 .replace(StatDefinition.DISPLAY_FEATURE_COARSE_VALUE, OotilityNumbers.readableRounding(approximateQuanta, logDecimals - 3))

@@ -129,7 +129,7 @@ public class IntegerDefinition extends StatDefinition<Integer> {
 
         // Cook format
         String singleLine = getDisplayFeature(DISPLAY_FEATURE_FORMAT)
-                .replace(StatDefinition.DISPLAY_FEATURE_PLUS_VALUE, value >= 0 ? "+" : "-")
+                .replace(StatDefinition.DISPLAY_FEATURE_PLUS_VALUE, value >= 0 ? "+" : "")
                 .replace(StatDefinition.DISPLAY_FEATURE_EXACT_VALUE, OotilityNumbers.readableRounding(value, 0));
 
         // Cook further

@@ -100,6 +100,8 @@ public class StatsManager {
         // Register default stats... if there were any
         registerStat(GOOMStats.AURA);
         registerStat(GOOMStats.BLESSING_OF_MANGOES);
+        registerStat(GOOMStats.CURSED_ENERGY);
+        registerStat(GOOMStats.AIR_PROTECTION_DISABLE);
 
         // Register external stats through event
         RegisterAllStatsEvent playerEvent = new RegisterAllStatsEvent(this);

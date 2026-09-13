@@ -168,7 +168,7 @@ public class FriendlyFeedbackMessage implements Cloneable {
         }
 
         // Add colored message
-        actualMessage.append(pal.parseForPlayer(OotilityNumbers.colorizeAmpersandToSection(getMessage())));
+        actualMessage.append(pal.parseForPlayer(getMessage()));
 
         // Return built
         return actualMessage;

@@ -3,7 +3,6 @@ package gunging.ootilities.GungingOotilitiesMod.mixin;
 import gunging.ootilities.GungingOotilitiesMod.events.ExtensionEventBroadcaster;
 import gunging.ootilities.GungingOotilitiesMod.events.extension.ItemFlowExtensionReason;
 import gunging.ootilities.GungingOotilitiesMod.mixininterfaces.WithStatsStack;
-import gunging.ootilities.GungingOotilitiesMod.mixininterfaces.WithTransitiveStack;
 import gunging.ootilities.GungingOotilitiesMod.ootilityception.OotilityNumbers;
 import gunging.ootilities.GungingOotilitiesMod.stats.core.*;
 import net.minecraft.core.NonNullList;
@@ -24,7 +23,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import java.util.ArrayList;
 
 @Mixin(Inventory.class)
-public abstract class InventoryMixin implements WithTransitiveStack {
+public abstract class InventoryMixin implements WithStatsStack {
 
     @Unique
     public int gungingoom$originalSlot;
@@ -101,20 +100,16 @@ public abstract class InventoryMixin implements WithTransitiveStack {
         gungingoom.Log("ASI INV placeItemBackInInventory <Coming Soon>");
     }   //*/
 
-    @Unique @Nullable TransitiveStack gungingoom$stats;
+    @Unique @Nullable StatStack gungingoom$stats;
 
     @Override
-    public @NotNull StatStacked gungingoom$getParentStack() {
-        return ((WithStatsStack) player).gungingoom$getStatStack();
-    }
-
-    @Override
-    public @NotNull TransitiveStack gungingoom$getContainedStatStacks() {
+    public @NotNull StatStack gungingoom$getStatStack() {
         if (gungingoom$stats == null) {
-            gungingoom$stats = new TransitiveStack(this);
-            gungingoom$stats.setParentStack(gungingoom$getParentStack());
+            StatStack parentStack = ((WithStatsStack) player).gungingoom$getStatStack();
+            gungingoom$stats = new StatStack();
             gungingoom$stats.preStatTotalsReloaded(sm -> gungingoom$refreshEquipmentStats());
-            gungingoom$getParentStack().getChildStacks().add(gungingoom$stats);
+            gungingoom$stats.setParentStack(parentStack);
+            parentStack.getChildStacks().add(gungingoom$stats);
             gungingoom$stats.parentalChainRegisterChanges();
         }
         return gungingoom$stats;
@@ -122,36 +117,31 @@ public abstract class InventoryMixin implements WithTransitiveStack {
 
     @Inject(method = "<init>", at = @At("RETURN"))
     public void whenConstructed(Player pPlayer, CallbackInfo ci) {
-        gungingoom$getContainedStatStacks();
+        gungingoom$getStatStack();
     }
 
     @Unique
     public void gungingoom$refreshEquipmentStats() {
-        gungingoom$getContainedStatStacks().getChildStacks().clear();
+        gungingoom$getStatStack().getChildStacks().clear();
 
         // Armor
         for (ItemStack item : armor) {
             if (OotilityNumbers.isAir(item)) { continue; }
             WithStatsStack asStats = (WithStatsStack) (Object) item;
-            gungingoom$getContainedStatStacks().getChildStacks().add(asStats.gungingoom$getStatStack());
+            gungingoom$getStatStack().getChildStacks().add(asStats.gungingoom$getStatStack());
         }
 
         // Offhand
         for (ItemStack item : offhand) {
             if (OotilityNumbers.isAir(item)) { continue; }
             WithStatsStack asStats = (WithStatsStack) (Object) item;
-            gungingoom$getContainedStatStacks().getChildStacks().add(asStats.gungingoom$getStatStack());
+            gungingoom$getStatStack().getChildStacks().add(asStats.gungingoom$getStatStack());
         }
 
         // Mainhand
         ItemStack main = getSelected();
         if (!OotilityNumbers.isAir(main)) {
             WithStatsStack asStats = (WithStatsStack) (Object) main;
-            gungingoom$getContainedStatStacks().getChildStacks().add(asStats.gungingoom$getStatStack()); }
-    }
-
-    @Override
-    public @NotNull ArrayList<StatStacked> gungingoom$getChildStacks() {
-        return gungingoom$getContainedStatStacks().getChildStacks();
+            gungingoom$getStatStack().getChildStacks().add(asStats.gungingoom$getStatStack()); }
     }
 }
