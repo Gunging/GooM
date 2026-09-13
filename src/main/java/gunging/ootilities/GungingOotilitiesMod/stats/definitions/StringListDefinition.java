@@ -192,8 +192,8 @@ public class StringListDefinition extends StatDefinition<List<String>> {
      * @since 1.0.0
      */
     @Override
-    public @NotNull ArrayList<String> whenDisplayed(@NotNull StatValue<? extends List<String>> current) {
-        ArrayList<String> ret = super.whenDisplayed(current);
+    public @NotNull ArrayList<String> whenDisplayed(@NotNull StatValue<? extends List<String>> current, boolean asTotal) {
+        ArrayList<String> ret = super.whenDisplayed(current, asTotal);
         if (ret.isEmpty()) { return ret; }
 
         // List all the entries in this string list

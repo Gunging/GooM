@@ -28,7 +28,8 @@ public class DoubleDefinition extends StatDefinition<Double> {
      */
     public DoubleDefinition(@NotNull String definitionID, @NotNull StatValue<? extends Double> def) {
         super(definitionID, def);
-        withDisplayFeature(StatDefinition.DISPLAY_FEATURE_FORMAT, "#symbol-color##symbol#<#9f9f9f> #name-color##name#:<#9f9f9f> #value-color-neutral##plus##value#");
+        withDisplayFeature(StatDefinition.DISPLAY_FEATURE_FORMAT, "#symbol-color##symbol#<#9f9f9f> #name-color##name#:<#9f9f9f> #value-color-neutral##plus##value##units#");
+        withDisplayFeature(DISPLAY_FEATURE_UNITS, "");
     }
 
     /**
@@ -174,11 +175,58 @@ public class DoubleDefinition extends StatDefinition<Double> {
     public boolean isDesirable() { return desirable; }
 
     /**
+     * The multiplier when displaying this value with units
+     *
+     * @since 1.0.0
+     */
+    double unitsMultiplier = 1;
+    /**
+     * The units to give meaning to the multiplier
+     *
+     * @since 1.0.0
+     */
+    @NotNull String units = "";
+    /**
+     * @param multiplier The multiplication inverse of the symbol numeric meaning. Example "0.001"
+     * @param symbol The symbol that carries meaning of units. Example "k"
+     *
+     * @return This same object. Builder pattern.
+     *
+     * @author Gunging
+     * @since 1.0.0
+     */
+    @NotNull public DoubleDefinition withUnits(double multiplier, @NotNull String symbol) {
+
+        // Actually there ARE some constrains on this
+        this.unitsMultiplier = multiplier;
+        this.units = symbol;
+        withDisplayFeature(DISPLAY_FEATURE_UNITS, symbol);
+        return this;
+    }
+    /**
+     * The number around which this stat is significant.
+     *
+     * @since 1.0.0
+     */
+    public double getUnitsMultiplier() { return unitsMultiplier; }
+    /**
+     * @since 1.0.0
+     */
+    @NotNull public String getUnits() { return units; }
+
+    /**
+     * The format by which other display features will display
+     *
+     * @since 1.0.0
+     */
+    public static final String DISPLAY_FEATURE_UNITS = "#units#";
+
+    /**
      * @author Gunging
      * @since 1.0.0
      */
     @Override
-    public @NotNull ArrayList<String> whenDisplayed(@NotNull StatValue<? extends Double> current) {
+    public @NotNull ArrayList<String> whenDisplayed(@NotNull StatValue<? extends Double> current, boolean asTotal) {
 
         // If the super determined not to display this, then no more replacing is needed
         ArrayList<String> ret = new ArrayList<>();
@@ -191,19 +239,19 @@ public class DoubleDefinition extends StatDefinition<Double> {
         double basisAbsolute = basisQuanta < 0 ? -basisQuanta : basisQuanta;
 
         // If there is such a negligible value that no one would care, ignore it.
-        if (basisAbsolute < 0.2D) { return ret; }
-        double basisLog = Math.log10(getSignificanceBasis());
+        if (basisAbsolute < 0.19D) { return ret; }
+        double basisLog = Math.log10(getSignificanceBasis() * unitsMultiplier);
         int logDecimals = OotilityNumbers.round(basisLog - 3D);
         if (logDecimals > 0) { logDecimals = 0; } else { logDecimals = -logDecimals; }
 
         double exactQuanta = OotilityNumbers.round(basisQuanta, 1);
         double approximateQuanta = OotilityNumbers.round(basisQuanta * 0.1D, 0) * 10D;
 
-        exactQuanta *= basisQuantum;
-        approximateQuanta *= basisQuantum;
+        exactQuanta *= basisQuantum * unitsMultiplier;
+        approximateQuanta *= basisQuantum * unitsMultiplier;
 
-        String qualitativeness = value > 0 ? "Increases" : "Decreases";
-        double qualitativeAbsolute = basisAbsolute * 100;
+        String qualitativeness = asTotal ?  value > 0 ? "Increased" : "Decreased" : value > 0 ? "Increases" : "Decreases";
+        double qualitativeAbsolute = basisAbsolute * 0.01D;
         if (qualitativeAbsolute > 1000000) { qualitativeness = "Incomprehensibly " + qualitativeness; }
         else if (qualitativeAbsolute > 10000) { qualitativeness = "Godly " + qualitativeness; }
         else if (qualitativeAbsolute > 1000) { qualitativeness = "Insanely " + qualitativeness; }
@@ -217,7 +265,7 @@ public class DoubleDefinition extends StatDefinition<Double> {
         String NO = StatDefinition.DISPLAY_COLOR_UNDESIRABLE;
         String singleLine = getDisplayFeature(DISPLAY_FEATURE_FORMAT)
                 .replace(StatDefinition.DISPLAY_FEATURE_VALUE_COLOR_DESIRABLE, isDesirable() ? value >= 0 ? YES : NO : value >= 0 ? NO : YES)
-                .replace(StatDefinition.DISPLAY_FEATURE_PLUS_VALUE, value >= 0 ? "+" : "")
+                .replace(StatDefinition.DISPLAY_FEATURE_PLUS_VALUE, asTotal ? "" : value >= 0 ? "+" : "")
                 .replace(StatDefinition.DISPLAY_FEATURE_EXACT_VALUE, OotilityNumbers.readableRounding(exactQuanta, logDecimals))
                 .replace(StatDefinition.DISPLAY_FEATURE_APPROXIMATE_VALUE, OotilityNumbers.readableRounding(approximateQuanta, logDecimals - 2))
                 .replace(StatDefinition.DISPLAY_FEATURE_COARSE_VALUE, OotilityNumbers.readableRounding(approximateQuanta, logDecimals - 3))

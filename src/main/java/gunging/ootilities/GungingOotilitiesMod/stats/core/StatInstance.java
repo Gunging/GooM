@@ -211,7 +211,7 @@ public class StatInstance<Measure> implements Cloneable {
      * @author Gunging
      * @since 1.0.0
      */
-    @NotNull public ArrayList<String> whenDisplayed() {
-        return getDefinition().whenDisplayed(getValue());
+    @NotNull public ArrayList<String> whenDisplayed(boolean asTotal) {
+        return getDefinition().whenDisplayed(getValue(), asTotal);
     }
 }

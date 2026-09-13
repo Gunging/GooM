@@ -61,7 +61,7 @@ public class ClientsideControlListener {
 
         // Include GooM Stats in this list
         for (StatInstance<?> stat : asStats.gungingoom$getStatStack().getStatTotals().values()) {
-            for (String lore : stat.whenDisplayed()) {
+            for (String lore : stat.whenDisplayed(false)) {
                 event.getToolTip().add(OotilityNumbers.colorize(lore));
             }
         }

@@ -95,7 +95,7 @@ public class SeeStatsCommand extends GCMGooMCommandNode {
         if (slot == null) {
             FriendlyFeedbackProvider seeFFP = new FriendlyFeedbackProvider(ffp == null ? new FFPGooM() : ffp.getPalette());
             FriendlyFeedbackProvider.logInfo(seeFFP, "Stats of $r{0}$b: ", player.getScoreboardName());
-            printStatStack(((WithStatsStack) player).gungingoom$getStatStack(), advanced, seeFFP);
+            printStatStack(((WithStatsStack) player).gungingoom$getStatStack(), advanced, true, seeFFP);
             if (forgeContext != null) { seeFFP.sendAllTo(forgeContext::sendSystemMessage); }
             return "";
         }
@@ -118,7 +118,7 @@ public class SeeStatsCommand extends GCMGooMCommandNode {
 
             // Perform operation
             StatStack itemStats = ((WithStatsStack) (Object) item).gungingoom$getStatStack();
-            printStatStack(itemStats, advanced, seeFFP);
+            printStatStack(itemStats, advanced, false, seeFFP);
         }
         if (forgeContext != null) { seeFFP.sendAllTo(forgeContext::sendSystemMessage); }
 
@@ -138,12 +138,12 @@ public class SeeStatsCommand extends GCMGooMCommandNode {
      * @author Gunging
      * @since 1.0.0
      */
-    public static void printStatStack(@NotNull StatStacked stats, boolean advanced, @Nullable FriendlyFeedbackProvider ffp) {
+    public static void printStatStack(@NotNull StatStacked stats, boolean advanced, boolean totals, @Nullable FriendlyFeedbackProvider ffp) {
         if (ffp == null) { return; }
 
         // Append every stat
         for (StatInstance<?> stat : stats.getRefreshedStatTotals().values()) {
-            ArrayList<String> whenDisplayed = stat.whenDisplayed();
+            ArrayList<String> whenDisplayed = stat.whenDisplayed(totals);
 
             // In simple view, we really only print lore
             if (!advanced) {

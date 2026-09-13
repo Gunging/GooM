@@ -102,6 +102,8 @@ public class StatsManager {
         registerStat(GOOMStats.BLESSING_OF_MANGOES);
         registerStat(GOOMStats.CURSED_ENERGY);
         registerStat(GOOMStats.AIR_PROTECTION_DISABLE);
+        registerStat(GOOMStats.VAPE_DEALERS);
+        registerStat(GOOMStats.NIRVANA_COMPLETION);
 
         // Register external stats through event
         RegisterAllStatsEvent playerEvent = new RegisterAllStatsEvent(this);

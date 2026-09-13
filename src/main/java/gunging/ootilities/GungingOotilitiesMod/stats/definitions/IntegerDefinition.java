@@ -120,7 +120,7 @@ public class IntegerDefinition extends StatDefinition<Integer> {
      * @since 1.0.0
      */
     @Override
-    public @NotNull ArrayList<String> whenDisplayed(@NotNull StatValue<? extends Integer> current) {
+    public @NotNull ArrayList<String> whenDisplayed(@NotNull StatValue<? extends Integer> current, boolean asTotal) {
 
         // If the super determined not to display this, then no more replacing is needed
         ArrayList<String> ret = new ArrayList<>();
@@ -129,7 +129,7 @@ public class IntegerDefinition extends StatDefinition<Integer> {
 
         // Cook format
         String singleLine = getDisplayFeature(DISPLAY_FEATURE_FORMAT)
-                .replace(StatDefinition.DISPLAY_FEATURE_PLUS_VALUE, value >= 0 ? "+" : "")
+                .replace(StatDefinition.DISPLAY_FEATURE_PLUS_VALUE, asTotal ? "" : value >= 0 ? "+" : "")
                 .replace(StatDefinition.DISPLAY_FEATURE_EXACT_VALUE, OotilityNumbers.readableRounding(value, 0));
 
         // Cook further

@@ -34,7 +34,7 @@ public abstract class StatDefinition<Measure> {
 
         // Default stat stuff
         withDisplayFeature(DISPLAY_FEATURE_FORMAT, "#symbol-color##symbol#<#9f9f9f> #name-color##name##name-color#:<#9f9f9f> #value-color-neutral##value#");
-        withDisplayFeature(DISPLAY_FEATURE_SYMBOL_COLOR, "<#" + Integer.toHexString((new Random(definitionID.hashCode() - 67)).nextInt()) + ">");
+        withDisplayFeature(DISPLAY_FEATURE_SYMBOL_COLOR, "<#" + Integer.toHexString((new Random(definitionID.hashCode() - 6)).nextInt()) + ">");
         withDisplayFeature(DISPLAY_FEATURE_SYMBOL, "■");
         withDisplayFeature(DISPLAY_FEATURE_NAME_COLOR, "");
         withDisplayFeature(DISPLAY_FEATURE_NAME, definitionID.replace("_", " "));
@@ -261,9 +261,13 @@ public abstract class StatDefinition<Measure> {
     /**
      * Prepares a list of tooltip lines to show the value of this stat.
      *
+     * @param current The value to be displayed
+     * @param asTotal If this must be shown as the totals rather than a contribution.
+     *                Consider "+10 attack damage" vs the total "10 attack damage."
+     *
      * @since 1.0.0
      */
-    @NotNull public ArrayList<String> whenDisplayed(@NotNull StatValue<? extends Measure> current) {
+    @NotNull public ArrayList<String> whenDisplayed(@NotNull StatValue<? extends Measure> current, boolean asTotal) {
 
         // Default stats are not written
         if (isDefault(current)) { return new ArrayList<>(); }
