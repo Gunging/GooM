@@ -4,11 +4,15 @@ import gunging.ootilities.GungingOotilitiesMod.events.ExtensionEventBroadcaster;
 import gunging.ootilities.GungingOotilitiesMod.events.extension.ItemFlowExtensionReason;
 import gunging.ootilities.GungingOotilitiesMod.mixininterfaces.WithStatsStack;
 import gunging.ootilities.GungingOotilitiesMod.stats.core.StatStack;
+import gunging.ootilities.GungingOotilitiesMod.stats.events.PlayerStatsRecalculatedEvent;
+import gunging.ootilities.GungingOotilitiesMod.stats.events.StatsRecalculatedEvent;
 import gunging.ootilities.GungingOotilitiesMod.stats.registry.GOOMStats;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.entity.*;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
+import net.minecraftforge.common.MinecraftForge;
 import org.jetbrains.annotations.NotNull;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
@@ -43,6 +47,32 @@ public abstract class LivingEntityMixin extends Entity implements WithStatsStack
         for (Map.Entry<EquipmentSlot, ItemStack> slot : pEquipments.entrySet()) {
             ExtensionEventBroadcaster.BroadcastEquipmentChangeEvent(ItemFlowExtensionReason.CLIENTBOUND_SET_EQUIPMENT_SEND_HANDLE_EQUIPMENT_CHANGES, false, slot.getKey(), (LivingEntity) (Object) this);
         }
+    }
+
+    @Inject(method = "<init>", at = @At("RETURN"))
+    public void onConstruct(EntityType<?> pEntityType, Level pLevel, CallbackInfo ci) {
+
+        // Send event when stats are recalculated
+        gungingoom$stats.postStatTotalsReloaded(mv -> gungingoom$sendStatsRecalculatedEvent());
+    }
+
+    /**
+     * Event send after stats are recalculated for this entity
+     */
+    @Unique
+    public void gungingoom$sendStatsRecalculatedEvent() {
+        Object me = this;
+
+        // Choose event to run
+        StatsRecalculatedEvent event;
+        if (me instanceof Player) {
+            event = PlayerStatsRecalculatedEvent.forPlayer((Player) me);
+        } else {
+            event = new StatsRecalculatedEvent((LivingEntity) me);
+        }
+
+        // Post event
+        MinecraftForge.EVENT_BUS.post(event);
     }
 
     /*

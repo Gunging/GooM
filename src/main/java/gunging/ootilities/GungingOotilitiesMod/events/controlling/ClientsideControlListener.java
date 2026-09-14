@@ -7,6 +7,7 @@ import gunging.ootilities.GungingOotilitiesMod.netcode.GOOMNetworkManager;
 import gunging.ootilities.GungingOotilitiesMod.netcode.packets.serverbound.GMNServerboundStatementSyncRequest;
 import gunging.ootilities.GungingOotilitiesMod.ootilityception.OotilityNumbers;
 import gunging.ootilities.GungingOotilitiesMod.stats.core.StatInstance;
+import gunging.ootilities.GungingOotilitiesMod.stats.events.StatsRecalculatedEvent;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.world.entity.player.Player;
